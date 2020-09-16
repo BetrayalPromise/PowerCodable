@@ -2144,4 +2144,24 @@ final class SwiftModelTests: XCTestCase {
             XCTAssertNil(error, error.localizedDescription)
         }
     }
+
+    func testPropertyWrapper() {
+        let data: Data = #"""
+            {
+                "name": "abc",
+                "info": "info"
+            }
+        """#.data(using: String.Encoding.utf8) ?? Data()
+
+        struct Information: Codable {
+            @IgnoreNonoptionalCoding
+            var name: String = "ABC"
+            @IgnoreOptionalCoding
+            var info: String? = "INFO"
+        }
+        let decoder: NIOJSONDecoder = NIOJSONDecoder()
+        let model = try? decoder.decode(type: Information.self, from: data)
+        print(model?.name)
+        print(model?.info)
+    }
 }
