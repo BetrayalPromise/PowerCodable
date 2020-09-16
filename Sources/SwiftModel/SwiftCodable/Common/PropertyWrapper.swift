@@ -1,5 +1,6 @@
 import Foundation
 
+#if swift(>=5.1)
 @propertyWrapper
 public struct IgnoreNonoptionalCoding<WrappedType: Codable>: Codable {
     public var wrappedValue: WrappedType
@@ -45,7 +46,7 @@ private struct IgnoreCodingStore {
     static var optionalValue: Any?
     static var nonoptionalValue: Any = NSNull()
 }
-
+#endif
 
 
 
