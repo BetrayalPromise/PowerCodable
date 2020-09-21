@@ -2145,23 +2145,43 @@ final class SwiftModelTests: XCTestCase {
         }
     }
 
-    func testPropertyWrapper() {
+    func testPropertyWrapperIgnore() {
         let data: Data = #"""
             {
                 "name": "abc",
-                "info": "info"
+                "info": "info",
+                "data": "datat"
             }
         """#.data(using: String.Encoding.utf8) ?? Data()
 
         struct Information: Codable {
-            @IgnoreNonoptionalCoding
-            var name: String = "ABC"
-            @IgnoreOptionalCoding
-            var info: String? = "INFO"
+            @Ignore.NonoptionalCoding
+            var name: String = "10JQKA"
+            @Ignore.OptionalCoding
+            var info: String? = nil
+            @Base64.DecodingToString
+            var data: String?
+        }
+        let decoder: NIOJSONDecoder = NIOJSONDecoder()
+        guard let model = try? decoder.decode(type: Information.self, from: data) else { return }
+        XCTAssertEqual(model.name, "10JQKA")
+        XCTAssertEqual(model.info, nil)
+        print(model.data ?? "")
+    }
+
+    func testPropertyWrapperBase64() {
+        let data: Data = #"""
+            {
+                "name": "abc"
+            }
+        """#.data(using: String.Encoding.utf8) ?? Data()
+
+        struct Information: Codable {
+            @CustomKey(keys: "name", "ABC")
+            var namee: String?
         }
         let decoder: NIOJSONDecoder = NIOJSONDecoder()
         let model = try? decoder.decode(type: Information.self, from: data)
-        print(model?.name)
-        print(model?.info)
+        print(model?.namee)
     }
 }
