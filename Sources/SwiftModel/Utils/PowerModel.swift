@@ -215,3 +215,22 @@ public extension Decodable {
     }
 }
 
+
+extension Data {
+    func toJSON() throws -> JSON? {
+        do {
+            return try JSON.Parser.parse(self)
+        } catch {
+            return nil
+        }
+    }
+}
+
+extension String {
+    func toJSON() throws -> JSON? {
+        guard let data = self.data(using: Encoding.utf8) else {
+            return nil
+        }
+        return try data.toJSON()
+    }
+}
