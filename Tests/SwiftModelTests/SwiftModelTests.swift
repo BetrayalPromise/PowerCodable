@@ -975,8 +975,8 @@ final class SwiftModelTests: XCTestCase {
 
     func testDictionary() {
         do {
-            struct Root: Codable, MappingKeysControllable {
-                static func modelsKeys() -> [String : [String]] {
+            struct Root: Codable, DecodingMappingKeys {
+                static func modelDecodingKeys() -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
                 let info: Bool
@@ -1200,5 +1200,22 @@ final class SwiftModelTests: XCTestCase {
         let age = json["age"]
         age?.path()
         json?.path()
+    }
+
+    func testEncode() {
+        struct A : Encodable {
+            var name: String = "ABCD"
+
+            func encoded() -> JSON {
+                return JSON.init
+            }
+        }
+        let a = A()
+
+        let encoder = JSONEncoder()
+        let data = (try? encoder.encode(a)) ?? Data()
+        print(String(data: data, encoding: String.Encoding.utf8))
+
+        print(a.toJSON())
     }
 }

@@ -30,7 +30,7 @@ public final class PowerJSONDecoder {
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     func decode<T>(type: T.Type, fromString: String) throws -> T? where T: Decodable {
-        return try self.decode(type: type, fromObject: fromString.data(using: String.Encoding.utf8) ?? "无法解析\(fromString)")
+        return try self.decode(type: type, fromData: (fromString.data(using: String.Encoding.utf8) ?? Data()))
     }
 
     /// 模型转化
@@ -42,7 +42,7 @@ public final class PowerJSONDecoder {
     func decode<T>(type: T.Type, fromObject: Any) throws -> T? where T: Decodable {
         if JSONSerialization.isValidJSONObject(fromObject) {
             let data: Data = try JSONSerialization.data(withJSONObject: fromObject, options: .prettyPrinted)
-            return try self.decode(type: type, fromObject: data)
+            return try self.decode(type: type, fromData: data)
         } else {
             throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: [], debugDescription: "无效的JSON数据"))
         }

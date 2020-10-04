@@ -234,3 +234,9 @@ extension String {
         return try data.toJSON()
     }
 }
+
+public extension Encodable {
+    func toJSON() {
+        print(self)
+    }
+}

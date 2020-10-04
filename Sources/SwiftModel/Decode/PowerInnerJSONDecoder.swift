@@ -149,10 +149,10 @@ extension PowerInnerJSONDecoder {
 
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
         currentObject = object
-        guard let type: MappingKeysControllable.Type = T.self as? MappingKeysControllable.Type else {
+        guard let type: DecodingMappingKeys.Type = T.self as? DecodingMappingKeys.Type else {
             return try T.init(from: self)
         }
-        self.mappingKeys = type.modelsKeys()
+        self.mappingKeys = type.modelDecodingKeys()
         return try T.init(from: self)
     }
 

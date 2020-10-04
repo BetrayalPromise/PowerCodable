@@ -292,12 +292,22 @@ extension TypeConvertible {
     func toString(path: JSONPath, value: JSONArray) -> String { return "[]" }
 }
 
-public protocol MappingKeysControllable {
-    static func modelsKeys() -> [String: [String]]
+public protocol DecodingMappingKeys {
+    static func modelDecodingKeys() -> [String: [String]]
 }
 
-extension MappingKeysControllable {
-    static func modelsKeys() -> [String: [String]] {
+extension DecodingMappingKeys {
+    static func modelDecodingKeys() -> [String: [String]] {
         return ["": []]
+    }
+}
+
+public protocol EncodingMappingKeys {
+    static func modelEncodingKeys() -> [String: String]
+}
+
+extension EncodingMappingKeys {
+    static func modelEncodingKeys() -> [String: String] {
+        return ["": ""]
     }
 }

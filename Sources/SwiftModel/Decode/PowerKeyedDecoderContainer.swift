@@ -210,9 +210,7 @@ extension PowerKeyedDecodingContainer {
 
         return try decoder.unkeyedContainer(wrapping: object)
     }
-}
 
-extension PowerKeyedDecodingContainer {
     func superDecoder() throws -> Decoder {
         return try buildSuperDecoder(forKey: PowerJSONKey.super)
     }
@@ -220,7 +218,9 @@ extension PowerKeyedDecodingContainer {
     func superDecoder(forKey key: K) throws -> Decoder {
         return try buildSuperDecoder(forKey: key)
     }
+}
 
+extension PowerKeyedDecodingContainer {
     private func buildSuperDecoder(forKey key: CodingKey) throws -> Decoder {
         codingPath.append(key)
         defer { codingPath.removeLast() }

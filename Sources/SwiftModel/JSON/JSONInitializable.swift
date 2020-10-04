@@ -1,21 +1,15 @@
 import Foundation
 
-/// Conforming types can be decoded from a JSON instance
 public protocol JSONInitializable {
-    /// Initialize an instance of `Self` from JSON
     init(json: JSON) throws
 }
 
-
-// MARK: - Partial implementation
 extension JSONInitializable {
     public static func decode(_ json: JSON) throws -> Self {
         return try Self(json: json)
     }
 }
 
-
-// MARK: - Bool Conformance to JSONInitializable
 extension Bool: JSONInitializable {
     public init(json: JSON) throws {
         guard let b = json.bool else { throw JSON.Error.badValue(json) }
@@ -23,17 +17,12 @@ extension Bool: JSONInitializable {
     }
 }
 
-
-// MARK: - String Conformance to JSONInitializable
 extension String: JSONInitializable {
     public init(json: JSON) throws {
         guard let s = json.string else { throw JSON.Error.badValue(json) }
         self = s
     }
 }
-
-
-// MARK: - FloatingPointTypes: JSONInitializable
 
 extension Double: JSONInitializable {
     public init(json: JSON) throws {
@@ -49,8 +38,6 @@ extension Float: JSONInitializable {
     }
 }
 
-
-// MARK: - IntegerTypes: JSONInitializable
 extension Int: JSONInitializable {
     public init(json: JSON) throws {
         guard let i = json.int else { throw JSON.Error.badValue(json) }
@@ -65,10 +52,6 @@ extension Int64: JSONInitializable {
     }
 }
 
-
-// NOTE: track rdar://23433955
-// MARK: - Add decode to Optional JSONInitializables
-// TODO (vdka): add init(json: JSON) throws
 extension Optional where Wrapped: JSONInitializable {
     public init(json: JSON) throws {
         self = try Wrapped(json: json)
@@ -79,8 +62,6 @@ extension Optional where Wrapped: JSONInitializable {
     }
 }
 
-
-// MARK: - Add decode to RawRepresentable JSONInitializables
 extension RawRepresentable where RawValue: JSONInitializable {
     public init(json: JSON) throws {
         guard let value = try Self(rawValue: RawValue(json: json)) else { throw JSON.Error.badValue(json) }
@@ -92,8 +73,6 @@ extension RawRepresentable where RawValue: JSONInitializable {
     }
 }
 
-
-// MARK: - Add decode to Arrays of JSONInitializable
 extension Array where Element: JSONInitializable {
     public init(json: JSON) throws {
         guard let array = json.array else { throw JSON.Error.badValue(json) }
@@ -104,7 +83,6 @@ extension Array where Element: JSONInitializable {
         return try Array<Element>(json: json)
     }
 }
-
 
 public protocol JSONConvertible: JSONInitializable, JSONRepresentable {}
 
