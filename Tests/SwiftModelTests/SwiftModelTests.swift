@@ -1198,6 +1198,7 @@ final class SwiftModelTests: XCTestCase {
         """.data(using: String.Encoding.utf8) ?? Data()
         let json = try? data.toJSON()
         let age = json["age"]
-        json?.path(of: age)
+        age?.path()
+        json?.path()
     }
 }

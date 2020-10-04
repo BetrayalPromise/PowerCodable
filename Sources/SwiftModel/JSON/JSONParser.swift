@@ -71,33 +71,36 @@ extension JSON.Parser {
             }
 
             // TODO (vkda): option to skip the trailing data check, useful for say streams see Jay's model
-
             try parser.skipWhitespace()
 
             guard parser.pointer == parser.buffer.endAddress else { throw Error.Reason.invalidSyntax }
 
             return rootValue
         } catch let error as Error.Reason {
-
             // We unwrap here because on we do this check prior to the do { } catch { } block.
             throw Error(byteOffset: parser.buffer.baseAddress!.distance(to: parser.pointer), reason: error)
         }
     }
 }
 
-import struct Foundation.Data
-
 extension JSON.Parser {
     public static func parse(_ data: Data, options: Option = []) throws -> JSON {
-        return try data.withUnsafeBytes { (pointer: UnsafePointer<UTF8.CodeUnit>) in
-            let buffer = UnsafeBufferPointer(start: pointer, count: data.count)
+        #if swift(>=5)
+        return try data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> JSON in
+            let buffer: UnsafeBufferPointer<UTF8.CodeUnit> = pointer.bindMemory(to: UTF8.CodeUnit.self)
             return try JSON.Parser.parse(buffer, options: options)
         }
+        #else
+        return try data.withUnsafeBytes { (pointer: UnsafePointer<UTF8.CodeUnit>) in
+            let buffer: UnsafeBufferPointer<UTF8.CodeUnit> = UnsafeBufferPointer(start: pointer, count: data.count)
+            return try JSON.Parser.parse(buffer, options: options)
+        }
+        #endif
     }
 
     public static func parse(_ data: [UTF8.CodeUnit], options: Option = []) throws -> JSON {
-        return try data.withUnsafeBufferPointer { buffer in
-            return try JSON.Parser.parse(buffer, options: options)
+        return try data.withUnsafeBufferPointer { (pointer: UnsafeBufferPointer<UTF8.CodeUnit>) in
+            return try JSON.Parser.parse(pointer, options: options)
         }
     }
 
@@ -271,10 +274,8 @@ extension JSON.Parser {
     }
 
     mutating func parseArray() throws -> JSON {
-
         assert(peek() == arrayOpen)
         pop()
-
         try skipWhitespace()
 
         // Saves the allocation of the tempArray
@@ -285,47 +286,33 @@ extension JSON.Parser {
 
         var tempArray: [JSON] = []
         tempArray.reserveCapacity(6)
-
         var wasComma = false
-
         repeat {
-
             switch peek() {
             case comma?:
-
                 guard !wasComma else { throw Error.Reason.invalidSyntax }
                 guard tempArray.count > 0 else { throw Error.Reason.invalidSyntax }
-
                 wasComma = true
                 try skipComma()
-
             case arrayClose?:
-
                 guard !wasComma else { throw Error.Reason.trailingComma }
-
                 _ = pop()
                 return .array(tempArray)
-
             case nil:
                 throw Error.Reason.endOfStream
-
             default:
-
                 if tempArray.count > 0 && !wasComma {
                     throw Error.Reason.expectedComma
                 }
-
                 let value = try parseValue()
                 try skipWhitespace()
                 wasComma = false
-
                 switch value {
                 case .null where omitNulls:
                     if peek() == comma {
                         try skipComma()
                         wasComma = true
                     }
-
                 default:
                     tempArray.append(value)
                 }
@@ -334,18 +321,14 @@ extension JSON.Parser {
     }
 
     mutating func parseNumber() throws -> JSON {
-
         assert(numbers ~= peek()! || minus == peek()!)
-
         var seenExponent = false
         var seenDecimal = false
-
         let negative: Bool = {
             guard minus == peek() else { return false }
             pop()
             return true
         }()
-
         guard let next = peek(), numbers ~= next else { throw Error.Reason.invalidNumber }
         // Checks for leading zero's on numbers that are not '0' or '0.x'
         if next == zero {
@@ -366,73 +349,44 @@ extension JSON.Parser {
         var exponent: UInt64 = 0
         var negativeExponent = false
         var didOverflow: Bool
-
         repeat {
-
             switch peek() {
             case numbers? where !seenDecimal && !seenExponent:
-
                 (significand, didOverflow) = significand.multipliedReportingOverflow(by: 10)
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
 
                 (significand, didOverflow) = significand.addingReportingOverflow(UInt64(pop() - zero))
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-
             case numbers? where seenDecimal && !seenExponent:
-
                 divisor *= 10
-
                 (mantisa, didOverflow) = mantisa.multipliedReportingOverflow(by: 10)
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-
                 (mantisa, didOverflow) = mantisa.addingReportingOverflow(UInt64(pop() - zero))
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-
             case numbers? where seenExponent:
-
                 (exponent, didOverflow) = exponent.multipliedReportingOverflow(by: 10)
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-
                 (exponent, didOverflow) = exponent.addingReportingOverflow(UInt64(pop() - zero))
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-
             case decimal? where !seenExponent && !seenDecimal:
-
                 pop()
                 seenDecimal = true
                 guard let next = peek(), numbers ~= next else { throw Error.Reason.invalidNumber }
-
             case E? where !seenExponent,
                  e? where !seenExponent:
-
                 pop()
                 seenExponent = true
-
                 if peek() == minus {
-
                     negativeExponent = true
                     pop()
                 } else if peek() == plus {
-
                     pop()
                 }
-
                 guard let next = peek(), numbers ~= next else { throw Error.Reason.invalidNumber }
-
             case let value? where value.isTerminator:
                 fallthrough
-
             case nil:
-
-                return try constructNumber(
-                    significand: significand,
-                    mantisa: seenDecimal ? mantisa : nil,
-                    exponent: seenExponent ? exponent : nil,
-                    divisor: divisor,
-                    negative: negative,
-                    negativeExponent: negativeExponent
-                )
-
+                return try constructNumber(significand: significand, mantisa: seenDecimal ? mantisa : nil, exponent: seenExponent ? exponent : nil, divisor: divisor, negative: negative, negativeExponent: negativeExponent)
             default:
                 throw Error.Reason.invalidNumber
             }
@@ -440,28 +394,20 @@ extension JSON.Parser {
     }
 
     func constructNumber(significand: UInt64, mantisa: UInt64?, exponent: UInt64?, divisor: Double, negative: Bool, negativeExponent: Bool) throws -> JSON {
-
         if mantisa != nil || exponent != nil {
             var divisor = divisor
-
             divisor /= 10
-
             let number = Double(negative ? -1 : 1) * (Double(significand) + Double(mantisa ?? 0) / divisor)
-
             guard let exponent = exponent else { return .double(number) }
             return .double(Double(number) * pow(10, negativeExponent ? -Double(exponent) : Double(exponent)))
         } else {
-
             switch significand {
             case validUnsigned64BitInteger where !negative:
                 return .integer(Int64(significand))
-
             case UInt64(Int64.max) + 1 where negative:
                 return .integer(Int64.min)
-
             case validUnsigned64BitInteger where negative:
                 return .integer(-Int64(significand))
-
             default:
                 throw Error.Reason.numberOverflow
             }
@@ -472,20 +418,16 @@ extension JSON.Parser {
     // TODO (vdka): option to _repair_ Unicode
     // NOTE(vdka): Not sure I ever will get to refactoring this, I just don't find Swift's String _comfortable_ to work with at a byte level.
     mutating func parseString() throws -> String {
-
         assert(peek() == quote)
         pop()
-
         var escaped = false
         stringBuffer.removeAll(keepingCapacity: true)
-
         repeat {
             guard let codeUnit = peek() else { throw Error.Reason.invalidEscape }
             pop()
             if codeUnit == backslash && !escaped {
                 escaped = true
             } else if codeUnit == quote && !escaped {
-
                 stringBuffer.append(0)
                 return stringBuffer.withUnsafeBufferPointer { bufferPointer in
                     return String(cString: unsafeBitCast(bufferPointer.baseAddress, to: UnsafePointer<CChar>.self))

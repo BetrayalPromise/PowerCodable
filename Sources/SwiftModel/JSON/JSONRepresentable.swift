@@ -12,7 +12,6 @@ public protocol JSONRepresentable {
     func encoded() -> JSON
 }
 
-
 // MARK: - JSON Conformance to JSONRepresentable
 extension JSON: JSONRepresentable {
     public init(_ value: JSONRepresentable) {
@@ -20,14 +19,12 @@ extension JSON: JSONRepresentable {
     }
 }
 
-
 // MARK: - Add `serialized` to `JSONRepresentable`
 extension JSONRepresentable {
     public func serialized(options: JSON.Serializer.Option = []) throws -> String {
         return try JSON.Serializer.serialize(self.encoded(), options: options)
     }
 }
-
 
 // NOTE: track http://www.openradar.me/23433955
 // MARK: - Add encoded to Optional JSONRepresentables
@@ -38,14 +35,12 @@ extension Optional where Wrapped: JSONRepresentable {
     }
 }
 
-
 // MARK: - Add encoded to RawRepresentable JSONRepresentables
 extension RawRepresentable where RawValue: JSONRepresentable {
     public func encoded() -> JSON {
         return JSON(rawValue)
     }
 }
-
 
 // MARK: - Add encoded to Sequences of JSONRepresentable
 extension Sequence where Iterator.Element: JSONRepresentable {
@@ -65,7 +60,6 @@ extension Sequence where Iterator.Element == (key: String, value: JSONRepresenta
     }
 }
 
-
 // MARK: - Bool Conformance to JSONRepresentable
 extension Bool: JSONRepresentable {
     public func encoded() -> JSON {
@@ -73,14 +67,12 @@ extension Bool: JSONRepresentable {
     }
 }
 
-
 // MARK: - String Conformance to JSONRepresentable
 extension String: JSONRepresentable {
     public func encoded() -> JSON {
         return .string(self)
     }
 }
-
 
 // MARK: - FloatingPointTypes: JSONRepresentable
 extension Double: JSONRepresentable {
@@ -94,7 +86,6 @@ extension Float: JSONRepresentable {
         return .double(Double(self))
     }
 }
-
 
 // MARK: - IntegerTypes: JSONRepresentable
 // NOTE: This sucks. It is very repetitive and ugly, is there a possiblity of `extension IntegerType: JSONRepresentable` in the future?

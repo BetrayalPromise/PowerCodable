@@ -14,7 +14,7 @@ public enum JSON {
 
 public extension JSON {
     static var level: Int = 0
-    func path(of json: JSON?) {
+    func path() {
         JSON.level += 1
         defer {
             JSON.level -= 1
@@ -23,12 +23,12 @@ public extension JSON {
         case .array(let array):
             for (i, item) in array.enumerated() {
                 print("level: \(JSON.level) ---- []\(i)")
-                item.path(of: json)
+                item.path()
             }
         case .object(let object):
             for (key, _) in object {
                 print("level: \(JSON.level) ---- [:]\(key)")
-                object[key]?.path(of: json)
+                object[key]?.path()
             }
         case .bool(let bool):
             print("result: ---- bool: \(bool)")
@@ -154,6 +154,31 @@ extension JSON: CustomDebugStringConvertible {
             return try self.serialized(options: .prettyPrint)
         } catch {
             return String(describing: error)
+        }
+    }
+}
+
+extension JSON: Sequence {
+    public func makeIterator() -> AnyIterator<JSON> {
+        switch self {
+        case .array(let array):
+            var iterator = array.makeIterator()
+            return AnyIterator {
+                return iterator.next()
+            }
+        case .object(let object):
+            var iterator = object.makeIterator()
+            return AnyIterator {
+                guard let (key, value) = iterator.next() else { return nil }
+                return .object([key: value])
+            }
+        default:
+            var value: JSON? = self
+            return AnyIterator {
+                defer { value = nil }
+                if case .null? = value { return nil }
+                return value
+            }
         }
     }
 }

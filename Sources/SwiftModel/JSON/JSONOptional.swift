@@ -8,7 +8,6 @@ extension JSON: JSONControllable {}
 // TODO: Test setters ensure behaviour is predictable and expected when operating on nested JSON
 // TODO: Check if it is viable to use JSONRepresentable as the contraint and be rid of JSONControllable
 extension Optional where Wrapped: JSONControllable {
-
     /// returns the `JSON` value for key iff `Wrapped == JSON.object(_)` and there is a value for the key
     /// - Note: you will get better performance if you chain your subscript eg. ["key"]?.string This is because the compiler will retain more type information.
     public subscript(key: String) -> JSON? {
@@ -39,11 +38,9 @@ extension Optional where Wrapped: JSONControllable {
                 a[index] = value
                 self = (JSON.array(a) as? Wrapped)
             }
-
         }
     }
 }
-
 
 // MARK: - Standard typed accessors
 extension Optional where Wrapped: JSONControllable {
@@ -84,9 +81,7 @@ extension Optional where Wrapped: JSONControllable {
     }
 }
 
-
 // MARK: Non RFC JSON types
-
 extension Optional where Wrapped: JSONControllable {
     /// Returns an `Int` iff `Wrapped == JSON.integer(_)`
     public var int: Int? {
