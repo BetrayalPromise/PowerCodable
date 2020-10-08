@@ -1206,9 +1206,9 @@ final class SwiftModelTests: XCTestCase {
         struct A : Encodable {
             var name: String = "ABCD"
 
-            func encoded() -> JSON {
-                return JSON.init
-            }
+//            func encoded() -> JSON {
+//                return JSON.init
+//            }
         }
         let a = A()
 
