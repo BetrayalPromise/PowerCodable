@@ -96,7 +96,7 @@ extension PowerJSONEncoder {
             let keyEncoding: KeyEncodingStrategy
         }
 
-        private var topLevel: JSONType
+        private var topLevel: JSON
         private var writer: Writer
         private var options: Options
 
@@ -109,7 +109,7 @@ extension PowerJSONEncoder {
         }
 
         let encoder: Encoder
-        init(topLevel: JSONType, options: Options, encoder: Encoder) {
+        init(topLevel: JSON, options: Options, encoder: Encoder) {
             self.options = options
             self.writer = Writer()
             self.topLevel = topLevel
@@ -122,7 +122,7 @@ extension PowerJSONEncoder {
             case .array(let elements):
                 try writeJSONArray(elements: elements)
             case .object(let object):
-                try writeJSONObject(object: object)
+                try writeJSONObject(object: object.toJSONTuples())
                 break
             default:
                 try writeJSONPrimitive(value: topLevel)
@@ -148,10 +148,10 @@ extension PowerJSONEncoder {
                 try date.encode(to: self.encoder)
             case .secondsSince1970:
                 let number = date.timeIntervalSince1970
-                try writeJSONPrimitive(value: .float(number))
+                try writeJSONPrimitive(value: .double(number))
             case .millisecondsSince1970:
                 let number = date.timeIntervalSince1970
-                try writeJSONPrimitive(value: .float(1000.0 * number))
+                try writeJSONPrimitive(value: .double(1000.0 * number))
             case .iso8601:
                 let value = iso8601DateFormatter.string(from: date)
                 try writer.write(value)
@@ -163,27 +163,27 @@ extension PowerJSONEncoder {
             }
         }
 
-        func writeJSONPrimitive(value: JSONType) throws {
+        func writeJSONPrimitive(value: JSON) throws {
             switch value {
             case .bool(let value):
                 let str = value ? "true": "false"
                 try writer.write(str)
             case .integer(let value):
                 try writer.write("\(value)")
-            case .float(let value):
+            case .double(let value):
                 try writer.write("\(value)")
             case .string(let value):
                 try writer.write("\"\(value)\"")
             case .null:
                 try writer.write("null")
-            case .date(let value):
-                try writer.write("\(value)")
-            case .data(let data):
-                try writeData(data)
+//            case .date(let value):
+//                try writer.write("\(value)")
+//            case .data(let data):
+//                try writeData(data)
             case .array(let array):
                 try writeJSONArray(elements: array)
             case .object(let object):
-                try writeJSONObject(object: object)
+                try writeJSONObject(object: object.toJSONTuples())
             }
         }
 
@@ -250,7 +250,7 @@ extension PowerJSONEncoder {
                 fatalError("Unimplemented yet")
             }
         }
-        func writeJSONObject(object: [KeyValue]) throws {
+        func writeJSONObject(object: [JSONTuples]) throws {
             try writer.write("{")
 
             if prettyPrinted {
@@ -260,7 +260,7 @@ extension PowerJSONEncoder {
             }
 
             var first = true
-            func writeKeyValue(key: String, value: JSONType) throws {
+            func writeKeyValue(key: String, value: JSON) throws {
                 if first {
                     first = false
                 } else if prettyPrinted {
@@ -305,7 +305,7 @@ extension PowerJSONEncoder {
         }
 
         // MARK: - Array
-        func writeJSONArray(elements: [JSONType]) throws {
+        func writeJSONArray(elements: [JSON]) throws {
             try writer.write("[")
             if prettyPrinted {
                 try writer.write("\n")

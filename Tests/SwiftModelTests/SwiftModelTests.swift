@@ -1205,17 +1205,11 @@ final class SwiftModelTests: XCTestCase {
     func testEncode() {
         struct A : Encodable {
             var name: String = "ABCD"
-
-//            func encoded() -> JSON {
-//                return JSON.init
-//            }
         }
         let a = A()
 
-        let encoder = JSONEncoder()
+        let encoder = PowerJSONEncoder()
         let data = (try? encoder.encode(a)) ?? Data()
-        print(String(data: data, encoding: String.Encoding.utf8))
-
-        print(a.toJSON())
+        print(String(data: data, encoding: String.Encoding.utf8) ?? "error")
     }
 }

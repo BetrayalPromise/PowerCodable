@@ -21,7 +21,7 @@ public class PowerJSONEncoder {
 }
 
 protocol JSONValue {
-    var jsonValue: JSONType { get }
+    var jsonValue: JSON { get }
 }
 
 class PowerInnerJSONEncoder: Encoder {
@@ -33,26 +33,18 @@ class PowerInnerJSONEncoder: Encoder {
     fileprivate func assertCanCreateContainer() {
         precondition(self.container == nil)
     }
-
-    var jsonValue: JSONType {
-        return container?.jsonValue ?? .null
-    }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         assertCanCreateContainer()
-
         let container = KeyedContainer<Key>(codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
-
         return KeyedEncodingContainer(container)
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
         assertCanCreateContainer()
-
         let container = UnkeyedContainer(codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
-
         return container
     }
 
@@ -61,5 +53,11 @@ class PowerInnerJSONEncoder: Encoder {
         let container = SingleValueContainer(codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
+    }
+}
+
+extension PowerInnerJSONEncoder: JSONValue {
+    var jsonValue: JSON {
+        return container?.jsonValue ?? .null
     }
 }

@@ -68,12 +68,11 @@ extension PowerInnerJSONEncoder {
             fatalError("Unimplemented yet")
         }
     }
-
 }
 
 extension PowerInnerJSONEncoder.KeyedContainer: JSONValue {
-    var jsonValue: JSONType {
-        let elements = self.storage.elements.map { ($0.0.stringValue, $0.1.jsonValue) }
+    var jsonValue: JSON {
+        let elements = self.storage.elements.map { ($0.0.stringValue, $0.1.jsonValue) }.toJSONDictionary()
         return .object(elements)
     }
 }

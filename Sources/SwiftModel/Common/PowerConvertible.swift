@@ -8,6 +8,27 @@ public typealias JSONString = String
 public typealias JSONArray = [JSON]
 public typealias JSONDictionary = [String: JSON]
 public typealias JSONPath = String
+public typealias JSONTuples = (String, JSON)
+
+extension Array where Element == JSONTuples {
+    func toJSONDictionary() -> JSONDictionary {
+        var dictionary: [String: JSON] = [:]
+        for item in self {
+            dictionary.updateValue(item.1, forKey: item.0)
+        }
+        return dictionary
+    }
+}
+
+extension Dictionary where Key == String, Value == JSON {
+    func toJSONTuples() -> [JSONTuples] {
+        var tuples: [JSONTuples] = []
+        for (k, v) in self {
+            tuples.append((k, v))
+        }
+        return tuples
+    }
+}
 
 /// 基础类型转换处理
 public protocol TypeConvertible {

@@ -74,7 +74,7 @@ extension PowerInnerJSONEncoder {
 }
 
 extension PowerInnerJSONEncoder.UnkeyedContainer: JSONValue {
-    var jsonValue: JSONType {
+    var jsonValue: JSON {
         let elements = self.storage.map { $0.jsonValue }
         return .array(elements)
     }

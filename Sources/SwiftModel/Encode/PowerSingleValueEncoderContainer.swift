@@ -14,7 +14,7 @@ extension PowerInnerJSONEncoder {
         var codingPath: [CodingKey]
         var userInfo: [CodingUserInfoKey: Any]
         
-        fileprivate var storage: JSONType = .null
+        fileprivate var storage: JSON = .null
         
         init(codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
             self.codingPath = codingPath
@@ -45,84 +45,84 @@ extension PowerInnerJSONEncoder {
             try checkCanEncode(value: nil)
             defer { self.canEncodeNewValue = false }
 
-            self.storage = .float(value)
+            self.storage = .double(value)
         }
         
         func encode(_ value: Float) throws {
             try checkCanEncode(value: nil)
             defer { self.canEncodeNewValue = false }
 
-            self.storage = .float(Double(value))
+            self.storage = .double(Double(value))
         }
         
         func encode(_ value: Int) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int8) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int16) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int32) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int64) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt8) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt16) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt32) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt64) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
 
-           self.storage = .integer(Int(value))
+           self.storage = .integer(Int64(value))
         }
         
         func encode<T>(_ value: T) throws where T : Encodable {
@@ -138,5 +138,5 @@ extension PowerInnerJSONEncoder {
 }
 
 extension PowerInnerJSONEncoder.SingleValueContainer: JSONValue {
-    var jsonValue: JSONType { return self.storage }
+    var jsonValue: JSON { return self.storage }
 }
