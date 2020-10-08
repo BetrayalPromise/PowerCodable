@@ -9,14 +9,34 @@ public class PowerJSONEncoder {
     public var dateEncodingStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
     public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
     public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
-    
-    func encode<T>(_ value: T) throws -> Data where T: Encodable {
+
+    /// 逆向模型转化
+    /// - Parameter value: 实现Encodable对象
+    /// - Throws: 解析异常
+    /// - Returns: 转换完成的二进制数据
+    func encodeToData<T>(value: T) throws -> Data where T: Encodable {
         let encoder = PowerInnerJSONEncoder()
         try value.encode(to: encoder)
         let topLevel = encoder.jsonValue
         let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
         let formatter = Formatter(topLevel: topLevel, options: options, encoder: encoder)
         return try formatter.writeJSON()
+    }
+
+    /// 逆向模型转化
+    /// - Parameter value: 实现Encodable对象
+    /// - Throws: 解析异常
+    /// - Returns: 转换完成的字符串数据
+    func encodeToString<T>(value: T) throws -> String where T: Encodable {
+        return String(data: try self.encodeToData(value: value), encoding: String.Encoding.utf8) ?? "error"
+    }
+
+    /// 逆向模型转化
+    /// - Parameter value: 实现Encodable对象
+    /// - Throws: 解析异常
+    /// - Returns: 转换完成的JSON对象
+    func encodeToJSONObject<T>(value: T) throws -> Any where T: Encodable {
+        return try JSONSerialization.jsonObject(with: try self.encodeToData(value: value), options: JSONSerialization.ReadingOptions.mutableLeaves)
     }
 }
 

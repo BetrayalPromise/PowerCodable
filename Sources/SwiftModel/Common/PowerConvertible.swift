@@ -313,21 +313,23 @@ extension TypeConvertible {
     func toString(path: JSONPath, value: JSONArray) -> String { return "[]" }
 }
 
-public protocol DecodingMappingKeys {
+public typealias MappingCodingKeys = MappingDecodingKeys & MappingEncodingKeys
+
+public protocol MappingDecodingKeys {
     static func modelDecodingKeys() -> [String: [String]]
 }
 
-extension DecodingMappingKeys {
+extension MappingDecodingKeys {
     static func modelDecodingKeys() -> [String: [String]] {
         return ["": []]
     }
 }
 
-public protocol EncodingMappingKeys {
+public protocol MappingEncodingKeys {
     static func modelEncodingKeys() -> [String: String]
 }
 
-extension EncodingMappingKeys {
+extension MappingEncodingKeys {
     static func modelEncodingKeys() -> [String: String] {
         return ["": ""]
     }

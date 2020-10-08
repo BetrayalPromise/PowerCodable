@@ -975,7 +975,7 @@ final class SwiftModelTests: XCTestCase {
 
     func testDictionary() {
         do {
-            struct Root: Codable, DecodingMappingKeys {
+            struct Root: Codable, MappingDecodingKeys {
                 static func modelDecodingKeys() -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
@@ -1202,14 +1202,14 @@ final class SwiftModelTests: XCTestCase {
         json?.path()
     }
 
-    func testEncode() {
-        struct A : Encodable {
+    func testEncode()  {
+        struct A : Encodable, MappingEncodingKeys {
             var name: String = "ABCD"
         }
         let a = A()
 
         let encoder = PowerJSONEncoder()
-        let data = (try? encoder.encode(a)) ?? Data()
-        print(String(data: data, encoding: String.Encoding.utf8) ?? "error")
+        let data = try? encoder.encodeToData(value: a)
+        print(String(data: data ?? Data(), encoding: String.Encoding.utf8) ?? "error")
     }
 }
