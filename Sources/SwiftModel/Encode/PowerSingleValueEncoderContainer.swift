@@ -1,7 +1,7 @@
 import Foundation
 
 extension PowerInnerJSONEncoder {
-    class SingleValueContainer: SingleValueEncodingContainer {
+    class SingleValue: SingleValueEncodingContainer {
         fileprivate var canEncodeNewValue = true
 
         fileprivate func checkCanEncode(value: Any?) throws {
@@ -30,113 +30,97 @@ extension PowerInnerJSONEncoder {
         func encode(_ value: Bool) throws {
             try checkCanEncode(value: nil)
             defer { self.canEncodeNewValue = false }
-
             self.storage = .bool(value)
         }
         
         func encode(_ value: String) throws {
             try checkCanEncode(value: nil)
             defer { self.canEncodeNewValue = false }
-
             self.storage = .string(value)
         }
         
         func encode(_ value: Double) throws {
             try checkCanEncode(value: nil)
             defer { self.canEncodeNewValue = false }
-
             self.storage = .double(value)
         }
         
         func encode(_ value: Float) throws {
             try checkCanEncode(value: nil)
             defer { self.canEncodeNewValue = false }
-
             self.storage = .double(Double(value))
         }
         
         func encode(_ value: Int) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int8) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int16) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int32) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: Int64) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt8) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt16) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt32) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode(_ value: UInt64) throws {
             try checkCanEncode(value: value)
             defer { self.canEncodeNewValue = false }
-
-           self.storage = .integer(Int64(value))
+            self.storage = .integer(Int64(value))
         }
         
         func encode<T>(_ value: T) throws where T : Encodable {
             try checkCanEncode(value: nil)
             defer { self.canEncodeNewValue = false }
-            
             let encoder = PowerInnerJSONEncoder()
             try value.encode(to: encoder)
-
             self.storage = encoder.jsonValue            
         }
     }
 }
 
-extension PowerInnerJSONEncoder.SingleValueContainer: JSONValue {
+extension PowerInnerJSONEncoder.SingleValue: JSONValue {
     var jsonValue: JSON { return self.storage }
 }

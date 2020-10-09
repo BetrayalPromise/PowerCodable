@@ -1,8 +1,7 @@
 import Foundation
 
 extension PowerInnerJSONEncoder {
-    class UnkeyedContainer: UnkeyedEncodingContainer {
-
+    class Unkeyed: UnkeyedEncodingContainer {
         struct Index: CodingKey {
             var intValue: Int?
 
@@ -19,9 +18,7 @@ extension PowerInnerJSONEncoder {
             }
         }
         private var storage: [JSONValue] = []
-
         var codingPath: [CodingKey]
-
         var userInfo: [CodingUserInfoKey: Any]
 
         var count: Int {
@@ -44,21 +41,20 @@ extension PowerInnerJSONEncoder {
         }
 
         func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-            let container = UnkeyedContainer(codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+            let container = PowerInnerJSONEncoder.Unkeyed(codingPath: self.nestedCodingPath, userInfo: self.userInfo)
             self.storage.append(container)
             return container
         }
 
         private func nestedSingleValueContainer() -> SingleValueEncodingContainer {
-            let container = PowerInnerJSONEncoder.SingleValueContainer(codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+            let container = PowerInnerJSONEncoder.SingleValue(codingPath: self.nestedCodingPath, userInfo: self.userInfo)
             self.storage.append(container)
             return container
         }
 
         func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-            let container = PowerInnerJSONEncoder.KeyedContainer<NestedKey>(codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+            let container = PowerInnerJSONEncoder.Keyed<NestedKey>(codingPath: self.nestedCodingPath, userInfo: self.userInfo)
             self.storage.append(container)
-
             return KeyedEncodingContainer(container)
         }
         
@@ -73,7 +69,7 @@ extension PowerInnerJSONEncoder {
     }
 }
 
-extension PowerInnerJSONEncoder.UnkeyedContainer: JSONValue {
+extension PowerInnerJSONEncoder.Unkeyed: JSONValue {
     var jsonValue: JSON {
         let elements = self.storage.map { $0.jsonValue }
         return .array(elements)
