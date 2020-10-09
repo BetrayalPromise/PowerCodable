@@ -1,6 +1,6 @@
 import Foundation
 
-struct PowerSingleValueDecodingContainer: SingleValueDecodingContainer {
+struct DecodingSingleValue: SingleValueDecodingContainer {
     var codingPath: [CodingKey] {
         get { return decoder.codingPath }
         set { decoder.codingPath = newValue }

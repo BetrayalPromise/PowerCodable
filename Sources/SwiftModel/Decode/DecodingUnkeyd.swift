@@ -1,6 +1,6 @@
 import Foundation
 
-struct PowerUnkeyedDecoderContainer: UnkeyedDecodingContainer {
+struct DecodingUnkeyed: UnkeyedDecodingContainer {
     var codingPath: [CodingKey] {
         get { return decoder.codingPath }
         set { decoder.codingPath = newValue }
@@ -40,7 +40,7 @@ struct PowerUnkeyedDecoderContainer: UnkeyedDecodingContainer {
     }
 }
 
-extension PowerUnkeyedDecoderContainer {
+extension DecodingUnkeyed {
     mutating func decodeNil() throws -> Bool {
         self.decoder.paths.push(value: Path.index(by: currentIndex))
         defer {
@@ -186,7 +186,7 @@ extension PowerUnkeyedDecoderContainer {
     }
 }
 
-extension PowerUnkeyedDecoderContainer {
+extension DecodingUnkeyed {
     mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
         codingPath.append(currentKey)
         defer { codingPath.removeLast() }
@@ -198,7 +198,7 @@ extension PowerUnkeyedDecoderContainer {
     }
 }
 
-extension PowerUnkeyedDecoderContainer {
+extension DecodingUnkeyed {
     mutating func superDecoder() throws -> Decoder {
         return PowerInnerJSONDecoder(referencing: JSON.array(sequence), at: decoder.codingPath)
     }

@@ -1,6 +1,6 @@
 import Foundation
 
-final class PowerKeyedDecodingContainer<K: CodingKey>: KeyedDecodingContainerProtocol {
+class DecodingKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     typealias Key = K
     private unowned let decoder: PowerInnerJSONDecoder
     private let rootObject: [String: JSON]
@@ -48,7 +48,7 @@ final class PowerKeyedDecodingContainer<K: CodingKey>: KeyedDecodingContainerPro
     }
 }
 
-extension PowerKeyedDecodingContainer {
+extension DecodingKeyed {
     func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
         self.decoder.paths.push(value: Path.index(by: key.stringValue))
         defer {
@@ -194,7 +194,7 @@ extension PowerKeyedDecodingContainer {
     }
 }
 
-extension PowerKeyedDecodingContainer {
+extension DecodingKeyed {
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
         codingPath.append(key)
         defer { codingPath.removeLast() }
@@ -220,7 +220,7 @@ extension PowerKeyedDecodingContainer {
     }
 }
 
-extension PowerKeyedDecodingContainer {
+extension DecodingKeyed {
     private func buildSuperDecoder(forKey key: CodingKey) throws -> Decoder {
         codingPath.append(key)
         defer { codingPath.removeLast() }

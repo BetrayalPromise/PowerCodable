@@ -92,7 +92,7 @@ extension PowerInnerJSONDecoder {
     func singleValueContainer() throws -> SingleValueDecodingContainer {
 //        print(#function, "begin")
 //        defer { print(#function, "end") }
-        return PowerSingleValueDecodingContainer(referencing: self, wrapping: currentObject)
+        return DecodingSingleValue(referencing: self, wrapping: currentObject)
     }
 }
 
@@ -102,7 +102,7 @@ extension PowerInnerJSONDecoder {
             throw typeMismatch(expectation: [String: JSON].self, reality: object)
         }
 
-        let keyedContainer = PowerKeyedDecodingContainer<Key>(referencing: self, wrapping: unwrappedObject)
+        let keyedContainer = DecodingKeyed<Key>(referencing: self, wrapping: unwrappedObject)
         return KeyedDecodingContainer(keyedContainer)
     }
 
@@ -110,7 +110,7 @@ extension PowerInnerJSONDecoder {
         guard case let .array(array) = object else {
             throw typeMismatch(expectation: [String: JSON].self, reality: object)
         }
-        return PowerUnkeyedDecoderContainer(referencing: self, wrapping: array)
+        return DecodingUnkeyed(referencing: self, wrapping: array)
     }
 }
 
