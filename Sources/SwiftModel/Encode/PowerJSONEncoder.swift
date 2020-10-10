@@ -90,6 +90,8 @@ class PowerInnerJSONEncoder: Encoder {
     }
 }
 
+extension PowerInnerJSONEncoder: TypeConvertible {}
+
 extension PowerInnerJSONEncoder: JSONValue {
     var jsonValue: JSON {
         return container?.jsonValue ?? .null

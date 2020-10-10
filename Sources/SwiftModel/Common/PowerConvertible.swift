@@ -6,12 +6,12 @@ public typealias JSONInteger = Int64
 public typealias JSONFloating = Double
 public typealias JSONString = String
 public typealias JSONArray = [JSON]
-public typealias JSONDictionary = [String: JSON]
+public typealias JSONObject = [String: JSON]
 public typealias JSONPath = String
 public typealias JSONTuples = (String, JSON)
 
 extension Array where Element == JSONTuples {
-    func toJSONDictionary() -> JSONDictionary {
+    func toJSONObject() -> JSONObject {
         var dictionary: [String: JSON] = [:]
         for item in self {
             dictionary.updateValue(item.1, forKey: item.0)
@@ -38,7 +38,7 @@ public protocol TypeConvertible {
     func toBool(path: JSONPath, value: JSONInteger) -> Bool
     func toBool(path: JSONPath, value: JSONFloating) -> Bool
     func toBool(path: JSONPath, value: JSONString) -> Bool
-    func toBool(path: JSONPath, value: JSONDictionary) -> Bool
+    func toBool(path: JSONPath, value: JSONObject) -> Bool
     func toBool(path: JSONPath, value: JSONArray) -> Bool
 
     // MARK: - Int
@@ -47,7 +47,7 @@ public protocol TypeConvertible {
     func toInt(path: JSONPath, value: JSONInteger) -> Int
     func toInt(path: JSONPath, value: JSONFloating) -> Int
     func toInt(path: JSONPath, value: JSONString) -> Int
-    func toInt(path: JSONPath, value: JSONDictionary) -> Int
+    func toInt(path: JSONPath, value: JSONObject) -> Int
     func toInt(path: JSONPath, value: JSONArray) -> Int
 
     // MARK:  - Int8
@@ -56,7 +56,7 @@ public protocol TypeConvertible {
     func toInt8(path: JSONPath, value: JSONInteger) -> Int8
     func toInt8(path: JSONPath, value: JSONFloating) -> Int8
     func toInt8(path: JSONPath, value: JSONString) -> Int8
-    func toInt8(path: JSONPath, value: JSONDictionary) -> Int8
+    func toInt8(path: JSONPath, value: JSONObject) -> Int8
     func toInt8(path: JSONPath, value: JSONArray) -> Int8
 
     // MARK: - Int16
@@ -65,7 +65,7 @@ public protocol TypeConvertible {
     func toInt16(path: JSONPath, value: JSONInteger) -> Int16
     func toInt16(path: JSONPath, value: JSONFloating) -> Int16
     func toInt16(path: JSONPath, value: JSONString) -> Int16
-    func toInt16(path: JSONPath, value: JSONDictionary) -> Int16
+    func toInt16(path: JSONPath, value: JSONObject) -> Int16
     func toInt16(path: JSONPath, value: JSONArray) -> Int16
 
     // MARK: - Int32
@@ -74,7 +74,7 @@ public protocol TypeConvertible {
     func toInt32(path: JSONPath, value: JSONInteger) -> Int32
     func toInt32(path: JSONPath, value: JSONFloating) -> Int32
     func toInt32(path: JSONPath, value: JSONString) -> Int32
-    func toInt32(path: JSONPath, value: JSONDictionary) -> Int32
+    func toInt32(path: JSONPath, value: JSONObject) -> Int32
     func toInt32(path: JSONPath, value: JSONArray) -> Int32
 
     // MARK: - Int64
@@ -83,7 +83,7 @@ public protocol TypeConvertible {
     func toInt64(path: JSONPath, value: JSONInteger) -> Int64
     func toInt64(path: JSONPath, value: JSONFloating) -> Int64
     func toInt64(path: JSONPath, value: JSONString) -> Int64
-    func toInt64(path: JSONPath, value: JSONDictionary) -> Int64
+    func toInt64(path: JSONPath, value: JSONObject) -> Int64
     func toInt64(path: JSONPath, value: JSONArray) -> Int64
 
     // MARK: - UInt
@@ -92,7 +92,7 @@ public protocol TypeConvertible {
     func toUInt(path: JSONPath, value: JSONInteger) -> UInt
     func toUInt(path: JSONPath, value: JSONFloating) -> UInt
     func toUInt(path: JSONPath, value: JSONString) -> UInt
-    func toUInt(path: JSONPath, value: JSONDictionary) -> UInt
+    func toUInt(path: JSONPath, value: JSONObject) -> UInt
     func toUInt(path: JSONPath, value: JSONArray) -> UInt
 
     // MARK: - UInt8
@@ -101,7 +101,7 @@ public protocol TypeConvertible {
     func toUInt8(path: JSONPath, value: JSONInteger) -> UInt8
     func toUInt8(path: JSONPath, value: JSONFloating) -> UInt8
     func toUInt8(path: JSONPath, value: JSONString) -> UInt8
-    func toUInt8(path: JSONPath, value: JSONDictionary) -> UInt8
+    func toUInt8(path: JSONPath, value: JSONObject) -> UInt8
     func toUInt8(path: JSONPath, value: JSONArray) -> UInt8
 
     // MARK: - UInt16
@@ -110,7 +110,7 @@ public protocol TypeConvertible {
     func toUInt16(path: JSONPath, value: JSONInteger) -> UInt16
     func toUInt16(path: JSONPath, value: JSONFloating) -> UInt16
     func toUInt16(path: JSONPath, value: JSONString) -> UInt16
-    func toUInt16(path: JSONPath, value: JSONDictionary) -> UInt16
+    func toUInt16(path: JSONPath, value: JSONObject) -> UInt16
     func toUInt16(path: JSONPath, value: JSONArray) -> UInt16
 
     // MARK: - UInt32
@@ -119,7 +119,7 @@ public protocol TypeConvertible {
     func toUInt32(path: JSONPath, value: JSONInteger) -> UInt32
     func toUInt32(path: JSONPath, value: JSONFloating) -> UInt32
     func toUInt32(path: JSONPath, value: JSONString) -> UInt32
-    func toUInt32(path: JSONPath, value: JSONDictionary) -> UInt32
+    func toUInt32(path: JSONPath, value: JSONObject) -> UInt32
     func toUInt32(path: JSONPath, value: JSONArray) -> UInt32
 
     // MARK: - UInt64
@@ -128,7 +128,7 @@ public protocol TypeConvertible {
     func toUInt64(path: JSONPath, value: JSONInteger) -> UInt64
     func toUInt64(path: JSONPath, value: JSONFloating) -> UInt64
     func toUInt64(path: JSONPath, value: JSONString) -> UInt64
-    func toUInt64(path: JSONPath, value: JSONDictionary) -> UInt64
+    func toUInt64(path: JSONPath, value: JSONObject) -> UInt64
     func toUInt64(path: JSONPath, value: JSONArray) -> UInt64
 
     // MARK: - Float
@@ -137,7 +137,7 @@ public protocol TypeConvertible {
     func toFloat(path: JSONPath, value: JSONInteger) -> Float
     func toFloat(path: JSONPath, value: JSONFloating) -> Float
     func toFloat(path: JSONPath, value: JSONString) -> Float
-    func toFloat(path: JSONPath, value: JSONDictionary) -> Float
+    func toFloat(path: JSONPath, value: JSONObject) -> Float
     func toFloat(path: JSONPath, value: JSONArray) -> Float
 
     // MARK: - Double
@@ -146,7 +146,7 @@ public protocol TypeConvertible {
     func toDouble(path: JSONPath, value: JSONInteger) -> Double
     func toDouble(path: JSONPath, value: JSONFloating) -> Double
     func toDouble(path: JSONPath, value: JSONString) -> Double
-    func toDouble(path: JSONPath, value: JSONDictionary) ->  Double
+    func toDouble(path: JSONPath, value: JSONObject) ->  Double
     func toDouble(path: JSONPath, value: JSONArray) ->  Double
 
     // MARK: - String
@@ -155,7 +155,7 @@ public protocol TypeConvertible {
     func toString(path: JSONPath, value: JSONInteger) -> String
     func toString(path: JSONPath, value: JSONFloating) -> String
     func toString(path: JSONPath, value: JSONString) -> String
-    func toString(path: JSONPath, value: JSONDictionary) -> String
+    func toString(path: JSONPath, value: JSONObject) -> String
     func toString(path: JSONPath, value: JSONArray) -> String
 }
 
@@ -166,7 +166,7 @@ extension TypeConvertible {
     func toBool(path: JSONPath, value: JSONInteger) -> Bool { return value == 1 ? true : false }
     func toBool(path: JSONPath, value: JSONFloating) -> Bool { return value == 1 ? true : false }
     func toBool(path: JSONPath, value: JSONString) -> Bool { return Bool(value) ?? false }
-    func toBool(path: JSONPath, value: JSONDictionary) -> Bool { return false }
+    func toBool(path: JSONPath, value: JSONObject) -> Bool { return false }
     func toBool(path: JSONPath, value: JSONArray) -> Bool { return false }
 }
 
@@ -177,7 +177,7 @@ extension TypeConvertible {
     func toInt(path: JSONPath, value: JSONInteger) -> Int { return Int(value) }
     func toInt(path: JSONPath, value: JSONFloating) -> Int { return Int(value) }
     func toInt(path: JSONPath, value: JSONString) -> Int { return Int(value) ?? 0 }
-    func toInt(path: JSONPath, value: JSONDictionary) -> Int { return 0 }
+    func toInt(path: JSONPath, value: JSONObject) -> Int { return 0 }
     func toInt(path: JSONPath, value: JSONArray) -> Int { return 0 }
 }
 
@@ -188,7 +188,7 @@ extension TypeConvertible {
     func toInt8(path: JSONPath, value: JSONInteger) -> Int8 { return Int8(value) }
     func toInt8(path: JSONPath, value: JSONFloating) -> Int8 { return Int8(value) }
     func toInt8(path: JSONPath, value: JSONString) -> Int8 { return Int8(value) ?? 0 }
-    func toInt8(path: JSONPath, value: JSONDictionary) -> Int8 { return 0 }
+    func toInt8(path: JSONPath, value: JSONObject) -> Int8 { return 0 }
     func toInt8(path: JSONPath, value: JSONArray) -> Int8 { return 0 }
 }
 
@@ -199,7 +199,7 @@ extension TypeConvertible {
     func toInt16(path: JSONPath, value: JSONInteger) -> Int16 { return Int16(value) }
     func toInt16(path: JSONPath, value: JSONFloating) -> Int16 { return Int16(value) }
     func toInt16(path: JSONPath, value: JSONString) -> Int16 { return Int16(value) ?? 0 }
-    func toInt16(path: JSONPath, value: JSONDictionary) -> Int16 { return 0 }
+    func toInt16(path: JSONPath, value: JSONObject) -> Int16 { return 0 }
     func toInt16(path: JSONPath, value: JSONArray) -> Int16 { return 0 }
 }
 
@@ -210,7 +210,7 @@ extension TypeConvertible {
     func toInt32(path: JSONPath, value: JSONInteger) -> Int32 { return Int32(value) }
     func toInt32(path: JSONPath, value: JSONFloating) -> Int32 { return Int32(value) }
     func toInt32(path: JSONPath, value: JSONString) -> Int32 { return Int32(value) ?? 0 }
-    func toInt32(path: JSONPath, value: JSONDictionary) -> Int32 { return 0 }
+    func toInt32(path: JSONPath, value: JSONObject) -> Int32 { return 0 }
     func toInt32(path: JSONPath, value: JSONArray) -> Int32 { return 0 }
 }
 
@@ -221,7 +221,7 @@ extension TypeConvertible {
     func toInt64(path: JSONPath, value: JSONInteger) -> Int64 { return Int64(value) }
     func toInt64(path: JSONPath, value: JSONFloating) -> Int64  { return Int64(value) }
     func toInt64(path: JSONPath, value: JSONString) -> Int64  { return Int64(value) ?? 0 }
-    func toInt64(path: JSONPath, value: JSONDictionary) -> Int64  { return 0 }
+    func toInt64(path: JSONPath, value: JSONObject) -> Int64  { return 0 }
     func toInt64(path: JSONPath, value: JSONArray) -> Int64  { return 0 }
 }
 
@@ -232,7 +232,7 @@ extension TypeConvertible {
     func toUInt(path: JSONPath, value: JSONInteger) -> UInt { return value >= 0 ? UInt(value) : 0 }
     func toUInt(path: JSONPath, value: JSONFloating) -> UInt { return value >= 0 ? UInt(value) : 0 }
     func toUInt(path: JSONPath, value: JSONString) -> UInt { return UInt(value) ?? 0 }
-    func toUInt(path: JSONPath, value: JSONDictionary) -> UInt { return 0 }
+    func toUInt(path: JSONPath, value: JSONObject) -> UInt { return 0 }
     func toUInt(path: JSONPath, value: JSONArray) -> UInt { return 0 }
 }
 
@@ -243,7 +243,7 @@ extension TypeConvertible {
     func toUInt8(path: JSONPath, value: JSONInteger) -> UInt8 { return value >= 0 ? UInt8(value) : 0 }
     func toUInt8(path: JSONPath, value: JSONFloating) -> UInt8 { return value >= 0 ? UInt8(value) : 0 }
     func toUInt8(path: JSONPath, value: JSONString) -> UInt8 { return UInt8(value) ?? 0 }
-    func toUInt8(path: JSONPath, value: JSONDictionary) -> UInt8 { return 0 }
+    func toUInt8(path: JSONPath, value: JSONObject) -> UInt8 { return 0 }
     func toUInt8(path: JSONPath, value: JSONArray) -> UInt8 { return 0 }
 }
 
@@ -254,7 +254,7 @@ extension TypeConvertible {
     func toUInt16(path: JSONPath, value: JSONInteger) -> UInt16  { return value >= 0 ? UInt16(value) : 0 }
     func toUInt16(path: JSONPath, value: JSONFloating) -> UInt16  { return value >= 0 ? UInt16(value) : 0 }
     func toUInt16(path: JSONPath, value: JSONString) -> UInt16 { return UInt16(value) ?? 0 }
-    func toUInt16(path: JSONPath, value: JSONDictionary) -> UInt16 { return 0 }
+    func toUInt16(path: JSONPath, value: JSONObject) -> UInt16 { return 0 }
     func toUInt16(path: JSONPath, value: JSONArray) -> UInt16 { return 0 }
 }
 
@@ -265,7 +265,7 @@ extension TypeConvertible {
     func toUInt32(path: JSONPath, value: JSONInteger) -> UInt32 { return value >= 0 ? UInt32(value) : 0 }
     func toUInt32(path: JSONPath, value: JSONFloating) -> UInt32 { return value >= 0 ? UInt32(value) : 0 }
     func toUInt32(path: JSONPath, value: JSONString) -> UInt32 { return UInt32(value) ?? 0 }
-    func toUInt32(path: JSONPath, value: JSONDictionary) -> UInt32 { return 0 }
+    func toUInt32(path: JSONPath, value: JSONObject) -> UInt32 { return 0 }
     func toUInt32(path: JSONPath, value: JSONArray) -> UInt32 { return 0 }
 }
 
@@ -276,7 +276,7 @@ extension TypeConvertible {
     func toUInt64(path: JSONPath, value: JSONInteger) -> UInt64 { return value >= 0 ? UInt64(value) : 0 }
     func toUInt64(path: JSONPath, value: JSONFloating) -> UInt64 { return value >= 0 ? UInt64(value) : 0 }
     func toUInt64(path: JSONPath, value: JSONString) -> UInt64 { return UInt64(value) ?? 0 }
-    func toUInt64(path: JSONPath, value: JSONDictionary) -> UInt64 { return 0 }
+    func toUInt64(path: JSONPath, value: JSONObject) -> UInt64 { return 0 }
     func toUInt64(path: JSONPath, value: JSONArray) -> UInt64  { return 0 }
 }
 
@@ -287,7 +287,7 @@ extension TypeConvertible {
     func toFloat(path: JSONPath, value: JSONInteger) -> Float { return Float(value) }
     func toFloat(path: JSONPath, value: JSONFloating) -> Float { return Float(value) }
     func toFloat(path: JSONPath, value: JSONString) -> Float { return Float(value) ?? 0 }
-    func toFloat(path: JSONPath, value: JSONDictionary) -> Float  { return 0 }
+    func toFloat(path: JSONPath, value: JSONObject) -> Float  { return 0 }
     func toFloat(path: JSONPath, value: JSONArray) -> Float { return 0 }
 }
 
@@ -298,7 +298,7 @@ extension TypeConvertible {
     func toDouble(path: JSONPath, value: JSONInteger) -> Double { return Double(value) }
     func toDouble(path: JSONPath, value: JSONFloating) -> Double { return Double(value) }
     func toDouble(path: JSONPath, value: JSONString) -> Double  { return Double(value) ?? 0 }
-    func toDouble(path: JSONPath, value: JSONDictionary) ->  Double { return 0 }
+    func toDouble(path: JSONPath, value: JSONObject) ->  Double { return 0 }
     func toDouble(path: JSONPath, value: JSONArray) ->  Double { return 0 }
 }
 
@@ -309,7 +309,7 @@ extension TypeConvertible {
     func toString(path: JSONPath, value: JSONInteger) -> String { return String(value) }
     func toString(path: JSONPath, value: JSONFloating) -> String { return String(value) }
     func toString(path: JSONPath, value: JSONString) -> String  { return value }
-    func toString(path: JSONPath, value: JSONDictionary) -> String { return "[:]" }
+    func toString(path: JSONPath, value: JSONObject) -> String { return "[:]" }
     func toString(path: JSONPath, value: JSONArray) -> String { return "[]" }
 }
 
@@ -329,10 +329,14 @@ extension MappingDecodingKeys {
 public protocol MappingEncodingKeys {
     /// 可转变的keys
     static func modelEncodingKeys() -> [String: String]
+    static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON
 }
 
 extension MappingEncodingKeys {
     static func modelEncodingKeys() -> [String: String] {
         return ["": ""]
+    }
+    static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
+        return JSON(stringLiteral: "2020/10/10-15:16:30")
     }
 }

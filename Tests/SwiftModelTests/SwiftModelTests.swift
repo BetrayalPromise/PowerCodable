@@ -1221,6 +1221,15 @@ final class SwiftModelTests: XCTestCase {
             static func modelEncodingKeys() -> [String: String] {
                 return ["string": "hello"]
             }
+//            static func modelEncodingValues(path: JSONPath, ) -> String {
+
+//            }
+//            static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
+//                if path == "[:]bool" {
+//                    return JSON(integerLiteral: 3)
+//                }
+//                return value
+//            }
         }
         let a = A()
 
