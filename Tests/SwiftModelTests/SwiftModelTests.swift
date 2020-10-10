@@ -1205,6 +1205,10 @@ final class SwiftModelTests: XCTestCase {
     func testEncode()  {
         struct A : Encodable, MappingEncodingKeys {
             var name: String = "ABCD"
+
+            static func modelEncodingKeys() -> [String: String] {
+                return ["name": "hello"]
+            }
         }
         let a = A()
 

@@ -12,7 +12,7 @@ fileprivate class Storage<Key: CodingKey> {
     }
 }
 
-class EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
+struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
     private(set) var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
     private var storage = Storage<Key>()
@@ -28,7 +28,6 @@ class EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
         return self.codingPath + [key]
     }
 
-    // MARK: - KeyedEncodingContainerProtocol
     func encodeNil(forKey key: Key) throws {
         var container = self.nestedSingleValueContainer(forKey: key)
         try container.encodeNil()
@@ -55,7 +54,6 @@ class EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         let container = EncodingKeyed<NestedKey>(referencing: self.encoder, codingPath: self.nestedCodingPath(forKey: key), userInfo: self.userInfo)
         self.storage.append(key: key, value: container)
-
         return KeyedEncodingContainer(container)
     }
 

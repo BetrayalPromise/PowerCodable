@@ -120,5 +120,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
 }
 
 extension EncodingSingleValue: JSONValue {
-    var jsonValue: JSON { return self.storage }
+    var jsonValue: JSON {
+        return self.storage
+    }
 }
