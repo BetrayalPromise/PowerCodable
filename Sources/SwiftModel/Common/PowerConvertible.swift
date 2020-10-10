@@ -316,6 +316,7 @@ extension TypeConvertible {
 public typealias MappingCodingKeys = MappingDecodingKeys & MappingEncodingKeys
 
 public protocol MappingDecodingKeys {
+    /// 可接受的keys
     static func modelDecodingKeys() -> [String: [String]]
 }
 
@@ -326,6 +327,7 @@ extension MappingDecodingKeys {
 }
 
 public protocol MappingEncodingKeys {
+    /// 可转变的keys
     static func modelEncodingKeys() -> [String: String]
 }
 

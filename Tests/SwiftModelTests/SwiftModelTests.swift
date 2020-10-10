@@ -1204,10 +1204,22 @@ final class SwiftModelTests: XCTestCase {
 
     func testEncode()  {
         struct A : Encodable, MappingEncodingKeys {
-            var name: String = "ABCD"
-
+            var bool: Bool = true
+            var int: Int = 0
+            var int8: Int8 = 1
+            var int16: Int16 = 2
+            var int32: Int32 = 3
+            var int64: Int64 = 4
+            var uint: UInt = 0
+            var uint8: UInt8 = 1
+            var uint16: UInt16 = 2
+            var uint32: UInt32 = 3
+            var uint64: UInt64 = 4
+            var float: Float = 100.0
+            var double: Double = 100.0
+            var string: String = "ABCD"
             static func modelEncodingKeys() -> [String: String] {
-                return ["name": "hello"]
+                return ["string": "hello"]
             }
         }
         let a = A()

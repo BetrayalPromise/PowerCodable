@@ -113,8 +113,10 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode<T>(_ value: T) throws where T : Encodable {
         try checkCanEncode(value: nil)
         defer { self.canEncodeNewValue = false }
-        let encoder = PowerInnerJSONEncoder()
-        try value.encode(to: encoder)
+//        let encoder = PowerInnerJSONEncoder()
+//        try value.encode(to: encoder)
+//        self.storage = encoder.jsonValue
+        try value.encode(to: self.encoder)
         self.storage = encoder.jsonValue
     }
 }
