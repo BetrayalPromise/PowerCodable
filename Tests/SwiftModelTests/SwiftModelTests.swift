@@ -1202,6 +1202,37 @@ final class SwiftModelTests: XCTestCase {
         json?.path()
     }
 
+    func testNested() {
+        do {
+            let data: Data = """
+                {"a": [{"b": [{"c": [{"d": [{"c": "over"}]}]}]}]}
+            """.data(using: String.Encoding.utf8) ?? Data()
+            struct Root: Codable {
+                struct a: Codable {
+                    struct b: Codable {
+                        struct c: Codable {
+                            struct d: Codable {
+                                let c: String
+                            }
+                            let d: [d]
+                        }
+                        let c: [c]
+                    }
+                    let b: [b]
+                }
+                let a: [a]
+            }
+
+            let decoder: PowerJSONDecoder = PowerJSONDecoder()
+            do {
+                let models: Root = try decoder.decode(type: Root.self, fromData: data)
+                XCTAssertEqual(models.a[0].b[0].c[0].d[0].c, "over")
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
+        }
+    }
+
     func testEncode()  {
         struct A : Encodable, MappingEncodingKeys {
             var bool: Bool = true
@@ -1237,4 +1268,13 @@ final class SwiftModelTests: XCTestCase {
         let data = try? encoder.encodeToData(value: a)
         print(String(data: data ?? Data(), encoding: String.Encoding.utf8) ?? "error")
     }
+
+//    func testEncodeArray() {
+//        struct A: Encodable {
+//            var bool = false
+//        }
+//        let encoder = PowerJSONEncoder()
+//        let data = try? encoder.encodeToData(value: [A(), A()])
+//        print(String(data: data ?? Data(), encoding: String.Encoding.utf8) ?? "error")
+//    }
 }

@@ -35,7 +35,6 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
         self.userInfo = userInfo
     }
 
-    // MARK: - UnkeyedEncodingContainer
     func encodeNil() throws {
         var container = self.nestedSingleValueContainer()
         try container.encodeNil()
