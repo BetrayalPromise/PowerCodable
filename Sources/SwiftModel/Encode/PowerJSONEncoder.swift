@@ -11,32 +11,28 @@ public class PowerJSONEncoder {
     public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
 
     /// 逆向模型转化
-    /// - Parameter value: 实现Encodable对象
+    /// - Parameters:
+    ///   - value: 实现Encodable对象
+    ///   - outputType: 输出类型, 只支持[Data String Any(json结构)]
     /// - Throws: 解析异常
-    /// - Returns: 转换完成的二进制数据
-    func encodeToData<T>(value: T) throws -> Data where T: Encodable {
+    /// - Returns: 输出值
+    func encode<T, U>(value: T, outputType: U.Type) throws -> U? where T: Encodable {
         let encoder = PowerInnerJSONEncoder(value: value)
         try value.encode(to: encoder)
         let topLevel = encoder.jsonValue
         let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
         let formatter = Formatter(topLevel: topLevel, options: options, encoder: encoder)
-        return try formatter.writeJSON()
-    }
-
-    /// 逆向模型转化
-    /// - Parameter value: 实现Encodable对象
-    /// - Throws: 解析异常
-    /// - Returns: 转换完成的字符串数据
-    func encodeToString<T>(value: T) throws -> String where T: Encodable {
-        return String(data: try self.encodeToData(value: value), encoding: String.Encoding.utf8) ?? "error"
-    }
-
-    /// 逆向模型转化
-    /// - Parameter value: 实现Encodable对象
-    /// - Throws: 解析异常
-    /// - Returns: 转换完成的JSON对象
-    func encodeToJSONObject<T>(value: T) throws -> Any where T: Encodable {
-        return try JSONSerialization.jsonObject(with: try self.encodeToData(value: value), options: JSONSerialization.ReadingOptions.mutableLeaves)
+        let data = try formatter.writeJSON()
+        if outputType == Data.self {
+            return data as? U
+        } else if outputType == String.self {
+            return (String(data: data, encoding: String.Encoding.utf8) ?? "error") as? U
+        } else if outputType == Any.self {
+            return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as? U
+        } else {
+            print("unsupport type: \(outputType)")
+            return nil
+        }
     }
 }
 

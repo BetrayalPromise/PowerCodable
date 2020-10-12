@@ -9,42 +9,36 @@ public final class PowerJSONDecoder {
     /// 正向模型转化
     /// - Parameters:
     ///   - type: 顶层模型类型
-    ///   - data: 数据源的二进制形式
+    ///   - from: 数据源, 只支持[Data String Any(json结构)]
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
-    func decode<T>(type: T.Type, fromData: Data) throws -> T where T: Decodable {
+    func decode<T, U>(type: T.Type, from: U) throws -> T? where T: Decodable {
         do {
-            let rootObject: JSON = try JSON.Parser.parse(fromData)
-            let decoder = PowerInnerJSONDecoder(referencing: rootObject)
-            decoder.wrapper = self
-            return try decoder.unboxDecodable(object: rootObject)
+            if from is Data {
+                guard let data = from as? Data else { return nil }
+                let rootObject: JSON = try JSON.Parser.parse(data)
+                let decoder = PowerInnerJSONDecoder(referencing: rootObject)
+                decoder.wrapper = self
+                return try decoder.unboxDecodable(object: rootObject)
+            } else if from is String {
+                guard let string = from as? String, let data = string.data(using: String.Encoding.utf8) else { return nil }
+                let rootObject: JSON = try JSON.Parser.parse(data)
+                let decoder = PowerInnerJSONDecoder(referencing: rootObject)
+                decoder.wrapper = self
+                return try decoder.unboxDecodable(object: rootObject)
+            } else {
+                if JSONSerialization.isValidJSONObject(from) {
+                    let data: Data = try JSONSerialization.data(withJSONObject: from, options: .prettyPrinted)
+                    let rootObject: JSON = try JSON.Parser.parse(data)
+                    let decoder = PowerInnerJSONDecoder(referencing: rootObject)
+                    decoder.wrapper = self
+                    return try decoder.unboxDecodable(object: rootObject)
+                } else {
+                    return nil
+                }
+            }
         } catch {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "The given data was not valid JSON", underlyingError: error ))
-        }
-    }
-
-    /// 正向模型转化
-    /// - Parameters:
-    ///   - type: 顶层模型类型
-    ///   - string: 数据源的字符串形式
-    /// - Throws: 解析异常
-    /// - Returns: 转换完成的模型
-    func decode<T>(type: T.Type, fromString: String) throws -> T? where T: Decodable {
-        return try self.decode(type: type, fromData: (fromString.data(using: String.Encoding.utf8) ?? Data()))
-    }
-
-    /// 正向模型转化
-    /// - Parameters:
-    ///   - type: 顶层模型类型
-    ///   - object: 数据源的对象形式
-    /// - Throws: 解析异常
-    /// - Returns: 转换完成的模型
-    func decode<T>(type: T.Type, fromJSONObject: Any) throws -> T? where T: Decodable {
-        if JSONSerialization.isValidJSONObject(fromJSONObject) {
-            let data: Data = try JSONSerialization.data(withJSONObject: fromJSONObject, options: .prettyPrinted)
-            return try self.decode(type: type, fromData: data)
-        } else {
-            throw DecodingError.typeMismatch(type, DecodingError.Context(codingPath: [], debugDescription: "无效的JSON数据"))
         }
     }
 }
