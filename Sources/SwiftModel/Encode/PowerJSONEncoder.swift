@@ -15,7 +15,7 @@ public class PowerJSONEncoder {
     /// - Throws: 解析异常
     /// - Returns: 转换完成的二进制数据
     func encodeToData<T>(value: T) throws -> Data where T: Encodable {
-        let encoder = PowerInnerJSONEncoder(instance: value)
+        let encoder = PowerInnerJSONEncoder(value: value)
         try value.encode(to: encoder)
         let topLevel = encoder.jsonValue
         let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
@@ -54,13 +54,12 @@ class PowerInnerJSONEncoder: Encoder {
         precondition(self.container == nil)
     }
     var paths: [Path] = []
-    var instance: Encodable
+    var value: Encodable
     var mappingKeys: [String: String]?
 
-    init(instance: Encodable) {
-        self.instance = instance
+    init(value: Encodable) {
+        self.value = value
     }
-
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         assertCanCreateContainer()

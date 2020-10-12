@@ -83,7 +83,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Bool, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
             self.storage.append(key: key.stringValue, value: container)
@@ -107,7 +107,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: String, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -132,7 +132,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Double, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -157,7 +157,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Float, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -182,7 +182,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Int, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -207,7 +207,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Int8, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -232,7 +232,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Int16, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -257,7 +257,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Int32, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -282,7 +282,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: Int64, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -307,7 +307,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: UInt, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -332,7 +332,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: UInt8, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -357,7 +357,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: UInt16, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -382,7 +382,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: UInt32, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -407,7 +407,7 @@ extension EncodingKeyed {
 
     mutating func encode(_ value: UInt64, forKey key: Key) throws {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
@@ -432,7 +432,7 @@ extension EncodingKeyed {
 
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
         let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.instance as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
             /// 没有实现自定义key转化
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }

@@ -59,8 +59,9 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
     }
 
     func encode<T>(_ value: T) throws where T : Encodable {
-        var container = self.nestedSingleValueContainer()
-        try container.encode(value)
+        let encoder = PowerInnerJSONEncoder(value: value)
+        try value.encode(to: encoder)
+        self.storage.append(encoder)
     }
 
     func superEncoder() -> Encoder {

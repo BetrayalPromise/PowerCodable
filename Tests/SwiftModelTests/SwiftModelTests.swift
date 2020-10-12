@@ -1269,12 +1269,15 @@ final class SwiftModelTests: XCTestCase {
         print(String(data: data ?? Data(), encoding: String.Encoding.utf8) ?? "error")
     }
 
-//    func testEncodeArray() {
-//        struct A: Encodable {
-//            var bool = false
-//        }
-//        let encoder = PowerJSONEncoder()
-//        let data = try? encoder.encodeToData(value: [A(), A()])
-//        print(String(data: data ?? Data(), encoding: String.Encoding.utf8) ?? "error")
-//    }
+    func testEncodeArray() {
+        struct A: Encodable {
+            var bs: [B] = [B(), B()]
+        }
+        struct B: Encodable {
+            var bool = false
+        }
+        let encoder = PowerJSONEncoder()
+        let data = try? encoder.encodeToData(value: A())
+        print(String(data: data ?? Data(), encoding: String.Encoding.utf8) ?? "error")
+    }
 }
