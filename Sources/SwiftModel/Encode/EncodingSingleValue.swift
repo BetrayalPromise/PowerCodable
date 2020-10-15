@@ -452,6 +452,15 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode<T>(_ value: T) throws where T : Encodable {
         try checkCanEncode(value: nil)
         defer { self.canEncodeNewValue = false }
+        if value is URL {
+            guard let url = value as? URL else {
+                throw CodingError.invalidTypeTransform()
+            }
+            let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
+            try value.encode(to: encoder)
+            self.storage = encoder.jsonValue
+            return
+        }
         let encoder = PowerInnerJSONEncoder(value: value)
         try value.encode(to: encoder)
         self.storage = encoder.jsonValue

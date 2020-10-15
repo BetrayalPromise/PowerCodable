@@ -1315,4 +1315,17 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
+
+    func testURL() {
+        struct Root :Codable {
+            let baidu: URL = URL(safe: "http://www.baidu.com")
+        }
+        let encoder: PowerJSONEncoder = PowerJSONEncoder()
+        do {
+            let model: String = try encoder.encode(value: Root(), outputType: String.self)
+            print(model)
+        } catch {
+            XCTAssertNil(error, error.localizedDescription)
+        }
+    }
 }

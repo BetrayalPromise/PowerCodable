@@ -16,7 +16,7 @@ public final class PowerJSONDecoder {
         do {
             if from is Data {
                 guard let data = from as? Data else {
-                    throw CodingError.Decoding.invalidTypeTransform()
+                    throw CodingError.invalidTypeTransform()
                 }
                 let json: JSON = try JSON.Parser.parse(data)
                 let decoder = PowerInnerJSONDecoder(json: json)
@@ -24,7 +24,7 @@ public final class PowerJSONDecoder {
                 return try decoder.unboxDecodable(object: json)
             } else if from is String {
                 guard let string = from as? String, let data = string.data(using: String.Encoding.utf8) else {
-                    throw CodingError.Decoding.invalidTypeTransform()
+                    throw CodingError.invalidTypeTransform()
                 }
                 let json: JSON = try JSON.Parser.parse(data)
                 let decoder = PowerInnerJSONDecoder(json: json)

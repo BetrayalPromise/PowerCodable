@@ -26,6 +26,11 @@ public struct CodingError: Swift.Error {
         return CodingError(errorCode: .invalidJSON)
     }
 
+    /// 转化失败
+    static func invalidTypeTransform() -> CodingError {
+        return CodingError(errorCode: .invalidTypeTransform)
+    }
+
     struct Decoding {
         static func typeMismatch(type: Any.Type, codingPath: [CodingKey] = [], reality: JSON) -> CodingError {
             let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Expected to decode \(type) but found \(reality)) instead.")
@@ -40,11 +45,6 @@ public struct CodingError: Swift.Error {
         static func valueNotFound(type: Any.Type, codingPath: [CodingKey] = []) -> CodingError {
             let error = DecodingError.valueNotFound(JSON.self, DecodingError.Context(codingPath: codingPath, debugDescription: "Unkeyed container is at end."))
             return CodingError(error: error, errorCode: CodingError.ErrorCode.decodingError)
-        }
-
-        /// 转化失败
-        static func invalidTypeTransform() -> CodingError {
-            return CodingError(errorCode: .invalidTypeTransform)
         }
     }
 
