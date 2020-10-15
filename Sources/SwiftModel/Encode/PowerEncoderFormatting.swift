@@ -55,7 +55,7 @@ extension PowerJSONEncoder {
         }
 
         func write(_ str: String) throws {
-            guard let data = str.data(using: .utf8) else { throw EncodingError.invalidUTF8String(str) }
+            guard let data = str.data(using: .utf8) else { throw CodingError.Encoding.invalidUTF8String(value: str) }
             buffer.append(data)
         }
 

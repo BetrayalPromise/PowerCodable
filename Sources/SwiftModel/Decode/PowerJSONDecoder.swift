@@ -16,7 +16,7 @@ public final class PowerJSONDecoder {
         do {
             if from is Data {
                 guard let data = from as? Data else {
-                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "value: \(from) can't translate into Data", underlyingError: nil ))
+                    throw CodingError.Decoding.invalidTypeTransform()
                 }
                 let json: JSON = try JSON.Parser.parse(data)
                 let decoder = PowerInnerJSONDecoder(json: json)
@@ -24,7 +24,7 @@ public final class PowerJSONDecoder {
                 return try decoder.unboxDecodable(object: json)
             } else if from is String {
                 guard let string = from as? String, let data = string.data(using: String.Encoding.utf8) else {
-                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "value: \(from) can't translate into Data", underlyingError: nil ))
+                    throw CodingError.Decoding.invalidTypeTransform()
                 }
                 let json: JSON = try JSON.Parser.parse(data)
                 let decoder = PowerInnerJSONDecoder(json: json)
@@ -38,11 +38,11 @@ public final class PowerJSONDecoder {
                     decoder.wrapper = self
                     return try decoder.unboxDecodable(object: json)
                 } else {
-                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "The given data was not valid JSON", underlyingError: nil ))
+                    throw CodingError.invalidJSON()
                 }
             }
         } catch {
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "The given data was not valid JSON", underlyingError: error ))
+            throw error
         }
     }
 }
@@ -91,7 +91,7 @@ extension PowerInnerJSONDecoder {
 extension PowerInnerJSONDecoder {
     func container<Key>(keyedBy type: Key.Type, wrapping object: JSON) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         guard case let .object(unwrappedObject) = object else {
-            throw typeMismatch(expectation: [String: JSON].self, reality: object)
+            throw CodingError.Decoding.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
         }
 
         let keyedContainer = DecodingKeyed<Key>(decoder: self, json: unwrappedObject)
@@ -100,7 +100,7 @@ extension PowerInnerJSONDecoder {
 
     func unkeyedContainer(wrapping object: JSON) throws -> UnkeyedDecodingContainer {
         guard case let .array(array) = object else {
-            throw typeMismatch(expectation: [String: JSON].self, reality: object)
+            throw CodingError.Decoding.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
         }
         return DecodingUnkeyed(decoder: self, json: array)
     }
@@ -119,15 +119,15 @@ extension PowerInnerJSONDecoder {
     func unbox<T>(object: JSON) throws -> T where T: BinaryFloatingPoint, T: LosslessStringConvertible {
         switch object {
         case let .integer(number):
-            guard let integer = T(exactly: number) else { throw numberMisfit( expectation: T.self, reality: number) }
+            guard let integer = T(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath , reality: number) }
             return integer
         case let .double(number):
             switch T.self {
             case is Double.Type:
-                guard let double = Double.init(exactly: number) else { throw numberMisfit(expectation: T.self, reality: number) }
+                guard let double = Double.init(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
                 return double as! T
             case is Float.Type:
-                guard let float = Float(exactly: number) else { throw numberMisfit(expectation: T.self, reality: number) }
+                guard let float = Float(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
                 return float as! T
             default:
                 fatalError()
@@ -138,7 +138,7 @@ extension PowerInnerJSONDecoder {
             guard let number = T(string) else { fallthrough }
             return number
         default:
-            throw typeMismatch(expectation: T.self, reality: object)
+            throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
         }
     }
 
@@ -152,19 +152,19 @@ extension PowerInnerJSONDecoder {
         switch object {
         case let .integer(number):
             guard let integer = T(exactly: number) else {
-                throw numberMisfit(expectation: T.self, reality: number)
+                throw  CodingError.Decoding.numberMisfit(type: T.self, reality: number)
             }
             return integer
         case let .double(number):
             guard let double = T(exactly: number) else {
-                throw numberMisfit(expectation: T.self, reality: number)
+                throw CodingError.Decoding.numberMisfit(type: T.self, reality: number)
             }
             return double
         case let .string(string):
             guard let number = T(string) else { fallthrough }
             return number
         default:
-            throw typeMismatch(expectation: T.self, reality: object)
+            throw CodingError.Decoding.typeMismatch(type: T.self, reality: object)
         }
     }
 
@@ -773,21 +773,5 @@ extension PowerInnerJSONDecoder {
             case .useCustom(let delegate): return delegate.toString(path: self.paths.jsonPath, value: NSNull())
             }
         }
-    }
-}
-
-extension PowerInnerJSONDecoder {
-    private func typeMismatch(expectation: Any.Type, reality: JSON) -> DecodingError {
-        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Expected to decode \(expectation) but found \(reality)) instead."
-        )
-        return DecodingError.typeMismatch(expectation, context)
-    }
-
-    private func numberMisfit(expectation: Any.Type, reality: CustomStringConvertible) -> DecodingError {
-        let context = DecodingError.Context(
-            codingPath: codingPath,
-            debugDescription: "Parsed JSON number <\(reality)> does not fit in \(expectation)."
-        )
-        return DecodingError.dataCorrupted(context)
     }
 }

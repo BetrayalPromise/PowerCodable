@@ -15,8 +15,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
 
     fileprivate func checkCanEncode(value: Any?) throws {
         guard self.canEncodeNewValue else {
-            let context = EncodingError.Context(codingPath: self.codingPath, debugDescription: "Attempt to encode value through single value container when previously value already encoded.")
-            throw EncodingError.invalidValue(value as Any, context)
+            throw CodingError.Encoding.invalidValue(value: value, codingPath: self.codingPath)
         }
     }
 

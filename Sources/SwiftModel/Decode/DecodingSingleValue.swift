@@ -99,7 +99,7 @@ extension URL {
         case .string(let string):
             self = URL(safe: string)
         default:
-            self = URL(safe: "")
+            throw CodingError.unsupportType()
         }
     }
 

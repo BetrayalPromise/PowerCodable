@@ -31,8 +31,7 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
     @inline(__always)
     private mutating func getCurrentObject() throws -> JSON {
         guard !isAtEnd else {
-            let context = DecodingError.Context(codingPath: decoder.codingPath + [currentKey], debugDescription: "Unkeyed container is at end.")
-            throw DecodingError.valueNotFound(JSON.self, context)
+            throw CodingError.Decoding.valueNotFound(type: JSON.self, codingPath: decoder.codingPath + [currentKey])
         }
         defer { currentIndex += 1 }
         return json[currentIndex]

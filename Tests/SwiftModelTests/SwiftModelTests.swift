@@ -1196,7 +1196,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             "hellow": [true, false, "null"]
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        let json = try? data.toJSON()
+        let json = data.toJSON()
         let age = json["age"]
         age?.path()
         json?.path()

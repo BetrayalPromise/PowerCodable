@@ -1,9 +1,9 @@
 import Foundation
 
 public class PowerJSONEncoder {
-    enum EncodingError: Error {
-        case invalidUTF8String(String)
-    }
+//    enum EncodingError: Error {
+//        case invalidUTF8String(String)
+//    }
 
     public var dataEncodingStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
     public var dateEncodingStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
@@ -30,7 +30,7 @@ public class PowerJSONEncoder {
         } else if outputType == Any.self {
             return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! U
         } else {
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "unsupport type: \(outputType)", underlyingError: nil ))
+            throw CodingError.unsupportType()
         }
     }
 }
