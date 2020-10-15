@@ -14,7 +14,7 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
         return currentIndex >= json.count
     }
     
-    var currentIndex: Int
+    var currentIndex: Int = 0
 
     private unowned let decoder: PowerInnerJSONDecoder
     private let json: [JSON]
@@ -22,7 +22,6 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
     init(decoder: PowerInnerJSONDecoder, json: [JSON]) {
         self.json = json
         self.decoder = decoder
-        self.currentIndex = 0
     }
 
     private var currentKey: CodingKey {
@@ -200,6 +199,6 @@ extension DecodingUnkeyed {
 
 extension DecodingUnkeyed {
     mutating func superDecoder() throws -> Decoder {
-        return PowerInnerJSONDecoder(referencing: JSON.array(json), at: decoder.codingPath)
+        return PowerInnerJSONDecoder(json: JSON.array(json), at: decoder.codingPath)
     }
 }

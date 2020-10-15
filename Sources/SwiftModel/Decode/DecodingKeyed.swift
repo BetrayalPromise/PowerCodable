@@ -226,6 +226,6 @@ extension DecodingKeyed {
         defer { codingPath.removeLast() }
 
         let value = (key is PowerJSONKey) == true ? JSON.object(self.json) : self.json[key.stringValue, default: .null]
-        return PowerInnerJSONDecoder(referencing: value, at: decoder.codingPath)
+        return PowerInnerJSONDecoder(json: value, at: decoder.codingPath)
     }
 }

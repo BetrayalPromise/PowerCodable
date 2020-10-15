@@ -12,29 +12,33 @@ public final class PowerJSONDecoder {
     ///   - from: 数据源, 只支持[Data String Any(json结构)]
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
-    func decode<T, U>(type: T.Type, from: U) throws -> T? where T: Decodable {
+    func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable {
         do {
             if from is Data {
-                guard let data = from as? Data else { return nil }
+                guard let data = from as? Data else {
+                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "value: \(from) can't translate into Data", underlyingError: nil ))
+                }
                 let json: JSON = try JSON.Parser.parse(data)
-                let decoder = PowerInnerJSONDecoder(referencing: json)
+                let decoder = PowerInnerJSONDecoder(json: json)
                 decoder.wrapper = self
                 return try decoder.unboxDecodable(object: json)
             } else if from is String {
-                guard let string = from as? String, let data = string.data(using: String.Encoding.utf8) else { return nil }
+                guard let string = from as? String, let data = string.data(using: String.Encoding.utf8) else {
+                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "value: \(from) can't translate into Data", underlyingError: nil ))
+                }
                 let json: JSON = try JSON.Parser.parse(data)
-                let decoder = PowerInnerJSONDecoder(referencing: json)
+                let decoder = PowerInnerJSONDecoder(json: json)
                 decoder.wrapper = self
                 return try decoder.unboxDecodable(object: json)
             } else {
                 if JSONSerialization.isValidJSONObject(from) {
                     let data: Data = try JSONSerialization.data(withJSONObject: from, options: .prettyPrinted)
                     let json: JSON = try JSON.Parser.parse(data)
-                    let decoder = PowerInnerJSONDecoder(referencing: json)
+                    let decoder = PowerInnerJSONDecoder(json: json)
                     decoder.wrapper = self
                     return try decoder.unboxDecodable(object: json)
                 } else {
-                    return nil
+                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "The given data was not valid JSON", underlyingError: nil ))
                 }
             }
         } catch {
@@ -56,31 +60,31 @@ public extension PowerJSONDecoder {
 final class PowerInnerJSONDecoder: Decoder {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey : Any]
-    var object: JSON
-    var currentObject: JSON
+    var json: JSON
+    var currentJSON: JSON
     unowned var wrapper: PowerJSONDecoder?
     var mappingKeys: [String: [String]]?
     var paths: [Path] = []
 
-    init(referencing object: JSON, at codingPath: [CodingKey] = []) {
+    init(json: JSON, at codingPath: [CodingKey] = []) {
         self.codingPath = codingPath
-        self.object = object
+        self.json = json
         self.userInfo = [:]
-        self.currentObject = object
+        self.currentJSON = json
     }
 }
 
 extension PowerInnerJSONDecoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        return try container(keyedBy: type, wrapping: currentObject)
+        return try container(keyedBy: type, wrapping: currentJSON)
     }
 
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        return try unkeyedContainer(wrapping: currentObject)
+        return try unkeyedContainer(wrapping: currentJSON)
     }
 
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-        return DecodingSingleValue(decoder: self, json: currentObject)
+        return DecodingSingleValue(decoder: self, json: currentJSON)
     }
 }
 
@@ -183,25 +187,15 @@ extension PowerInnerJSONDecoder {
     }
 
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
-        switch object {
-        case .object(let o):
-            print(o)
-        case .array(let a):
-            print(a)
-        case .null:
-            print("null")
-        case .bool(let b):
-            print(b)
-        case .string(let s):
-            print(s)
-        case .integer(let i):
-            print(i)
-        case .double(let d):
-            print(d)
-        }
-        currentObject = object
+        currentJSON = object
         guard let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type else {
+            if T.self == URL.self, object.isString {
+                return try DecodingSingleValue.decode(json: object) as! T
+            }
             return try T.init(from: self)
+        }
+        if T.self == URL.self, object.isString {
+            return try DecodingSingleValue.decode(json: object) as! T
         }
         self.mappingKeys = type.modelDecodingKeys()
         return try T.init(from: self)

@@ -16,7 +16,7 @@ public class PowerJSONEncoder {
     ///   - outputType: 输出类型, 只支持[Data String Any(json结构)]
     /// - Throws: 解析异常
     /// - Returns: 输出值
-    func encode<T, U>(value: T, outputType: U.Type) throws -> U? where T: Encodable {
+    func encode<T, U>(value: T, outputType: U.Type) throws -> U where T: Encodable {
         let encoder = PowerInnerJSONEncoder(value: value)
         try value.encode(to: encoder)
         let topLevel = encoder.jsonValue
@@ -24,14 +24,13 @@ public class PowerJSONEncoder {
         let formatter = Formatter(topLevel: topLevel, options: options, encoder: encoder)
         let data = try formatter.writeJSON()
         if outputType == Data.self {
-            return data as? U
+            return data as! U
         } else if outputType == String.self {
-            return (String(data: data, encoding: String.Encoding.utf8) ?? "error") as? U
+            return (String(data: data, encoding: String.Encoding.utf8) ?? "error") as! U
         } else if outputType == Any.self {
-            return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as? U
+            return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! U
         } else {
-            print("unsupport type: \(outputType)")
-            return nil
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "unsupport type: \(outputType)", underlyingError: nil ))
         }
     }
 }
