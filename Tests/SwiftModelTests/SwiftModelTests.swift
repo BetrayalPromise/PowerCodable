@@ -1,7 +1,7 @@
 import XCTest
 @testable import SwiftModel
 
-final class SwiftModelTests: XCTestCase {
+final class SwiftModelDecodeTests: XCTestCase {
     func testBool() {
         do {
             let data: Data = """
@@ -1022,7 +1022,7 @@ final class SwiftModelTests: XCTestCase {
     }
 
     func testWrapperIgnore() {
-         let data: Data = #"""
+        let data: Data = #"""
             {
                 "name": "abc",
                 "info": "info",
@@ -1233,6 +1233,26 @@ final class SwiftModelTests: XCTestCase {
         }
     }
 
+    func testURL() {
+        let data: Data = """
+        {
+            "baidu": "http://192.168.0.103"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        struct Root : Codable {
+            let baidu: URL
+        }
+        let decoder: PowerJSONDecoder = PowerJSONDecoder()
+        do {
+            let model: Root? = try decoder.decode(type: Root.self, from: data)
+            XCTAssertNotEqual(model?.baidu, nil)
+        } catch {
+            XCTAssertNil(error, error.localizedDescription)
+        }
+    }
+}
+
+final class SwiftModelEncodeTests: XCTestCase {
     func testEncode()  {
         struct A : Encodable, MappingEncodingKeys {
             var bool: Bool = true

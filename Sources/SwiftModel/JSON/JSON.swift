@@ -1,6 +1,6 @@
 import Foundation
 
-/// Any value that can be expressed in JSON has a representation in `JSON`.
+/// MARK: JSON抽象
 @dynamicMemberLookup
 public enum JSON {
     indirect case object([String: JSON])
@@ -10,6 +10,11 @@ public enum JSON {
     case string(String)
     case integer(Int64)
     case double(Double)
+
+    /// @dynamicMemberLookup
+    subscript(dynamicMember member: String) -> JSON {
+        return (try? self.get(member)) ?? .null
+    }
 }
 
 public extension JSON {
@@ -44,14 +49,7 @@ public extension JSON {
     }
 }
 
-extension JSON {
-    subscript(dynamicMember member: String) -> JSON {
-        return (try? self.get(member)) ?? .null
-    }
-}
-
-
-// MARK: - JSON Equatable conformance
+// MARK: - JSON Equatable协议
 extension JSON: Equatable {
     static public func ==(lhs: JSON, rhs: JSON) -> Bool {
         switch (lhs, rhs) {

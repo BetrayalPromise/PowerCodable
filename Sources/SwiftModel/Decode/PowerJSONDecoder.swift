@@ -72,20 +72,14 @@ final class PowerInnerJSONDecoder: Decoder {
 
 extension PowerInnerJSONDecoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-//        print(#function, "begin")
-//        defer { print(#function, "end") }
         return try container(keyedBy: type, wrapping: currentObject)
     }
 
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-//        print(#function, "begin")
-//        defer { print(#function, "end") }
         return try unkeyedContainer(wrapping: currentObject)
     }
 
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-//        print(#function, "begin")
-//        defer { print(#function, "end") }
         return DecodingSingleValue(referencing: self, wrapping: currentObject)
     }
 }
