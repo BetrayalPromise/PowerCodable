@@ -61,7 +61,7 @@ class PowerInnerJSONEncoder: Encoder {
         assertCanCreateContainer()
         print(#function, "begin")
         defer { print(#function, "end") }
-        let container = EncodingKeyed<Key>(referencing: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodingKeyed<Key>(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return KeyedEncodingContainer(container)
     }
@@ -70,7 +70,7 @@ class PowerInnerJSONEncoder: Encoder {
         assertCanCreateContainer()
         print(#function, "begin")
         defer { print(#function, "end") }
-        let container = EncodingUnkeyed(referencing: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodingUnkeyed(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
     }
@@ -79,7 +79,7 @@ class PowerInnerJSONEncoder: Encoder {
         assertCanCreateContainer()
         print(#function, "begin")
         defer { print(#function, "end") }
-        let container = EncodingSingleValue(referencing: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodingSingleValue(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
     }

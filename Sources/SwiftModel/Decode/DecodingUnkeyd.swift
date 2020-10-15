@@ -7,20 +7,20 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
     }
 
     var count: Int? {
-        return sequence.count
+        return json.count
     }
     
     var isAtEnd: Bool {
-        return currentIndex >= sequence.count
+        return currentIndex >= json.count
     }
     
     var currentIndex: Int
 
     private unowned let decoder: PowerInnerJSONDecoder
-    private let sequence: [JSON]
+    private let json: [JSON]
 
-    init(referencing decoder: PowerInnerJSONDecoder, wrapping container: [JSON]) {
-        self.sequence = container
+    init(decoder: PowerInnerJSONDecoder, json: [JSON]) {
+        self.json = json
         self.decoder = decoder
         self.currentIndex = 0
     }
@@ -36,7 +36,7 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
             throw DecodingError.valueNotFound(JSON.self, context)
         }
         defer { currentIndex += 1 }
-        return sequence[currentIndex]
+        return json[currentIndex]
     }
 }
 
@@ -200,6 +200,6 @@ extension DecodingUnkeyed {
 
 extension DecodingUnkeyed {
     mutating func superDecoder() throws -> Decoder {
-        return PowerInnerJSONDecoder(referencing: JSON.array(sequence), at: decoder.codingPath)
+        return PowerInnerJSONDecoder(referencing: JSON.array(json), at: decoder.codingPath)
     }
 }

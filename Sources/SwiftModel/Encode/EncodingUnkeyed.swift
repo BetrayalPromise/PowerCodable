@@ -29,7 +29,7 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
     }
     private unowned let encoder: PowerInnerJSONEncoder
 
-    init(referencing encoder: PowerInnerJSONEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+    init(encoder: PowerInnerJSONEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
@@ -41,19 +41,19 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
     }
 
     func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-        let container = EncodingUnkeyed(referencing: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodingUnkeyed(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return container
     }
 
     private func nestedSingleValueContainer() -> SingleValueEncodingContainer {
-        let container = EncodingSingleValue(referencing: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return container
     }
 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-        let container = EncodingKeyed<NestedKey>(referencing: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodingKeyed<NestedKey>(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return KeyedEncodingContainer(container)
     }

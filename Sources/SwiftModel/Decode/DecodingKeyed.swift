@@ -3,35 +3,35 @@ import Foundation
 class DecodingKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     typealias Key = K
     private unowned let decoder: PowerInnerJSONDecoder
-    private let rootObject: [String: JSON]
+    private let json: [String: JSON]
     
     var codingPath: [CodingKey] {
         get { return decoder.codingPath }
         set { decoder.codingPath = newValue }
     }
     
-    init(referencing decoder: PowerInnerJSONDecoder, wrapping object: [String: JSON]) {
+    init(decoder: PowerInnerJSONDecoder,  json: [String: JSON]) {
         self.decoder  = decoder
-        self.rootObject  = object
+        self.json = json
     }
     
     var allKeys: [Key] {
-        return rootObject.keys.compactMap(Key.init)
+        return self.json.keys.compactMap(Key.init)
     }
     
     func contains(_ key: Key) -> Bool {
-        return rootObject[key.stringValue] != nil
+        return self.json[key.stringValue] != nil
     }
 
     @inline(__always)
     private func getObject(forKey key: Key) throws -> JSON {
-        guard let object = rootObject[key.stringValue] else {
-            if rootObject.count == 0 {
+        guard let object = self.json[key.stringValue] else {
+            if self.json.count == 0 {
                 return JSON(dictionaryLiteral: ("", ""))
             } else {
                 if self.decoder.mappingKeys != nil {
                     for k in self.decoder.mappingKeys?[key.stringValue] ?? [] {
-                        switch rootObject[k] {
+                        switch self.json[k] {
                         case .none: continue
                         case .some(let json): return json
                         }
@@ -225,7 +225,7 @@ extension DecodingKeyed {
         codingPath.append(key)
         defer { codingPath.removeLast() }
 
-        let value = (key is PowerJSONKey) == true ? JSON.object(rootObject) : rootObject[key.stringValue, default: .null]
+        let value = (key is PowerJSONKey) == true ? JSON.object(self.json) : self.json[key.stringValue, default: .null]
         return PowerInnerJSONDecoder(referencing: value, at: decoder.codingPath)
     }
 }

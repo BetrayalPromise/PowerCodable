@@ -16,23 +16,23 @@ public final class PowerJSONDecoder {
         do {
             if from is Data {
                 guard let data = from as? Data else { return nil }
-                let rootObject: JSON = try JSON.Parser.parse(data)
-                let decoder = PowerInnerJSONDecoder(referencing: rootObject)
+                let json: JSON = try JSON.Parser.parse(data)
+                let decoder = PowerInnerJSONDecoder(referencing: json)
                 decoder.wrapper = self
-                return try decoder.unboxDecodable(object: rootObject)
+                return try decoder.unboxDecodable(object: json)
             } else if from is String {
                 guard let string = from as? String, let data = string.data(using: String.Encoding.utf8) else { return nil }
-                let rootObject: JSON = try JSON.Parser.parse(data)
-                let decoder = PowerInnerJSONDecoder(referencing: rootObject)
+                let json: JSON = try JSON.Parser.parse(data)
+                let decoder = PowerInnerJSONDecoder(referencing: json)
                 decoder.wrapper = self
-                return try decoder.unboxDecodable(object: rootObject)
+                return try decoder.unboxDecodable(object: json)
             } else {
                 if JSONSerialization.isValidJSONObject(from) {
                     let data: Data = try JSONSerialization.data(withJSONObject: from, options: .prettyPrinted)
-                    let rootObject: JSON = try JSON.Parser.parse(data)
-                    let decoder = PowerInnerJSONDecoder(referencing: rootObject)
+                    let json: JSON = try JSON.Parser.parse(data)
+                    let decoder = PowerInnerJSONDecoder(referencing: json)
                     decoder.wrapper = self
-                    return try decoder.unboxDecodable(object: rootObject)
+                    return try decoder.unboxDecodable(object: json)
                 } else {
                     return nil
                 }
@@ -80,7 +80,7 @@ extension PowerInnerJSONDecoder {
     }
 
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-        return DecodingSingleValue(referencing: self, wrapping: currentObject)
+        return DecodingSingleValue(decoder: self, json: currentObject)
     }
 }
 
@@ -90,7 +90,7 @@ extension PowerInnerJSONDecoder {
             throw typeMismatch(expectation: [String: JSON].self, reality: object)
         }
 
-        let keyedContainer = DecodingKeyed<Key>(referencing: self, wrapping: unwrappedObject)
+        let keyedContainer = DecodingKeyed<Key>(decoder: self, json: unwrappedObject)
         return KeyedDecodingContainer(keyedContainer)
     }
 
@@ -98,7 +98,7 @@ extension PowerInnerJSONDecoder {
         guard case let .array(array) = object else {
             throw typeMismatch(expectation: [String: JSON].self, reality: object)
         }
-        return DecodingUnkeyed(referencing: self, wrapping: array)
+        return DecodingUnkeyed(decoder: self, json: array)
     }
 }
 
@@ -183,6 +183,22 @@ extension PowerInnerJSONDecoder {
     }
 
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
+        switch object {
+        case .object(let o):
+            print(o)
+        case .array(let a):
+            print(a)
+        case .null:
+            print("null")
+        case .bool(let b):
+            print(b)
+        case .string(let s):
+            print(s)
+        case .integer(let i):
+            print(i)
+        case .double(let d):
+            print(d)
+        }
         currentObject = object
         guard let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type else {
             return try T.init(from: self)

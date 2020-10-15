@@ -7,7 +7,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     fileprivate var storage: JSON = .null
     private unowned let encoder: PowerInnerJSONEncoder
 
-    init(referencing encoder: PowerInnerJSONEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+    init(encoder: PowerInnerJSONEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
