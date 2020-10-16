@@ -7,8 +7,8 @@ public struct CodingError: Swift.Error {
         case unsupportType = 2 // 不支持的类型
         case decodingError = 3 // 解码错误
         case encodingError = 4 // 编码错误
-        case invalidUTF8String = 6
-        case jsonObjectError = 7
+        case invalidUTF8String = 6 // 无效的UTF8字符
+        case jsonObjectError = 7 // JSONObject错误
     }
 
     /// 可能是系统抛出也可能是本工具抛出的错误

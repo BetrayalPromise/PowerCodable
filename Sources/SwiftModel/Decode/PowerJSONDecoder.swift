@@ -12,35 +12,12 @@ public final class PowerJSONDecoder {
     ///   - from: 数据源, 只支持[Data String Any(json结构)]
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
-    func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable {
+    func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: JSONCodingSupport {
         do {
-            if from is Data {
-                guard let data = from as? Data else {
-                    throw CodingError.invalidTypeTransform()
-                }
-                let json: JSON = try JSON.Parser.parse(data)
-                let decoder = PowerInnerJSONDecoder(json: json)
-                decoder.wrapper = self
-                return try decoder.unboxDecodable(object: json)
-            } else if from is String {
-                guard let string = from as? String, let data = string.data(using: String.Encoding.utf8) else {
-                    throw CodingError.invalidTypeTransform()
-                }
-                let json: JSON = try JSON.Parser.parse(data)
-                let decoder = PowerInnerJSONDecoder(json: json)
-                decoder.wrapper = self
-                return try decoder.unboxDecodable(object: json)
-            } else {
-                if JSONSerialization.isValidJSONObject(from) {
-                    let data: Data = try JSONSerialization.data(withJSONObject: from, options: .prettyPrinted)
-                    let json: JSON = try JSON.Parser.parse(data)
-                    let decoder = PowerInnerJSONDecoder(json: json)
-                    decoder.wrapper = self
-                    return try decoder.unboxDecodable(object: json)
-                } else {
-                    throw CodingError.invalidJSON()
-                }
-            }
+            let json: JSON = try JSON.Parser.parse(from.dataWrapper)
+            let decoder = PowerInnerJSONDecoder(json: json)
+            decoder.wrapper = self
+            return try decoder.unboxDecodable(object: json)
         } catch {
             throw error
         }
@@ -55,11 +32,9 @@ public extension PowerJSONDecoder {
     }
 }
 
-
-
 final class PowerInnerJSONDecoder: Decoder {
     var codingPath: [CodingKey]
-    var userInfo: [CodingUserInfoKey : Any]
+    var userInfo: [CodingUserInfoKey : Any] = [:]
     var json: JSON
     var currentJSON: JSON
     unowned var wrapper: PowerJSONDecoder?
@@ -69,7 +44,6 @@ final class PowerInnerJSONDecoder: Decoder {
     init(json: JSON, at codingPath: [CodingKey] = []) {
         self.codingPath = codingPath
         self.json = json
-        self.userInfo = [:]
         self.currentJSON = json
     }
 }

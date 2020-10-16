@@ -1,10 +1,6 @@
 import Foundation
 
 public class PowerJSONEncoder {
-//    enum EncodingError: Error {
-//        case invalidUTF8String(String)
-//    }
-
     public var dataEncodingStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
     public var dateEncodingStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
     public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
@@ -16,19 +12,19 @@ public class PowerJSONEncoder {
     ///   - outputType: 输出类型, 只支持[Data String Any(json结构)]
     /// - Throws: 解析异常
     /// - Returns: 输出值
-    func encode<T, U>(value: T, outputType: U.Type) throws -> U where T: Encodable {
+    func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {
         let encoder = PowerInnerJSONEncoder(value: value)
         try value.encode(to: encoder)
         let topLevel = encoder.jsonValue
         let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
         let formatter = Formatter(topLevel: topLevel, options: options, encoder: encoder)
-        let data = try formatter.writeJSON()
-        if outputType == Data.self {
-            return data as! U
-        } else if outputType == String.self {
-            return (String(data: data, encoding: String.Encoding.utf8) ?? "error") as! U
-        } else if outputType == Any.self {
-            return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! U
+        let data: Data = try formatter.writeJSON()
+        if to.Wrapper == Data.self {
+            return data as! U.Wrapper
+        } else if to.Wrapper == String.self {
+            return (String(data: data, encoding: String.Encoding.utf8) ?? "error") as! U.Wrapper
+        } else if to.Wrapper == Any.self {
+            return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! U.Wrapper
         } else {
             throw CodingError.unsupportType()
         }
@@ -58,8 +54,6 @@ class PowerInnerJSONEncoder: Encoder {
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         assertCanCreateContainer()
-        print(#function, "begin")
-        defer { print(#function, "end") }
         let container = EncodingKeyed<Key>(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return KeyedEncodingContainer(container)
@@ -67,8 +61,6 @@ class PowerInnerJSONEncoder: Encoder {
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
         assertCanCreateContainer()
-        print(#function, "begin")
-        defer { print(#function, "end") }
         let container = EncodingUnkeyed(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
@@ -76,8 +68,6 @@ class PowerInnerJSONEncoder: Encoder {
 
     func singleValueContainer() -> SingleValueEncodingContainer {
         assertCanCreateContainer()
-        print(#function, "begin")
-        defer { print(#function, "end") }
         let container = EncodingSingleValue(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container

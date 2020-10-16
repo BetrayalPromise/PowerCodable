@@ -340,3 +340,43 @@ extension MappingEncodingKeys {
         return JSON(stringLiteral: "2020/10/10-15:16:30")
     }
 }
+
+protocol JSONCodingSupport {
+    /// JSON的二进制数据
+    var dataWrapper: Data { get }
+
+    associatedtype Wrapper
+}
+
+extension Data: JSONCodingSupport {
+    typealias Wrapper = Data
+    var dataWrapper: Data {
+        return self
+    }
+}
+
+extension String: JSONCodingSupport {
+    public typealias Wrapper = String
+    public var dataWrapper: Data {
+        return self.data(using: Encoding.utf8) ?? Data()
+    }
+}
+
+/// 对内存中的json结构对象进行描述 用它指代json
+public struct JSONStructure: JSONCodingSupport {
+    public typealias Wrapper = Any
+
+    public var dataWrapper: Data {
+        do {
+            return try JSONSerialization.data(withJSONObject: self.json, options: JSONSerialization.WritingOptions.prettyPrinted)
+        } catch {
+            return Data()
+        }
+    }
+    /// JSON实体
+    let json: Any
+
+    init(json: Any) {
+        self.json = json
+    }
+}

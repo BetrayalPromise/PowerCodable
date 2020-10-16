@@ -1291,7 +1291,7 @@ final class SwiftModelEncodeTests: XCTestCase {
         let a = A()
         let encoder = PowerJSONEncoder()
         do {
-            let data: String = try encoder.encode(value: a, outputType: String.self)
+            let data: String = try encoder.encode(value: a, to: String.self)
             print(data)
             XCTAssertNotEqual(data, "error")
         } catch  {
@@ -1308,7 +1308,7 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
         let encoder = PowerJSONEncoder()
         do {
-            let data: String = try encoder.encode(value: a, outputType: String.self)
+            let data: String = try encoder.encode(value: a, to: String.self)
             print(data)
             XCTAssertNotEqual(data, "error")
         } catch  {
@@ -1322,7 +1322,7 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
         let encoder: PowerJSONEncoder = PowerJSONEncoder()
         do {
-            let model: String = try encoder.encode(value: Root(), outputType: String.self)
+            let model: Any = try encoder.encode(value: Root(), to: JSONStructure.self)
             print(model)
         } catch {
             XCTAssertNil(error, error.localizedDescription)
