@@ -9,7 +9,7 @@ public class PowerJSONEncoder {
     /// 逆向模型转化
     /// - Parameters:
     ///   - value: 实现Encodable对象
-    ///   - outputType: 输出类型, 只支持[Data String Any(json结构)]
+    ///   - outputType: 输出类型, 只支持[Data String JSONStructure(json结构)]
     /// - Throws: 解析异常
     /// - Returns: 输出值
     func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {

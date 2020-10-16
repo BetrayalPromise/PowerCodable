@@ -9,7 +9,7 @@ public final class PowerJSONDecoder {
     /// 正向模型转化
     /// - Parameters:
     ///   - type: 顶层模型类型
-    ///   - from: 数据源, 只支持[Data String Any(json结构)]
+    ///   - from: 数据源, 只支持[Data String JSONStructure(json结构)]
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: JSONCodingSupport {
