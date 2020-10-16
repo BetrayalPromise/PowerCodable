@@ -36,10 +36,10 @@ class DecodingKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
                         case .some(let json): return json
                         }
                     }
-                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please confirm MappingDecodingKeys")
+                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement MappingDecodingKeys")
                     return JSON(dictionaryLiteral: ("", ""))
                 } else {
-                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please confirm MappingDecodingKeys")
+                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement MappingDecodingKeys")
                     return JSON(dictionaryLiteral: ("", ""))
                 }
             }

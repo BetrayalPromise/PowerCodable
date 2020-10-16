@@ -33,7 +33,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(booleanLiteral: value))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .bool(value)
             return
         }
@@ -66,7 +66,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(stringLiteral: value))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .string(value)
             return
         }
@@ -96,7 +96,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(floatLiteral: value))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .double(value)
             return
         }
@@ -126,7 +126,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(floatLiteral: Double(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .double(Double(value))
             return
         }
@@ -156,7 +156,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: value))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -186,7 +186,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -216,7 +216,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -247,7 +247,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -277,7 +277,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -307,7 +307,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -337,7 +337,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -367,7 +367,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -397,7 +397,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }
@@ -427,7 +427,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             return
         }
         let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        if json == JSON(stringLiteral: "2020/10/10-15:16:30") {
+        if json == JSON.defaultJSON() {
             self.storage = .integer(Int64(value))
             return
         }

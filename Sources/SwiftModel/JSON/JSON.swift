@@ -2,7 +2,8 @@ import Foundation
 
 /// MARK: JSON抽象
 @dynamicMemberLookup
-public enum JSON {
+public enum JSON: JSONCodingSupport {
+    typealias Wrapper = JSON
     indirect case object([String: JSON])
     indirect case array([JSON])
     case null
@@ -14,6 +15,16 @@ public enum JSON {
     /// @dynamicMemberLookup
     subscript(dynamicMember member: String) -> JSON {
         return (try? self.get(member)) ?? .null
+    }
+
+    var dataWrapper: Data {
+        return Data()
+    }
+}
+
+extension JSON {
+    static func defaultJSON() -> JSON {
+        return JSON(stringLiteral: "2020/10/10-15:16:30")
     }
 }
 

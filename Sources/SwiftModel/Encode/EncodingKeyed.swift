@@ -431,28 +431,32 @@ extension EncodingKeyed {
     }
 
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
-            /// 没有实现自定义key转化
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
-            try container.encode(value)
-            return
-        }
-        self.encoder.mappingKeys = type(of: keyValue).modelEncodingKeys()
-        let mapping = type(of: keyValue).modelEncodingKeys()
-        if mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by: mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            self.storage.append(key: mapping[key.stringValue] ?? "", value: container)
-            try container.encode(value)
-        } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
-            try container.encode(value)
-        }
+        let encoder = PowerInnerJSONEncoder(value: value)
+        try value.encode(to: encoder)
+
+        self.storage.append(key: key.stringValue, value: encoder.container!)
+//        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+//        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+//            /// 没有实现自定义key转化
+//            self.encoder.paths.push(value: Path.index(by: key.stringValue))
+//            defer { self.encoder.paths.pop() }
+//            self.storage.append(key: key.stringValue, value: container)
+//            try container.encode(value)
+//            return
+//        }
+//        self.encoder.mappingKeys = type(of: keyValue).modelEncodingKeys()
+//        let mapping = type(of: keyValue).modelEncodingKeys()
+//        if mapping.keys.contains(key.stringValue) {
+//            self.encoder.paths.push(value: Path.index(by: mapping[key.stringValue] ?? ""))
+//            defer { self.encoder.paths.pop() }
+//            self.storage.append(key: mapping[key.stringValue] ?? "", value: container)
+//            try container.encode(value)
+//        } else {
+//            self.encoder.paths.push(value: Path.index(by: key.stringValue))
+//            defer { self.encoder.paths.pop() }
+//            self.storage.append(key: key.stringValue, value: container)
+//            try container.encode(value)
+//        }
     }
 
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
@@ -478,7 +482,9 @@ extension EncodingKeyed {
 
 extension EncodingKeyed: JSONValue {
     var jsonValue: JSON {
-        let elements = self.storage.elements.map { ($0.0, $0.1.jsonValue) }.toJSONObject()
+        let elements: [String: JSON] = self.storage.elements.map {
+            return ($0.0, $0.1.jsonValue)
+        }.toJSONObject()
         return .object(elements)
     }
 }

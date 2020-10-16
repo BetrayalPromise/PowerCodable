@@ -15,9 +15,9 @@ public class PowerJSONEncoder {
     func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {
         let encoder = PowerInnerJSONEncoder(value: value)
         try value.encode(to: encoder)
-        let topLevel = encoder.jsonValue
+        let json = encoder.jsonValue
         let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
-        let formatter = Formatter(topLevel: topLevel, options: options, encoder: encoder)
+        let formatter = Formatter(topLevel: json, options: options, encoder: encoder)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {
             return data as! U.Wrapper
@@ -25,6 +25,8 @@ public class PowerJSONEncoder {
             return (String(data: data, encoding: String.Encoding.utf8) ?? "error") as! U.Wrapper
         } else if to.Wrapper == Any.self {
             return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! U.Wrapper
+        } else if to.Wrapper == JSON.self {
+            return json as! U.Wrapper
         } else {
             throw CodingError.unsupportType()
         }
@@ -39,7 +41,7 @@ class PowerInnerJSONEncoder: Encoder {
     var codingPath: [CodingKey] = []
 
     var userInfo: [CodingUserInfoKey : Any] = [:]
-    fileprivate var container: JSONValue?
+    var container: JSONValue?
 
     fileprivate func assertCanCreateContainer() {
         precondition(self.container == nil)

@@ -71,7 +71,9 @@ struct EncodingUnkeyed: UnkeyedEncodingContainer {
 
 extension EncodingUnkeyed: JSONValue {
     var jsonValue: JSON {
-        let elements = self.storage.map { $0.jsonValue }
+        let elements: [JSON] = self.storage.map {
+            return $0.jsonValue
+        }
         return .array(elements)
     }
 }

@@ -337,7 +337,7 @@ extension MappingEncodingKeys {
         return ["": ""]
     }
     static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
-        return JSON(stringLiteral: "2020/10/10-15:16:30")
+        return JSON.defaultJSON()
     }
 }
 
