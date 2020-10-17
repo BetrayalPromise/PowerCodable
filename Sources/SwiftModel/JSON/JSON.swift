@@ -11,6 +11,7 @@ public enum JSON: JSONCodingSupport {
     case string(String)
     case integer(Int64)
     case double(Double)
+//    case unknow
 
     /// @dynamicMemberLookup
     subscript(dynamicMember member: String) -> JSON {
@@ -25,6 +26,10 @@ public enum JSON: JSONCodingSupport {
 extension JSON {
     static func defaultJSON() -> JSON {
         return JSON(stringLiteral: "2020/10/10-15:16:30")
+    }
+
+    static func replace() -> JSON {
+        return JSON(stringLiteral: "replace")
     }
 }
 
@@ -82,6 +87,10 @@ extension JSON: ExpressibleByArrayLiteral {
         let array = elements.map({ $0.encoded() })
         self = .array(array)
     }
+
+    init(emptyArray: [Any] = []) {
+        self = .array([])
+    }
 }
 
 extension JSON: ExpressibleByDictionaryLiteral {
@@ -91,6 +100,10 @@ extension JSON: ExpressibleByDictionaryLiteral {
             dict[key] = value.encoded()
         }
         self = .object(dict)
+    }
+
+    init(emptyDictionary: [String: Any]) {
+        self = .object([:])
     }
 }
 

@@ -1303,17 +1303,50 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
     }
 
-    func testEncodeArray() {
+    func testEncodeHashMap() {
+        struct Root: Encodable {
+            var a: A = A()
+            var b: A = A()
+        }
         struct A: Encodable {
-            var bs: [B] = [B(), B()]
+            var b: B = B()
         }
         struct B: Encodable {
-            var bool = false
+            var c: C = C()
+        }
+        struct C: Encodable {
+            var string = "string"
         }
         let encoder = PowerJSONEncoder()
-        let a = A()
+        let root = Root()
         do {
-            let data: String = try encoder.encode(value: a, to: String.self)
+            let data: String = try encoder.encode(value: root, to: String.self)
+            print(data)
+            XCTAssertNotEqual(data, "error")
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testEncodeArray() {
+        struct Root: Encodable {
+            var `as`: [A] = []
+            var bs: [B] = [B()]
+            var cs: [C] = [C(), C()]
+        }
+        struct A: Encodable {
+            var bool = false
+        }
+        struct B: Encodable {
+            var int: Int = 0
+        }
+        struct C: Encodable {
+            var string = "string"
+        }
+        let encoder = PowerJSONEncoder()
+        let root = Root()
+        do {
+            let data: String = try encoder.encode(value: root, to: String.self)
             print(data)
             XCTAssertNotEqual(data, "error")
         } catch  {

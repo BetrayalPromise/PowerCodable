@@ -243,10 +243,24 @@ extension JSON {
         return o
     }
 
+    mutating func update(value: [String: JSON]) {
+        guard case .object(let o) = self else { return }
+        var object = o
+        object.updateValue(value.values.first ?? "", forKey: value.keys.first ?? "")
+        self = .object(object)
+    }
+
     /// Returns this enum's associated Array value iff `self == .array(_)`, `nil` otherwise.
     public var array: [JSON]? {
         guard case .array(let a) = self else { return nil }
         return a
+    }
+
+    mutating func append(value: JSON) {
+        guard case .array(let a) = self else { return }
+        var array = a
+        array.append(value)
+        self = .array(array)
     }
 
     /// Returns this enum's associated String value iff `self == .string(_)`, `nil` otherwise.
@@ -288,7 +302,6 @@ extension JSON {
 // MARK: Non RFC JSON types
 
 extension JSON {
-
     /// Returns this enum's associated `Int64` value as an `Int` iff `self == .integer(_)`, `nil` otherwise.
     public var int: Int? {
         switch self {

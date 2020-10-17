@@ -43,33 +43,28 @@ class PowerInnerJSONEncoder: Encoder {
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var container: JSONValue?
 
-    fileprivate func assertCanCreateContainer() {
-        precondition(self.container == nil)
-    }
     var paths: [Path] = []
     var value: Encodable
     var mappingKeys: [String: String]?
+    var json: JSON = .null
 
     init(value: Encodable) {
         self.value = value
     }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
-        assertCanCreateContainer()
         let container = EncodingKeyed<Key>(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return KeyedEncodingContainer(container)
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
-        assertCanCreateContainer()
         let container = EncodingUnkeyed(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
-        assertCanCreateContainer()
         let container = EncodingSingleValue(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container

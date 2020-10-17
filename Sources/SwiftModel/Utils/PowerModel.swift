@@ -239,4 +239,14 @@ public extension Encodable {
     func toJSON() {
         print(self)
     }
+
+    var count: Int? {
+        if self is Array<Encodable> {
+            guard let array = self as? Array<Encodable> else {
+                return nil
+            }
+            return array.count
+        }
+        return nil
+    }
 }
