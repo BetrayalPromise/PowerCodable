@@ -43,7 +43,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             """.data(using: String.Encoding.utf8) ?? Data()
             let decoder = PowerJSONDecoder()
             do {
-                let model: [Bool?] = try decoder.decode(type: [Bool?].self, from: data) 
+                let model: [Bool?] = try decoder.decode(type: [Bool?].self, from: data)
                 XCTAssertEqual(model[0], true)
                 XCTAssertEqual(model[1], false)
                 XCTAssertEqual(model[2], false)
@@ -1249,8 +1249,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         let decoder: PowerJSONDecoder = PowerJSONDecoder()
         do {
             let model: Root = try decoder.decode(type: Root.self, from: data)
-            XCTAssertNotNil(model)
-            XCTAssertNotNil(model.baidu)
+            XCTAssertEqual(model.baidu.absoluteString, "http://192.168.0.103")
             print(model.baidu)
         } catch {
             XCTAssertNil(error, error.localizedDescription)
@@ -1293,10 +1292,6 @@ final class SwiftModelEncodeTests: XCTestCase {
         do {
             let string: String = try encoder.encode(value: a, to: String.self)
             print(string)
-//            let data: Data = try encoder.encode(value: a, to: Data.self)
-//            print(data)
-//            let json: Any = try encoder.encode(value: a, to: JSONStructure.self)
-//            print(json)
             XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
@@ -1386,24 +1381,40 @@ final class SwiftModelEncodeTests: XCTestCase {
         let encoder = PowerJSONEncoder()
         let root = Root()
         do {
-            let data: String = try encoder.encode(value: root, to: String.self)
-            print(data)
-            XCTAssertNotEqual(data, "error")
+            let string: String = try encoder.encode(value: root, to: String.self)
+            print(string)
+            XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
         }
     }
 
     func testURL() {
-        struct Root :Codable {
-            let baidu: URL = URL(safe: "http://www.baidu.com")
-        }
-        let encoder: PowerJSONEncoder = PowerJSONEncoder()
         do {
-            let model: Any = try encoder.encode(value: Root(), to: JSONStructure.self)
-            print(model)
-        } catch {
-            XCTAssertNil(error, error.localizedDescription)
+            struct Root :Codable, MappingEncodingKeys {
+                let baidu: URL = URL(safe: "http://www.baidu.com")
+
+                static func modelEncodingKeys() -> [String: String] {
+                    return ["baidu": "google"]
+                }
+
+            }
+            let encoder: PowerJSONEncoder = PowerJSONEncoder()
+            do {
+                let model: Any = try encoder.encode(value: Root(), to: JSON.self)
+                print(model)
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
+        }
+        do {
+            let encoder: PowerJSONEncoder = PowerJSONEncoder()
+            do {
+                let model: Any = try encoder.encode(value: [URL(safe: "http://www.baidu.com"), URL(safe: "http://www.baidu.com")], to: JSON.self)
+                print(model)
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
         }
     }
 }

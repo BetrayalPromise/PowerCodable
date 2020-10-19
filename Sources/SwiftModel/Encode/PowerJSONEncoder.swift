@@ -59,7 +59,6 @@ class PowerInnerJSONEncoder: Encoder {
     init(value: Encodable, paths: [Path]) {
         self.value = value
         self.paths = paths
-        print("path: \"\(paths.jsonPath)\"")
     }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {

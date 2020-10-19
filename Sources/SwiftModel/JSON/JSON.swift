@@ -11,7 +11,7 @@ public enum JSON: JSONCodingSupport {
     case string(String)
     case integer(Int64)
     case double(Double)
-//    case unknow
+//    case unknow, `default`, error
 
     /// @dynamicMemberLookup
     subscript(dynamicMember member: String) -> JSON {
@@ -19,17 +19,19 @@ public enum JSON: JSONCodingSupport {
     }
 
     var dataWrapper: Data {
-        return Data()
+        do {
+            let string: String = try JSON.Serializer.serialize(self)
+            return string.data(using: String.Encoding.utf8) ?? Data()
+        } catch  {
+            print(error.localizedDescription)
+            return Data()
+        }
     }
 }
 
 extension JSON {
     static func defaultJSON() -> JSON {
         return JSON(stringLiteral: "2020/10/10-15:16:30")
-    }
-
-    static func replace() -> JSON {
-        return JSON(stringLiteral: "replace")
     }
 }
 

@@ -380,9 +380,43 @@ extension EncodingKeyed {
     }
 
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
-        let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
-        try value.encode(to: encoder)
-        self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
+        let keyValue: MappingEncodingKeys? = self.encoder.value as? MappingEncodingKeys
+        if value is URL {
+            guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
+            if keyValue.isHasValue {
+                let mapping: [String: String] = type(of: keyValue!).modelEncodingKeys()
+                if mapping.keys.contains(key.stringValue) {
+                    let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: mapping[key.stringValue] ?? "")])
+                    try url.absoluteString.encode(to: encoder)
+                    self.storage.append(key: mapping[key.stringValue] ?? "", value: encoder.container.jsonValue)
+                } else {
+                    let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
+                    try url.absoluteString.encode(to: encoder)
+                    self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
+                }
+            } else {
+                let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
+                try url.absoluteString.encode(to: encoder)
+                self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
+            }
+        } else {
+            if keyValue.isHasValue {
+                let mapping: [String: String] = type(of: keyValue!).modelEncodingKeys()
+                if mapping.keys.contains(key.stringValue) {
+                    let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: mapping[key.stringValue] ?? "")])
+                    try value.encode(to: encoder)
+                    self.storage.append(key: mapping[key.stringValue] ?? "", value: encoder.container.jsonValue)
+                } else {
+                    let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
+                    try value.encode(to: encoder)
+                    self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
+                }
+            } else {
+                let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
+                try value.encode(to: encoder)
+                self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
+            }
+        }
     }
 
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {

@@ -27,3 +27,12 @@ public extension Array where Element == Path {
         }
     }
 }
+
+extension Optional {
+    var isHasValue: Bool {
+        switch self {
+        case .none: return false
+        case .some(_): return true
+        }
+    }
+}
