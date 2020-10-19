@@ -404,7 +404,7 @@ extension EncodingKeyed {
         let keyValue: MappingEncodingKeysValues? = self.encoder.value as? MappingEncodingKeysValues
         if value is URL {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
-            if keyValue.isHasValue {
+            if keyValue.isSome {
                 let mapping: [String: String] = type(of: keyValue!).modelEncodingKeys()
                 if mapping.keys.contains(key.stringValue) {
                     let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: mapping[key.stringValue] ?? "")])
@@ -421,7 +421,7 @@ extension EncodingKeyed {
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
             }
         } else {
-            if keyValue.isHasValue {
+            if keyValue.isSome {
                 let mapping: [String: String] = type(of: keyValue!).modelEncodingKeys()
                 if mapping.keys.contains(key.stringValue) {
                     let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: mapping[key.stringValue] ?? "")])

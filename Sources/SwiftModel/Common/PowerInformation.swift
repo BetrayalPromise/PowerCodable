@@ -29,10 +29,14 @@ public extension Array where Element == Path {
 }
 
 extension Optional {
-    var isHasValue: Bool {
+    var isSome: Bool {
         switch self {
         case .none: return false
         case .some(_): return true
         }
+    }
+
+    var isNone: Bool {
+        return !self.isSome
     }
 }

@@ -1313,14 +1313,33 @@ final class SwiftModelDecodeTests: XCTestCase {
     }
 
     func testNull() {
+        //        {"hello": null}
         let data: Data = """
         {
-            "hello": null
+        
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
             struct Root: Codable {
                 let hello : String
+            }
+            let decoder = PowerJSONDecoder()
+            let json = try decoder.decode(type: Root.self, from: data)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testDate() {
+        let data: Data = """
+        {
+            "date": "1463241600"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        do {
+            struct Root: Codable {
+                let data : Date
             }
             let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: Root.self, from: data)
@@ -1465,9 +1484,8 @@ final class SwiftModelEncodeTests: XCTestCase {
 
     func testURL() {
         do {
-            struct Root :Codable, MappingEncodingKeysValues {
-                let baidu: URL = URL(safe: "http://www.baidu.com")
-
+            struct Root: Codable, MappingEncodingKeysValues {
+                let baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
                 static func modelEncodingKeys() -> [String: String] {
                     return ["baidu": "google"]
                 }
@@ -1484,7 +1502,7 @@ final class SwiftModelEncodeTests: XCTestCase {
         do {
             let encoder: PowerJSONEncoder = PowerJSONEncoder()
             do {
-                let model: Any = try encoder.encode(value: [URL(safe: "http://www.baidu.com"), URL(safe: "http://www.baidu.com")], to: JSON.self)
+                let model: Any = try encoder.encode(value: [URL.buildURL(string: "http://www.baidu.com"), URL.buildURL(string: "http://www.baidu.com")], to: JSON.self)
                 print(model)
             } catch {
                 XCTAssertNil(error, error.localizedDescription)
