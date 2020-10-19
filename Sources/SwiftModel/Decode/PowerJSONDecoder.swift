@@ -99,14 +99,24 @@ extension PowerInnerJSONDecoder {
 
 extension PowerInnerJSONDecoder: TypeConvertible {}
 
-// MARK: - Keyed解码
+// MARK: - Keyed和Unkeyed解码
 extension PowerInnerJSONDecoder {
+    /// 浮点型解码处理
+    /// - Parameters:
+    ///   - object: json对象
+    ///   - key: 解码key
+    /// - Throws: 处理异常
+    /// - Returns: 返回处理后的模型
     func unbox<T>(object: JSON, forKey key: CodingKey) throws -> T where T: BinaryFloatingPoint, T: LosslessStringConvertible {
         codingPath.append(key)
         defer { codingPath.removeLast() }
         return try unbox(object: object)
     }
 
+    /// 整型解码处理
+    /// - Parameter object: json对象
+    /// - Throws: 解码key
+    /// - Returns: 返回处理后的模型
     func unbox<T>(object: JSON) throws -> T where T: BinaryFloatingPoint, T: LosslessStringConvertible {
         switch object {
         case let .integer(number):
@@ -133,12 +143,23 @@ extension PowerInnerJSONDecoder {
         }
     }
 
+    /// 整型解码处理
+    /// - Parameters:
+    ///   - object: json对象
+    ///   - key: 解码key
+    /// - Throws: 处理异常
+    /// - Returns: 返回处理后的模型
     func unbox<T>(object: JSON, forKey key: CodingKey) throws -> T where T: FixedWidthInteger {
         codingPath.append(key)
         defer { codingPath.removeLast() }
         return try unbox(object: object)
     }
 
+    /// 整型解码处理
+    /// - Parameters:
+    ///   - object: json对象
+    /// - Throws: 处理异常
+    /// - Returns: 返回处理后的模型
     func unbox<T>(object: JSON) throws -> T where T: FixedWidthInteger {
         switch object {
         case let .integer(number):
@@ -159,24 +180,46 @@ extension PowerInnerJSONDecoder {
         }
     }
 
+    /// 布尔型解码处理
+    /// - Parameters:
+    ///   - object: json对象
+    ///   - key: 解码key
+    /// - Throws: 处理异常
+    /// - Returns: 返回处理后的模型
     func unbox(object: JSON, forKey key: CodingKey) throws -> Bool {
         codingPath.append(key)
         defer { codingPath.removeLast() }
         return try unbox(object: object)
     }
 
+    /// 字符串型解码处理
+    /// - Parameters:
+    ///   - object: json对象
+    ///   - key: 解码key
+    /// - Throws: 处理异常
+    /// - Returns: 返回处理后的模型
     func unbox(object: JSON, forKey key: CodingKey) throws -> String {
         codingPath.append(key)
         defer { codingPath.removeLast() }
         return try unbox(object: object)
     }
 
+    /// T型解码处理
+    /// - Parameters:
+    ///   - object: json对象
+    ///   - key: 解码key
+    /// - Throws: 处理异常
+    /// - Returns: 返回处理后的模型
     func unboxDecodable<T>(object: JSON, forKey key: CodingKey) throws -> T where T: Decodable {
         codingPath.append(key)
         defer { codingPath.removeLast() }
         return try unboxDecodable(object: object)
     }
 
+    /// 解码顶层处理
+    /// - Parameter object: json对象
+    /// - Throws: 处理异常
+    /// - Returns: 返回处理后的模型
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
         currentJSON = object
         guard let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type else {
@@ -194,6 +237,11 @@ extension PowerInnerJSONDecoder {
         return try T.init(from: self)
     }
 
+    /// 是否解码空
+    /// - Parameters:
+    ///   - object: json对象
+    ///   - key: 解码key
+    /// - Returns: 是否为空
     func unboxNil(object: JSON, forKey key: CodingKey) -> Bool {
         codingPath.append(key)
         defer { codingPath.removeLast() }
@@ -201,6 +249,9 @@ extension PowerInnerJSONDecoder {
         return unboxNil(object: object)
     }
 
+    /// 是否解码空
+    /// - Parameter object: json对象
+    /// - Returns: 是否为空
     func unboxNil(object: JSON) -> Bool {
         return object == .null
     }

@@ -93,18 +93,3 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
         return try decoder.unboxDecodable(object: json)
     }
 }
-
-//extension DecodingSingleValue {
-//    static func decode(json: JSON) throws -> URL {
-//        switch json {
-//        case .string(let string):
-//            do {
-//                return try URL.buildURL(string: string)
-//            } catch {
-//                throw error
-//            }
-//        default:
-//            throw CodingError.invalidTypeTransform()
-//        }
-//    }
-//}
