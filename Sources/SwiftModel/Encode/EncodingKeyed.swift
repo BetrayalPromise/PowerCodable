@@ -28,6 +28,27 @@ struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
 extension EncodingKeyed {
     mutating func encodeNil(forKey key: Key) throws {
         print("key: \(key.stringValue)")
+        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
+            self.encoder.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.encoder.paths.pop() }
+            self.storage.append(key: key.stringValue, value: container)
+            try container.encodeNil()
+            return
+        }
+        self.encoder.mappingKeys = type(of: keyValue).modelEncodingKeys()
+        let mapping = type(of: keyValue).modelEncodingKeys()
+        if mapping.keys.contains(key.stringValue) {
+            self.encoder.paths.push(value: Path.index(by: mapping[key.stringValue] ?? ""))
+            defer { self.encoder.paths.pop() }
+            self.storage.append(key: mapping[key.stringValue] ?? "", value: container)
+            try container.encodeNil()
+        } else {
+            self.encoder.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.encoder.paths.pop() }
+            self.storage.append(key: key.stringValue, value: container)
+            try container.encodeNil()
+        }
     }
 
     mutating func encode(_ value: Bool, forKey key: Key) throws {
@@ -417,6 +438,111 @@ extension EncodingKeyed {
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
             }
         }
+    }
+
+    mutating func encodeIfPresent(_ value: Bool?, forKey key: Key) throws {
+        guard let value: Bool = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: Int?, forKey key: Key) throws {
+        guard let value: Int = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: Int8?, forKey key: Key) throws {
+        guard let value: Int8 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: Int16?, forKey key: Key) throws {
+        guard let value: Int16 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: Int32?, forKey key: Key) throws {
+        guard let value: Int32 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: Int64?, forKey key: Key) throws {
+        guard let value: Int64 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: UInt?, forKey key: Key) throws {
+        guard let value: UInt = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: UInt8?, forKey key: Key) throws {
+        guard let value: UInt8 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: UInt16?, forKey key: Key) throws {
+        guard let value: UInt16 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: UInt32?, forKey key: Key) throws {
+        guard let value: UInt32 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: UInt64?, forKey key: Key) throws {
+        guard let value: UInt64 = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: Float?, forKey key: Key) throws {
+        guard let value: Float = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: Double?, forKey key: Key) throws {
+        guard let value: Double = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent(_ value: String?, forKey key: Key) throws {
+        guard let value: String = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
+    }
+
+    mutating func encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T : Encodable {
+        guard let value: T = value else {
+            try self.encodeNil(forKey: key); return
+        }
+        try self.encode(value, forKey: key)
     }
 
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {

@@ -1473,4 +1473,30 @@ final class SwiftModelEncodeTests: XCTestCase {
             }
         }
     }
+
+
+    func testNull() {
+        do {
+            struct Root: Codable {
+                var baidu: Bool? = nil
+            }
+            do {
+                let encoder: PowerJSONEncoder = PowerJSONEncoder()
+                let model = try encoder.encode(value: Root(), to: String.self)
+                print(model)
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
+        }
+        do {
+            do {
+                let encoder: PowerJSONEncoder = PowerJSONEncoder()
+                let root: [Bool?]? = [true, nil]
+                let model = try encoder.encode(value: root, to: String.self)
+                print(model)
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
+        }
+    }
 }
