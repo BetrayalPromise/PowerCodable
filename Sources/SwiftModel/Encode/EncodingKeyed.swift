@@ -380,11 +380,9 @@ extension EncodingKeyed {
     }
 
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
-        let encoder = PowerInnerJSONEncoder(value: value)
+        let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
         try value.encode(to: encoder)
-        print(self.encoder.jsonValue)
-        print(encoder.jsonValue)
-        self.storage.append(key: key.stringValue, value: encoder.container!)
+        self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
     }
 
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {

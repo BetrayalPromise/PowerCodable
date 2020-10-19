@@ -1293,10 +1293,10 @@ final class SwiftModelEncodeTests: XCTestCase {
         do {
             let string: String = try encoder.encode(value: a, to: String.self)
             print(string)
-            let data: Data = try encoder.encode(value: a, to: Data.self)
-            print(data)
-            let json: Any = try encoder.encode(value: a, to: JSONStructure.self)
-            print(json)
+//            let data: Data = try encoder.encode(value: a, to: Data.self)
+//            print(data)
+//            let json: Any = try encoder.encode(value: a, to: JSONStructure.self)
+//            print(json)
             XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
@@ -1328,7 +1328,47 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
     }
 
-    func testEncodeArray() {
+    func testArray0() {
+        let encoder = PowerJSONEncoder()
+        do {
+            let data: String = try encoder.encode(value: [true, false], to: String.self)
+            print(data)
+            XCTAssertNotEqual(data, "error")
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testArray1() {
+        let encoder = PowerJSONEncoder()
+        do {
+            let data: String = try encoder.encode(value: [[true, true], [false]], to: String.self)
+            print(data)
+            XCTAssertNotEqual(data, "error")
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testArray2() {
+        struct Root: Encodable {
+            var `as`: [[A]] = [[A(), A()]]
+        }
+        struct A: Encodable {
+            var bool = false
+        }
+
+        let encoder = PowerJSONEncoder()
+        do {
+            let data: String = try encoder.encode(value: Root(), to: String.self)
+            print(data)
+            XCTAssertNotEqual(data, "error")
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testArray() {
         struct Root: Encodable {
             var `as`: [A] = []
             var bs: [B] = [B()]

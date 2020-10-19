@@ -1,13 +1,15 @@
 import Foundation
 
-struct EncodingUnkeyed: UnkeyedEncodingContainer {
-    private static var storage: [JSONValue] = []
+class EncodingUnkeyed: UnkeyedEncodingContainer {
+    private var storage: [JSONValue] = []
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
 
     var count: Int {
-        return EncodingUnkeyed.storage.count
+        return self.storage.count
     }
+
+    var currentIndex: Int = 0
 
     var nestedCodingPath: [CodingKey] {
         return self.codingPath + [PowerJSONKey(intValue: self.count)!]
@@ -19,46 +21,53 @@ struct EncodingUnkeyed: UnkeyedEncodingContainer {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
-        EncodingUnkeyed.storage.removeAll()
+        self.storage.removeAll()
     }
 
-    mutating func encodeNil() throws {
+    func encodeNil() throws {
         var container = self.nestedSingleValueContainer()
         try container.encodeNil()
     }
 
-    mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
+    func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
         let container = EncodingUnkeyed(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
-        EncodingUnkeyed.storage.append(container)
+        self.storage.append(container)
         return container
     }
 
-    private mutating func nestedSingleValueContainer() -> SingleValueEncodingContainer {
+    private func nestedSingleValueContainer() -> SingleValueEncodingContainer {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
-        EncodingUnkeyed.storage.append(container)
+        self.storage.append(container)
         return container
     }
 
-    mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         let container = EncodingKeyed<NestedKey>(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
-        EncodingUnkeyed.storage.append(container)
+        self.storage.append(container)
         return KeyedEncodingContainer(container)
     }
 
-    mutating func encode<T>(_ value: T) throws where T : Encodable {
-        let encoder = PowerInnerJSONEncoder(value: value)
+    func encode<T>(_ value: T) throws where T : Encodable {
+        defer {
+            self.currentIndex += 1
+        }
+        let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: self.currentIndex)])
         try value.encode(to: encoder)
-        EncodingUnkeyed.storage.append(encoder)
+        self.storage.append(encoder.container.jsonValue)
     }
 
     func superEncoder() -> Encoder {
         fatalError("Unimplemented")
     }
+
+    deinit {
+//        print(self.jsonValue)
+    }
 }
 
 extension EncodingUnkeyed: JSONValue {
     var jsonValue: JSON {
-        let elements: [JSON] = EncodingUnkeyed.storage.map {
+        let elements: [JSON] = self.storage.map {
             return $0.jsonValue
         }
         return .array(elements)

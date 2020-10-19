@@ -13,7 +13,7 @@ public class PowerJSONEncoder {
     /// - Throws: 解析异常
     /// - Returns: 输出值
     func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {
-        let encoder = PowerInnerJSONEncoder(value: value)
+        let encoder = PowerInnerJSONEncoder(value: value, paths: [])
         try value.encode(to: encoder)
         let json = encoder.jsonValue
         let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
@@ -37,19 +37,29 @@ protocol JSONValue {
     var jsonValue: JSON { get }
 }
 
+struct DefaultJSONValue: JSONValue {
+    var jsonValue: JSON { return .null }
+}
+
+extension JSON: JSONValue {
+    var jsonValue: JSON {
+        return self
+    }
+}
+
 class PowerInnerJSONEncoder: Encoder {
     var codingPath: [CodingKey] = []
 
     var userInfo: [CodingUserInfoKey : Any] = [:]
-    var container: JSONValue?
-
+    var container: JSONValue = DefaultJSONValue()
     var paths: [Path] = []
-    var value: Encodable
+    let value: Encodable
     var mappingKeys: [String: String]?
-    var json: JSON = .null
 
-    init(value: Encodable) {
+    init(value: Encodable, paths: [Path]) {
         self.value = value
+        self.paths = paths
+        print("path: \"\(paths.jsonPath)\"")
     }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
@@ -75,6 +85,6 @@ extension PowerInnerJSONEncoder: TypeConvertible {}
 
 extension PowerInnerJSONEncoder: JSONValue {
     var jsonValue: JSON {
-        return container?.jsonValue ?? .null
+        return self.container.jsonValue
     }
 }
