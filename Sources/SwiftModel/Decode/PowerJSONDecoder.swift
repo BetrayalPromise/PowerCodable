@@ -226,6 +226,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toBool(path: self.paths.jsonPath, value: NSNull())
             case .useCustom(let delegate): return delegate.toBool(path: self.paths.jsonPath, value: NSNull())
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -266,6 +268,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toInt(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toInt(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -306,6 +310,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toInt8(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -346,6 +352,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toInt16(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -386,6 +394,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toInt32(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -426,6 +436,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toInt64(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -466,6 +478,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toUInt(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -506,6 +520,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toUInt8(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -546,6 +562,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toUInt16(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -586,6 +604,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toUInt32(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -626,6 +646,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toUInt64(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -666,6 +688,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toFloat(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -706,6 +730,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toDouble(path: self.paths.jsonPath, value: double)
             case .useCustom(let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: double)
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -746,6 +772,8 @@ extension PowerInnerJSONDecoder {
             case .useDefaultable, .none: return self.toString(path: self.paths.jsonPath, value: NSNull())
             case .useCustom(let delegate): return delegate.toString(path: self.paths.jsonPath, value: NSNull())
             }
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 }

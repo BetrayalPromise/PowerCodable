@@ -11,7 +11,7 @@ public enum JSON: JSONCodingSupport {
     case string(String)
     case integer(Int64)
     case double(Double)
-//    case unknow, `default`, error
+    case unknow // 给定一个unknow的初始值区别与null, 任何使用unknow的处理都会抛出异常
 
     /// @dynamicMemberLookup
     subscript(dynamicMember member: String) -> JSON {
@@ -63,6 +63,8 @@ public extension JSON {
             print("result: ---- string: \(string)")
         case .null:
             print("result: ---- null")
+        case .unknow:
+            print("unknow or default, error")
         }
     }
 }

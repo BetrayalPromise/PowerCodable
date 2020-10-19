@@ -184,6 +184,8 @@ extension PowerJSONEncoder {
                 try writeJSONArray(elements: array)
             case .object(let object):
                 try writeJSONObject(object: object.toJSONTuples())
+            case .unknow:
+                throw CodingError.unknowJSON()
             }
         }
 

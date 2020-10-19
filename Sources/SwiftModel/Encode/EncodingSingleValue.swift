@@ -47,14 +47,13 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         case .bool(let bool):
             self.storage = .bool(bool)
         case .string(let string):
-            if string == "2020/10/10-15:16:30" {
-
-            }
             self.storage = .string(string)
         case .integer(let integer):
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -85,6 +84,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -115,6 +116,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -145,6 +148,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -175,6 +180,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -205,6 +212,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -235,8 +244,9 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
-
     }
 
     func encode(_ value: Int32) throws {
@@ -266,6 +276,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -296,6 +308,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -326,6 +340,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -356,6 +372,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -386,6 +404,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -416,6 +436,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 
@@ -446,6 +468,8 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             self.storage = .integer(integer)
         case .double(let double):
             self.storage = .double(double)
+        case .unknow:
+            throw CodingError.unknowJSON()
         }
     }
 

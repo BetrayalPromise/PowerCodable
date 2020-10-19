@@ -8,7 +8,7 @@ public struct CodingError: Swift.Error {
         case decodingError = 3 // 解码错误
         case encodingError = 4 // 编码错误
         case invalidUTF8String = 6 // 无效的UTF8字符
-        case jsonObjectError = 7 // JSONObject错误
+        case jsonUnknow = 7 // 使用了JSON.unknow
     }
 
     /// 可能是系统抛出也可能是本工具抛出的错误
@@ -29,6 +29,11 @@ public struct CodingError: Swift.Error {
     /// 转化失败
     static func invalidTypeTransform() -> CodingError {
         return CodingError(errorCode: .invalidTypeTransform)
+    }
+
+    /// 无效的json
+    static func unknowJSON() -> CodingError {
+        return CodingError(errorCode: .jsonUnknow)
     }
 
     struct Decoding {
@@ -58,11 +63,6 @@ public struct CodingError: Swift.Error {
             debugPrint(value)
             return CodingError(errorCode: CodingError.ErrorCode.invalidUTF8String)
         }
-    }
-
-    /// JSON error转 CodingError
-    static func jsonErrorToCodingError(error: JSON.Error) -> CodingError {
-        return CodingError(error: error, errorCode: CodingError.ErrorCode.jsonObjectError)
     }
 }
 
