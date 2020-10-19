@@ -64,7 +64,7 @@ public extension JSON {
         case .null:
             print("result: ---- null")
         case .unknow:
-            print("unknow or default, error")
+            print("unknow")
         }
     }
 }

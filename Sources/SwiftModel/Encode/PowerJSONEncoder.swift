@@ -38,7 +38,7 @@ protocol JSONValue {
 }
 
 struct DefaultJSONValue: JSONValue {
-    var jsonValue: JSON { return .null }
+    var jsonValue: JSON { return .unknow }
 }
 
 extension JSON: JSONValue {

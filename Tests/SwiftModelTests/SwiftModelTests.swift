@@ -1311,6 +1311,24 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
+
+    func testNull() {
+        let data: Data = """
+        {
+            "hello": null
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        do {
+            struct Root: Codable {
+                let hello : String
+            }
+            let decoder = PowerJSONDecoder()
+            let json = try decoder.decode(type: Root.self, from: data)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
 }
 
 final class SwiftModelEncodeTests: XCTestCase {
