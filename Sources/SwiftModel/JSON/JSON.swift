@@ -1,6 +1,6 @@
 import Foundation
 
-/// MARK: JSON抽象
+/// MARK: JSON抽象 由于Swift中的JSON解析器给出的是Any类型 无法明确需要强转后再处理, 本工具使用JSON结构体明确可以看出JSON结构
 @dynamicMemberLookup
 public enum JSON: JSONCodingSupport {
     typealias Wrapper = JSON

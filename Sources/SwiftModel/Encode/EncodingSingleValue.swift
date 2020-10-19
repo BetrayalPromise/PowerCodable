@@ -28,7 +28,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Bool) throws {
         try checkCanEncode(value: nil)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .bool(value)
             return
         }
@@ -61,7 +61,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: String) throws {
         try checkCanEncode(value: nil)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .string(value)
             return
         }
@@ -91,7 +91,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Double) throws {
         try checkCanEncode(value: nil)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .double(value)
             return
         }
@@ -121,7 +121,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Float) throws {
         try checkCanEncode(value: nil)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .double(Double(value))
             return
         }
@@ -151,7 +151,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Int) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -181,7 +181,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Int8) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -211,7 +211,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Int16) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -242,7 +242,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Int32) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -272,7 +272,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: Int64) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -302,7 +302,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: UInt) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-                guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+                guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -332,7 +332,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: UInt8) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -362,7 +362,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: UInt16) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -392,7 +392,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: UInt32) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }
@@ -422,7 +422,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     func encode(_ value: UInt64) throws {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        guard let keyValue: MappingEncodingKeys = self.encoder.value as? MappingEncodingKeys else {
+        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value))
             return
         }

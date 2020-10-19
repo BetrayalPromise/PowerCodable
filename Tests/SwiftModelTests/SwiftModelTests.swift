@@ -1255,11 +1255,67 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertNil(error, error.localizedDescription)
         }
     }
+
+    func testType() {
+        /// Data -> Decodable
+        do {
+            let data: Data = """
+                [false, true]
+            """.data(using: String.Encoding.utf8) ?? Data()
+            let decoder = PowerJSONDecoder()
+            let json = try decoder.decode(type: [Bool].self, from: data)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+
+        /// String -> Decodable
+        do {
+            let string: String = """
+                [false, true]
+            """
+            let decoder = PowerJSONDecoder()
+            let json = try decoder.decode(type: [Bool].self, from: string)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+
+        /// JSON -> Decodable
+        do {
+            let root = JSON(array: [.bool(false), .bool(true)])
+            let decoder = PowerJSONDecoder()
+            let json = try decoder.decode(type: [Bool].self, from: root)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+
+        /// JSON -> Decodable
+        do {
+            let root = JSON(array: [.bool(false), .bool(true)])
+            let decoder = PowerJSONDecoder()
+            let json = try decoder.decode(type: [Bool].self, from: root)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+
+        /// JSONStructure -> Decodable
+        do {
+            let root = JSONStructure(json: [true, false])
+            let decoder = PowerJSONDecoder()
+            let json = try decoder.decode(type: [Bool].self, from: root)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
 }
 
 final class SwiftModelEncodeTests: XCTestCase {
     func testEncode()  {
-        struct A : Encodable, MappingEncodingKeys {
+        struct A : Encodable, MappingEncodingKeysValues {
             var bool: Bool = true
             var int: Int = 0
             var int8: Int8 = 1
@@ -1391,7 +1447,7 @@ final class SwiftModelEncodeTests: XCTestCase {
 
     func testURL() {
         do {
-            struct Root :Codable, MappingEncodingKeys {
+            struct Root :Codable, MappingEncodingKeysValues {
                 let baidu: URL = URL(safe: "http://www.baidu.com")
 
                 static func modelEncodingKeys() -> [String: String] {

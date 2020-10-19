@@ -313,8 +313,6 @@ extension TypeConvertible {
     func toString(path: JSONPath, value: JSONArray) -> String { return "[]" }
 }
 
-public typealias MappingCodingKeys = MappingDecodingKeys & MappingEncodingKeys
-
 public protocol MappingDecodingKeys {
     /// 可接受的keys
     static func modelDecodingKeys() -> [String: [String]]
@@ -326,13 +324,13 @@ extension MappingDecodingKeys {
     }
 }
 
-public protocol MappingEncodingKeys {
+public protocol MappingEncodingKeysValues {
     /// 可转变的keys
     static func modelEncodingKeys() -> [String: String]
     static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON
 }
 
-extension MappingEncodingKeys {
+extension MappingEncodingKeysValues {
     static func modelEncodingKeys() -> [String: String] {
         return ["": ""]
     }
@@ -375,8 +373,22 @@ public struct JSONStructure: JSONCodingSupport {
     }
     /// JSON实体
     let json: Any
+    let topLevelType: RootNodeType
 
     init(json: Any) {
         self.json = json
+        if ((json as? Array<Any>) != nil) {
+            self.topLevelType = .array
+        } else if ((json as? Dictionary<AnyHashable, Any>) != nil) {
+            self.topLevelType = .dictionary
+        } else {
+            self.topLevelType = .none
+        }
+    }
+
+    public enum RootNodeType {
+        case none
+        case array
+        case dictionary
     }
 }

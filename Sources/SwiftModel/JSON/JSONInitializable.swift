@@ -95,3 +95,13 @@ extension JSON: JSONConvertible {
         return self
     }
 }
+
+extension JSON {
+    init(array: [JSON]) {
+        self = .array(array)
+    }
+
+    init(dictionary: [String: JSON]) {
+        self = .object(dictionary)
+    }
+}
