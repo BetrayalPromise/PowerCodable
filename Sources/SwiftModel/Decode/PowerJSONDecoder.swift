@@ -6,6 +6,8 @@ public final class PowerJSONDecoder {
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     public var customNilToOptionalType: Bool = false
 
+//    public var dateDecodingStrategy: PowerJSONDecoder.DateDecodingStrategy = .deferredToDate
+
     /// 正向模型转化
     /// - Parameters:
     ///   - type: 顶层模型类型
@@ -215,6 +217,10 @@ extension PowerInnerJSONDecoder {
         if T.self == URL.self, object.isString$ {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
             return try container.decode(T.self)
+        } else if T.self == Date.self {
+//            let container = DecodingSingleValue(decoder: self, json: currentJSON)
+//            return try container.decode(T.self)
+            return try T.init(from: self)
         }
         return try T.init(from: self)
     }

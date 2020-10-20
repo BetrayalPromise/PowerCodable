@@ -1290,18 +1290,22 @@ final class SwiftModelDecodeTests: XCTestCase {
     func testDate() {
         let data: Data = """
         {
-            "date": "1463241600"
+            "date": "2020-06-27T16:09:00+00:00"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
             struct Root: Codable {
-                let data : Date
+                let date : Date
             }
             let json = try decoder.decode(type: Root.self, from: data)
             print(json)
         } catch {
             XCTFail("解析失败")
         }
+    }
+
+    func testData() {
+        
     }
 }
 

@@ -93,3 +93,37 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
         return try decoder.unboxDecodable(object: json)
     }
 }
+
+//extension DecodingSingleValue {
+//    func decode() throws -> Date {
+//        switch self.decoder.wrapper?.dateDecodingStrategy ?? .utc {
+//        case .deferredToDate, .utc: break
+//
+//        case .iso8601:
+//            if #available(OSX 10.12, *) {
+//                let formatter = ISO8601DateFormatter()
+//                formatter.timeZone = TimeZone(secondsFromGMT: 0)
+//                guard let string = self.json.string$, let date: Date = formatter.date(from: string) else {
+//                    throw CodingError.invalidTypeTransform()
+//                }
+//                return date
+//            } else {
+//                let formatter = DateFormatter()
+//                formatter.calendar = Calendar(identifier: .iso8601)
+//                formatter.locale = Locale(identifier: "en_US_POSIX")
+//                formatter.timeZone = TimeZone(secondsFromGMT: 0)
+//                formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+//                guard let string = self.json.string$, let date: Date = formatter.date(from: string) else {
+//                    return Date()
+//                }
+//                return date
+//            }
+//        case .secondsSince1970: break
+//        case .millisecondsSince1970: break
+//        case .formatted(let formatter): break
+//        case .custom(let closure): break
+//        case .gmt: break
+//        }
+//        return Date()
+//    }
+//}
