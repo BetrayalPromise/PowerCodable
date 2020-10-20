@@ -236,17 +236,13 @@ extension String {
 }
 
 public extension Encodable {
-    func toJSON() {
-        print(self)
-    }
-
-    var count: Int? {
-        if self is Array<Encodable> {
-            guard let array = self as? Array<Encodable> else {
-                return nil
-            }
-            return array.count
+    func toJSON() -> JSON? {
+        let encoder: JSONEncoder = JSONEncoder()
+        do {
+            let data = try encoder.encode(self)
+            return try JSON.Parser.parse(data)
+        } catch {
+            return nil
         }
-        return nil
     }
 }

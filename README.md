@@ -1,5 +1,7 @@
 # SwiftModel
-Analytical tools for swift
+
+Data <-> String <-> Any(Swift中的json结构, 本工具中以JSON结构体代替) <-> Model(Codable) 
+此四种类型数据任何方式转化
 
 #### 1.Bool解码处理
 ```Swift

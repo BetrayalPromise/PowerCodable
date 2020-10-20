@@ -126,7 +126,7 @@ extension JSON {
 
     public func get<T: JSONInitializable>(_ field: String, `default`: [T]? = nil) throws -> [T] {
         do {
-            guard let array = self[field].array else { throw JSON.Error.badField(field) }
+            guard let array = self[field].array$ else { throw JSON.Error.badField(field) }
             return try array.map(T.init(json:))
         } catch {
             guard let `default` = `default` else { throw error }
@@ -149,7 +149,7 @@ extension JSON {
     /// Returns the content matching the type of its destination
     public func get<T: RawRepresentable>(_ field: String, `default`: [T]? = nil) throws -> [T] where T.RawValue: JSONInitializable {
         do {
-            guard let array = self[field].array else { throw JSON.Error.badField(field) }
+            guard let array = self[field].array$ else { throw JSON.Error.badField(field) }
             return try array.map(T.init(json:))
         } catch {
             guard let `default` = `default` else { throw error }
@@ -182,7 +182,7 @@ extension JSON {
     /// Returns the content matching the type of its destination
     public func get<T: RawRepresentable & JSONInitializable>(_ field: String, `default`: [T]? = nil) throws -> [T] {
         do {
-            guard let array = self[field].array else { throw JSON.Error.badField(field) }
+            guard let array = self[field].array$ else { throw JSON.Error.badField(field) }
             return try array.map(T.init(json:))
         } catch {
             guard let `default` = `default` else { throw error }

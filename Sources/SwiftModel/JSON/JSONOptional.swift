@@ -12,7 +12,7 @@ extension Optional where Wrapped: JSONControllable {
     /// - Note: you will get better performance if you chain your subscript eg. ["key"]?.string This is because the compiler will retain more type information.
     public subscript(key: String) -> JSON? {
         get {
-            return object?[key]
+            return object$?[key]
         }
         set {
             guard var json = self as? JSON else { return }
@@ -45,37 +45,37 @@ extension Optional where Wrapped: JSONControllable {
 // MARK: - Standard typed accessors
 extension Optional where Wrapped: JSONControllable {
     /// Returns an array of `JSON` iff `Wrapped == JSON.array(_)`
-    public var array: [JSON]? {
+    public var array$: [JSON]? {
         guard let `self` = self as? JSON else { return nil }
         return self.array$
     }
 
     /// Returns a `JSON` object iff `Wrapped == JSON.object(_)`
-    public var object: [String: JSON]? {
+    public var object$: [String: JSON]? {
         guard let `self` = self as? JSON else { return nil }
         return self.object$
     }
 
     /// Returns a `String` iff `Wrapped == JSON.string(_)`
-    public var string: String? {
+    public var string$: String? {
         guard let `self` = self as? JSON else { return nil }
         return self.string$
     }
 
     /// Returns this enum's associated `Int64` iff `self == .integer(_)`, `nil` otherwise.
-    public var int64: Int64? {
+    public var integer$: Int64? {
         guard let `self` = self as? JSON else { return nil }
         return self.integer$
     }
 
     /// Returns a `Bool` iff `Wrapped == JSON.bool(_)`
-    public var bool: Bool? {
+    public var bool$: Bool? {
         guard let `self` = self as? JSON else { return nil }
         return self.bool$
     }
 
     /// Returns a `Double` iff `Wrapped == JSON.double(_)`
-    public var double: Double? {
+    public var double$: Double? {
         guard let `self` = self as? JSON else { return nil }
         return self.double$
     }
@@ -84,13 +84,13 @@ extension Optional where Wrapped: JSONControllable {
 // MARK: Non RFC JSON types
 extension Optional where Wrapped: JSONControllable {
     /// Returns an `Int` iff `Wrapped == JSON.integer(_)`
-    public var int: Int? {
+    public var int$: Int? {
         guard let `self` = self as? JSON else { return nil }
         return self.int$
     }
 
     /// Returns an `Float` iff `Wrapped == JSON.double(_)`
-    public var float: Float? {
+    public var float$: Float? {
         guard let `self` = self as? JSON else { return nil }
         return self.float$
     }
