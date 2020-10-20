@@ -335,7 +335,7 @@ extension MappingEncodingKeysValues {
         return ["": ""]
     }
     static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
-        return JSON.defaultJSON()
+        return JSON.unknow
     }
 }
 
@@ -391,4 +391,10 @@ public struct JSONStructure: JSONCodingSupport {
         case array
         case dictionary
     }
+}
+
+/// 类型不一致策略
+public enum ValueConvertTypeStrategy {
+    case useDefaultable
+    case useCustom(TypeConvertible)
 }

@@ -545,13 +545,11 @@ extension JSON.Parser {
 }
 
 // MARK: - Stdlib extensions
-
 extension UnsafeBufferPointer {
     var endAddress: UnsafePointer<Element> {
         return baseAddress!.advanced(by: endIndex)
     }
 }
-
 
 extension UTF8.CodeUnit {
     var isWhitespace: Bool {

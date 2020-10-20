@@ -300,7 +300,6 @@ extension JSON {
 
 
 // MARK: Non RFC JSON types
-
 extension JSON {
     /// Returns this enum's associated `Int64` value as an `Int` iff `self == .integer(_)`, `nil` otherwise.
     public var int: Int? {

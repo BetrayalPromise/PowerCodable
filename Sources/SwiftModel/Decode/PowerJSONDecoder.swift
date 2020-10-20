@@ -2,14 +2,14 @@ import Foundation
 
 public final class PowerJSONDecoder {
     /// 值转化策略
-    public var valueConvertTypeStrategy: PowerJSONDecoder.ValueConvertTypeStrategy = .useDefaultable
+    public var valueConvertTypeStrategy: ValueConvertTypeStrategy = .useDefaultable
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     public var customNilToOptionalType: Bool = false
 
     /// 正向模型转化
     /// - Parameters:
     ///   - type: 顶层模型类型
-    ///   - from: 数据源, 只支持[Data String JSONStructure(json结构)]
+    ///   - from: 数据源, 只支持[Data String JSONStructure(json结构) JSON]
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: JSONCodingSupport {
@@ -21,14 +21,6 @@ public final class PowerJSONDecoder {
         } catch {
             throw error
         }
-    }
-}
-
-public extension PowerJSONDecoder {
-    /// 类型不一致策略
-    enum ValueConvertTypeStrategy {
-        case useDefaultable
-        case useCustom(TypeConvertible)
     }
 }
 
@@ -222,18 +214,26 @@ extension PowerInnerJSONDecoder {
     /// - Returns: 返回处理后的模型
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
         currentJSON = object
-        guard let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type else {
-            if T.self == URL.self, object.isString {
-                let container = DecodingSingleValue(decoder: self, json: currentJSON)
-                return try container.decode(T.self)
-            }
-            return try T.init(from: self)
+//        guard let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type else {
+//            if T.self == URL.self, object.isString {
+//                let container = DecodingSingleValue(decoder: self, json: currentJSON)
+//                return try container.decode(T.self)
+//            }
+//            return try T.init(from: self)
+//        }
+//        if T.self == URL.self, object.isString {
+//            let container = DecodingSingleValue(decoder: self, json: currentJSON)
+//            return try container.decode(T.self)
+//        }
+//        self.mappingKeys = type.modelDecodingKeys()
+//        return try T.init(from: self)
+        if let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type {
+            self.mappingKeys = type.modelDecodingKeys()
         }
         if T.self == URL.self, object.isString {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
             return try container.decode(T.self)
         }
-        self.mappingKeys = type.modelDecodingKeys()
         return try T.init(from: self)
     }
 
@@ -245,7 +245,6 @@ extension PowerInnerJSONDecoder {
     func unboxNil(object: JSON, forKey key: CodingKey) -> Bool {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-
         return unboxNil(object: object)
     }
 

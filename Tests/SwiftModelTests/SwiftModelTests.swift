@@ -1370,15 +1370,12 @@ final class SwiftModelEncodeTests: XCTestCase {
             static func modelEncodingKeys() -> [String: String] {
                 return ["string": "hello"]
             }
-//            static func modelEncodingValues(path: JSONPath, ) -> String {
-
-//            }
-//            static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
-//                if path == "[:]bool" {
-//                    return JSON(integerLiteral: 3)
-//                }
-//                return value
-//            }
+            static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
+                if path == "[:]bool" {
+                    return JSON(integerLiteral: 3)
+                }
+                return value
+            }
         }
         let a = A()
         let encoder = PowerJSONEncoder()
@@ -1408,9 +1405,9 @@ final class SwiftModelEncodeTests: XCTestCase {
         let encoder = PowerJSONEncoder()
         let root = Root()
         do {
-            let data: String = try encoder.encode(value: root, to: String.self)
-            print(data)
-            XCTAssertNotEqual(data, "error")
+            let string: String = try encoder.encode(value: root, to: String.self)
+            print(string)
+            XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1419,9 +1416,9 @@ final class SwiftModelEncodeTests: XCTestCase {
     func testArray0() {
         let encoder = PowerJSONEncoder()
         do {
-            let data: String = try encoder.encode(value: [true, false], to: String.self)
-            print(data)
-            XCTAssertNotEqual(data, "error")
+            let string: String = try encoder.encode(value: [true, false], to: String.self)
+            print(string)
+            XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1430,9 +1427,9 @@ final class SwiftModelEncodeTests: XCTestCase {
     func testArray1() {
         let encoder = PowerJSONEncoder()
         do {
-            let data: String = try encoder.encode(value: [[true, true], [false]], to: String.self)
-            print(data)
-            XCTAssertNotEqual(data, "error")
+            let string: String = try encoder.encode(value: [[true, true], [false]], to: String.self)
+            print(string)
+            XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1448,9 +1445,9 @@ final class SwiftModelEncodeTests: XCTestCase {
 
         let encoder = PowerJSONEncoder()
         do {
-            let data: String = try encoder.encode(value: Root(), to: String.self)
-            print(data)
-            XCTAssertNotEqual(data, "error")
+            let string: String = try encoder.encode(value: Root(), to: String.self)
+            print(string)
+            XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1489,7 +1486,6 @@ final class SwiftModelEncodeTests: XCTestCase {
                 static func modelEncodingKeys() -> [String: String] {
                     return ["baidu": "google"]
                 }
-
             }
             let encoder: PowerJSONEncoder = PowerJSONEncoder()
             do {

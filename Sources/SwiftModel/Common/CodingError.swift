@@ -54,11 +54,6 @@ public struct CodingError: Swift.Error {
     }
 
     struct Encoding {
-        static func invalidValue(value: Any?, codingPath: [CodingKey]) -> CodingError {
-            let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Attempt to encode value through single value container when previously value already encoded.")
-            return CodingError(error: EncodingError.invalidValue(value as Any, context), errorCode: .encodingError)
-        }
-
         static func invalidUTF8String(value: String) -> CodingError {
             debugPrint(value)
             return CodingError(errorCode: CodingError.ErrorCode.invalidUTF8String)

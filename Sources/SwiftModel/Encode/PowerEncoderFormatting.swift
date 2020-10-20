@@ -176,10 +176,10 @@ extension PowerJSONEncoder {
                 try writer.write("\"\(value)\"")
             case .null:
                 try writer.write("null")
-                //            case .date(let value):
-                //                try writer.write("\(value)")
-                //            case .data(let data):
-            //                try writeData(data)
+//            case .date(let value):
+//                try writer.write("\(value)")
+//            case .data(let data):
+//                try writeData(data)
             case .array(let array):
                 try writeJSONArray(elements: array)
             case .object(let object):

@@ -3,7 +3,6 @@ import Foundation
 /// MARK: JSON抽象 由于Swift中的JSON解析器给出的是Any类型 无法明确需要强转后再处理, 本工具使用JSON结构体明确可以看出JSON结构
 @dynamicMemberLookup
 public enum JSON: JSONCodingSupport {
-    typealias Wrapper = JSON
     indirect case object([String: JSON])
     indirect case array([JSON])
     case null
@@ -18,6 +17,8 @@ public enum JSON: JSONCodingSupport {
         return (try? self.get(member)) ?? .null
     }
 
+    typealias Wrapper = JSON
+
     var dataWrapper: Data {
         do {
             let string: String = try JSON.Serializer.serialize(self)
@@ -26,12 +27,6 @@ public enum JSON: JSONCodingSupport {
             print(error.localizedDescription)
             return Data()
         }
-    }
-}
-
-extension JSON {
-    static func defaultJSON() -> JSON {
-        return JSON(stringLiteral: "2020/10/10-15:16:30")
     }
 }
 
@@ -80,7 +75,63 @@ extension JSON: Equatable {
         case (.string(let l), .string(let r)): return l == r
         case (.double(let l), .double(let r)): return l == r
         case (.integer(let l), .integer(let r)): return l == r
-        default: return false
+        case (.unknow, .unknow): return true
+        case (.unknow, .object(_)): return false
+        case (.unknow, .array(_)): return false
+        case (.unknow, .null): return false
+        case (.unknow, .bool(_)): return false
+        case (.unknow, .string(_)): return false
+        case (.unknow, .integer(_)): return false
+        case (.unknow, .double(_)): return false
+        case (.integer(_), .object(_)): return false
+        case (.integer(_), .array(_)): return false
+        case (.integer(_), .null): return false
+        case (.integer(_), .bool(_)): return false
+        case (.integer(_), .string(_)): return false
+        case (.integer(_), .double(_)): return false
+        case (.integer(_), .unknow): return false
+        case (.double(_), .object(_)): return false
+        case (.double(_), .array(_)): return false
+        case (.double(_), .null): return false
+        case (.double(_), .bool(_)): return false
+        case (.double(_), .string(_)): return false
+        case (.double(_), .integer(_)): return false
+        case (.double(_), .unknow): return false
+        case (.string(_), .object(_)): return false
+        case (.string(_), .array(_)): return false
+        case (.string(_), .null): return false
+        case (.string(_), .bool(_)): return false
+        case (.string(_), .integer(_)): return false
+        case (.string(_), .double(_)): return false
+        case (.string(_), .unknow): return false
+        case (.bool(_), .object(_)): return false
+        case (.bool(_), .array(_)): return false
+        case (.bool(_), .null): return false
+        case (.bool(_), .string(_)): return false
+        case (.bool(_), .integer(_)): return false
+        case (.bool(_), .double(_)): return false
+        case (.bool(_), .unknow): return false
+        case (.null, .object(_)): return false
+        case (.null, .array(_)): return false
+        case (.null, .bool(_)): return false
+        case (.null, .string(_)): return false
+        case (.null, .integer(_)): return false
+        case (.null, .double(_)): return false
+        case (.null, .unknow): return false
+        case (.array(_), .object(_)): return false
+        case (.array(_), .null): return false
+        case (.array(_), .bool(_)): return false
+        case (.array(_), .string(_)): return false
+        case (.array(_), .integer(_)): return false
+        case (.array(_), .double(_)): return false
+        case (.array(_), .unknow): return false
+        case (.object(_), .array(_)): return false
+        case (.object(_), .null): return false
+        case (.object(_), .bool(_)): return false
+        case (.object(_), .string(_)): return false
+        case (.object(_), .integer(_)): return false
+        case (.object(_), .double(_)): return false
+        case (.object(_), .unknow): return false
         }
     }
 }
