@@ -1215,6 +1215,8 @@ final class SwiftModelDecodeTests: XCTestCase {
             """.data(using: String.Encoding.utf8) ?? Data()
             let json = try decoder.decode(type: [Bool].self, from: data)
             print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
         } catch {
             XCTFail("解析失败")
         }
@@ -1226,6 +1228,8 @@ final class SwiftModelDecodeTests: XCTestCase {
             """
             let json = try decoder.decode(type: [Bool].self, from: string)
             print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
         } catch {
             XCTFail("解析失败")
         }
@@ -1235,6 +1239,8 @@ final class SwiftModelDecodeTests: XCTestCase {
             let root = JSON(array: [.bool(false), .bool(true)])
             let json = try decoder.decode(type: [Bool].self, from: root)
             print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
         } catch {
             XCTFail("解析失败")
         }
@@ -1244,6 +1250,8 @@ final class SwiftModelDecodeTests: XCTestCase {
             let root = JSON(array: [.bool(false), .bool(true)])
             let json = try decoder.decode(type: [Bool].self, from: root)
             print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
         } catch {
             XCTFail("解析失败")
         }
@@ -1252,6 +1260,8 @@ final class SwiftModelDecodeTests: XCTestCase {
         do {
             let root = JSONStructure(json: [true, false])
             let json = try decoder.decode(type: [Bool].self, from: root)
+            XCTAssertEqual(json[0], true)
+            XCTAssertEqual(json[1], false)
             print(json)
         } catch {
             XCTFail("解析失败")
@@ -1325,8 +1335,8 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
         let a = A()
         do {
-            let string: String = try encoder.encode(value: a, to: String.self)
-            print(string)
+            let string: JSON = try encoder.encode(value: a, to: JSON.self)
+//            print(string.bool)
             XCTAssertNotEqual(string, "error")
         } catch  {
             XCTFail("解析失败")
