@@ -360,7 +360,7 @@ extension String: JSONCodingSupport {
     }
 }
 
-/// 对内存中的json结构对象进行描述 用它指代json
+/// 对内存中的json结构对象进行描述 用它包裹真实的son
 public struct JSONStructure: JSONCodingSupport {
     public typealias Wrapper = Any
 

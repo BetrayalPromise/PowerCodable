@@ -24,23 +24,6 @@ public final class PowerJSONDecoder {
     }
 }
 
-//extension PowerJSONDecoder {
-//    public enum DateDecodingStrategy {
-//        /// Defer to `Date` for decoding. This is the default strategy.
-//        case deferredToDate
-//        /// Decode the `Date` as a UNIX timestamp from a JSON number.
-//        case secondsSince1970
-//        /// Decode the `Date` as UNIX millisecond timestamp from a JSON number.
-//        case millisecondsSince1970
-//        /// Decode the `Date` as an ISO-8601-formatted string (in RFC 3339 format).
-//        case iso8601
-//        /// Decode the `Date` as a string parsed by the given formatter.
-//        case formatted(DateFormatter)
-//        /// Decode the `Date` as a custom value decoded by the given closure.
-//        case custom((Decoder) throws -> Date)
-//    }
-//}
-
 final class PowerInnerJSONDecoder: Decoder {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey : Any] = [:]
@@ -72,18 +55,17 @@ extension PowerInnerJSONDecoder {
 }
 
 extension PowerInnerJSONDecoder {
-    func container<Key>(keyedBy type: Key.Type, wrapping object: JSON) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
+    func container<Key>(keyedBy type: Key.Type, wrapping object: JSON) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
         guard case let .object(unwrappedObject) = object else {
             throw CodingError.Decoding.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
         }
-
-        let keyedContainer = DecodingKeyed<Key>(decoder: self, json: unwrappedObject)
-        return KeyedDecodingContainer(keyedContainer)
+        let container = DecodingKeyed<Key>(decoder: self, json: unwrappedObject)
+        return KeyedDecodingContainer(container)
     }
 
     func unkeyedContainer(wrapping object: JSON) throws -> UnkeyedDecodingContainer {
         guard case let .array(array) = object else {
-            throw CodingError.Decoding.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
+            throw CodingError.Decoding.typeMismatch(type: [JSON].self, codingPath: self.codingPath, reality: object)
         }
         return DecodingUnkeyed(decoder: self, json: array)
     }

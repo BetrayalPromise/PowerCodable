@@ -2,608 +2,581 @@ import XCTest
 @testable import SwiftModel
 
 final class SwiftModelDecodeTests: XCTestCase {
+    let decoder = PowerJSONDecoder()
     func testBool() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}, "", "dfadfad"]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}, "", "dfadfad"]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Bool] = try decoder.decode(type: [Bool].self, from: data) 
-                XCTAssertEqual(model[0], true)
-                XCTAssertEqual(model[1], false)
-                XCTAssertEqual(model[2], false)
-                XCTAssertEqual(model[3], true)
-                XCTAssertEqual(model[4], false)
-                XCTAssertEqual(model[5], false)
-                XCTAssertEqual(model[6], false)
-                XCTAssertEqual(model[7], false)
-                XCTAssertEqual(model[8], false)
-                XCTAssertEqual(model[9], false)
-                XCTAssertEqual(model[10], false)
-                XCTAssertEqual(model[11], false)
-                XCTAssertEqual(model[12], false)
-                XCTAssertEqual(model[13], false)
-                XCTAssertEqual(model[14], false)
-                XCTAssertEqual(model[15], false)
-                XCTAssertEqual(model[16], false)
-                XCTAssertEqual(model[17], false)
-                XCTAssertEqual(model[18], false)
-                XCTAssertEqual(model[19], false)
-                XCTAssertEqual(model[20], false)
-                XCTAssertEqual(model[22], false)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Bool] = try decoder.decode(type: [Bool].self, from: data)
+            XCTAssertEqual(model[0], true)
+            XCTAssertEqual(model[1], false)
+            XCTAssertEqual(model[2], false)
+            XCTAssertEqual(model[3], true)
+            XCTAssertEqual(model[4], false)
+            XCTAssertEqual(model[5], false)
+            XCTAssertEqual(model[6], false)
+            XCTAssertEqual(model[7], false)
+            XCTAssertEqual(model[8], false)
+            XCTAssertEqual(model[9], false)
+            XCTAssertEqual(model[10], false)
+            XCTAssertEqual(model[11], false)
+            XCTAssertEqual(model[12], false)
+            XCTAssertEqual(model[13], false)
+            XCTAssertEqual(model[14], false)
+            XCTAssertEqual(model[15], false)
+            XCTAssertEqual(model[16], false)
+            XCTAssertEqual(model[17], false)
+            XCTAssertEqual(model[18], false)
+            XCTAssertEqual(model[19], false)
+            XCTAssertEqual(model[20], false)
+            XCTAssertEqual(model[22], false)
+        } catch {
+            XCTFail("error")
         }
+    }
 
+    func testOptionalBool() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Bool?] = try decoder.decode(type: [Bool?].self, from: data)
-                XCTAssertEqual(model[0], true)
-                XCTAssertEqual(model[1], false)
-                XCTAssertEqual(model[2], false)
-                XCTAssertEqual(model[3], true)
-                XCTAssertEqual(model[4], false)
-                XCTAssertEqual(model[5], false)
-                XCTAssertEqual(model[6], false)
-                XCTAssertEqual(model[7], false)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], false)
-                XCTAssertEqual(model[10], false)
-                XCTAssertEqual(model[11], false)
-                XCTAssertEqual(model[12], false)
-                XCTAssertEqual(model[13], false)
-                XCTAssertEqual(model[14], false)
-                XCTAssertEqual(model[15], false)
-                XCTAssertEqual(model[16], false)
-                XCTAssertEqual(model[17], false)
-                XCTAssertEqual(model[18], false)
-                XCTAssertEqual(model[19], false)
-                XCTAssertEqual(model[20], false)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Bool?] = try decoder.decode(type: [Bool?].self, from: data)
+            XCTAssertEqual(model[0], true)
+            XCTAssertEqual(model[1], false)
+            XCTAssertEqual(model[2], false)
+            XCTAssertEqual(model[3], true)
+            XCTAssertEqual(model[4], false)
+            XCTAssertEqual(model[5], false)
+            XCTAssertEqual(model[6], false)
+            XCTAssertEqual(model[7], false)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], false)
+            XCTAssertEqual(model[10], false)
+            XCTAssertEqual(model[11], false)
+            XCTAssertEqual(model[12], false)
+            XCTAssertEqual(model[13], false)
+            XCTAssertEqual(model[14], false)
+            XCTAssertEqual(model[15], false)
+            XCTAssertEqual(model[16], false)
+            XCTAssertEqual(model[17], false)
+            XCTAssertEqual(model[18], false)
+            XCTAssertEqual(model[19], false)
+            XCTAssertEqual(model[20], false)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testInt() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int] = try decoder.decode(type: [Int].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int] = try decoder.decode(type: [Int].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalInt() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int?] = try decoder.decode(type: [Int?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int?] = try decoder.decode(type: [Int?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testInt8() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int8] = try decoder.decode(type: [Int8].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int8] = try decoder.decode(type: [Int8].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalInt8() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int8?] = try decoder.decode(type: [Int8?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int8?] = try decoder.decode(type: [Int8?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testInt16() {
+        let data: Data = #"""
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """#.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = #"""
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """#.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int16] = try decoder.decode(type: [Int16].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int16] = try decoder.decode(type: [Int16].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalInt16() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int16?] = try decoder.decode(type: [Int16?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int16?] = try decoder.decode(type: [Int16?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testInt32() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int32] = try decoder.decode(type: [Int32].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int32] = try decoder.decode(type: [Int32].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalInt32() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int32?] = try decoder.decode(type: [Int32?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int32?] = try decoder.decode(type: [Int32?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testInt64() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int64] = try decoder.decode(type: [Int64].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int64] = try decoder.decode(type: [Int64].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalInt64() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Int64?] = try decoder.decode(type: [Int64?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], -6)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Int64?] = try decoder.decode(type: [Int64?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], -6)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testUInt() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt] = try decoder.decode(type: [UInt].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
+            let model: [UInt] = try decoder.decode(type: [UInt].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail(error.localizedDescription)
         }
+    }
+
+    func testOptionalUInt() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt?] = try decoder.decode(type: [UInt?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt?] = try decoder.decode(type: [UInt?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testUInt8() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt8] = try decoder.decode(type: [UInt8].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt8] = try decoder.decode(type: [UInt8].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalUInt8() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt8?] = try decoder.decode(type: [UInt8?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt8?] = try decoder.decode(type: [UInt8?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testUInt16() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt16] = try decoder.decode(type: [UInt16].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt16] = try decoder.decode(type: [UInt16].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalUInt16() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt16?] = try decoder.decode(type: [UInt16?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt16?] = try decoder.decode(type: [UInt16?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
@@ -612,7 +585,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             do {
                 let model: [UInt32] = try decoder.decode(type: [UInt32].self, from: data) 
                 XCTAssertEqual(model[0], 1)
@@ -640,171 +612,165 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTFail("error")
             }
         }
+    }
+
+    func testOptionalUInt32() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt32?] = try decoder.decode(type: [UInt32?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt32?] = try decoder.decode(type: [UInt32?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testUInt64() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt64] = try decoder.decode(type: [UInt64].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt64] = try decoder.decode(type: [UInt64].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalUInt64() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [UInt64?] = try decoder.decode(type: [UInt64?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4)
-                XCTAssertEqual(model[7], 0)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [UInt64?] = try decoder.decode(type: [UInt64?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4)
+            XCTAssertEqual(model[7], 0)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
     func testFloat() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Float] = try decoder.decode(type: [Float].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4.5)
-                XCTAssertEqual(model[7], -6.7)
-                XCTAssertEqual(model[8], 0)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Float] = try decoder.decode(type: [Float].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4.5)
+            XCTAssertEqual(model[7], -6.7)
+            XCTAssertEqual(model[8], 0)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
+    }
+
+    func testOptionalFloat() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Float?] = try decoder.decode(type: [Float?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4.5)
-                XCTAssertEqual(model[7], -6.7)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Float?] = try decoder.decode(type: [Float?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4.5)
+            XCTAssertEqual(model[7], -6.7)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
@@ -813,7 +779,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             do {
                 let model: [Double] = try decoder.decode(type: [Double].self, from: data) 
                 XCTAssertEqual(model[0], 1)
@@ -841,37 +806,37 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTFail("error")
             }
         }
+    }
+
+    func testOptionalDouble() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [Double?] = try decoder.decode(type: [Double?].self, from: data) 
-                XCTAssertEqual(model[0], 1)
-                XCTAssertEqual(model[1], 0)
-                XCTAssertEqual(model[2], 0)
-                XCTAssertEqual(model[3], 1)
-                XCTAssertEqual(model[4], 2)
-                XCTAssertEqual(model[5], 3)
-                XCTAssertEqual(model[6], 4.5)
-                XCTAssertEqual(model[7], -6.7)
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], 0)
-                XCTAssertEqual(model[10], 0)
-                XCTAssertEqual(model[11], 0)
-                XCTAssertEqual(model[12], 0)
-                XCTAssertEqual(model[13], 0)
-                XCTAssertEqual(model[14], 0)
-                XCTAssertEqual(model[15], 0)
-                XCTAssertEqual(model[16], 0)
-                XCTAssertEqual(model[17], 0)
-                XCTAssertEqual(model[18], 0)
-                XCTAssertEqual(model[19], 0)
-                XCTAssertEqual(model[20], 0)
-            } catch {
-                XCTFail("error")
-            }
+            let model: [Double?] = try decoder.decode(type: [Double?].self, from: data)
+            XCTAssertEqual(model[0], 1)
+            XCTAssertEqual(model[1], 0)
+            XCTAssertEqual(model[2], 0)
+            XCTAssertEqual(model[3], 1)
+            XCTAssertEqual(model[4], 2)
+            XCTAssertEqual(model[5], 3)
+            XCTAssertEqual(model[6], 4.5)
+            XCTAssertEqual(model[7], -6.7)
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], 0)
+            XCTAssertEqual(model[10], 0)
+            XCTAssertEqual(model[11], 0)
+            XCTAssertEqual(model[12], 0)
+            XCTAssertEqual(model[13], 0)
+            XCTAssertEqual(model[14], 0)
+            XCTAssertEqual(model[15], 0)
+            XCTAssertEqual(model[16], 0)
+            XCTAssertEqual(model[17], 0)
+            XCTAssertEqual(model[18], 0)
+            XCTAssertEqual(model[19], 0)
+            XCTAssertEqual(model[20], 0)
+        } catch {
+            XCTFail("error")
         }
     }
 
@@ -880,7 +845,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             do {
                 let model: [String] = try decoder.decode(type: [String].self, from: data) 
                 XCTAssertEqual(model[0], "true")
@@ -908,37 +872,38 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTFail("error")
             }
         }
+
+    }
+
+    func testOptionalString() {
+        let data: Data = """
+            [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
+        """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            let data: Data = """
-                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-            do {
-                let model: [String?] = try decoder.decode(type: [String?].self, from: data) 
-                XCTAssertEqual(model[0], "true")
-                XCTAssertEqual(model[1], "false")
-                XCTAssertEqual(model[2], "0")
-                XCTAssertEqual(model[3], "1")
-                XCTAssertEqual(model[4], "2")
-                XCTAssertEqual(model[5], "3")
-                XCTAssertEqual(model[6], "4.5")
-                XCTAssertEqual(model[7], "-6.7")
-                XCTAssertEqual(model[8], nil)
-                XCTAssertEqual(model[9], "[]")
-                XCTAssertEqual(model[10], "[]")
-                XCTAssertEqual(model[11], "[]")
-                XCTAssertEqual(model[12], "[]")
-                XCTAssertEqual(model[13], "[]")
-                XCTAssertEqual(model[14], "[]")
-                XCTAssertEqual(model[15], "[]")
-                XCTAssertEqual(model[16], "[]")
-                XCTAssertEqual(model[17], "[]")
-                XCTAssertEqual(model[18], "[]")
-                XCTAssertEqual(model[19], "[:]")
-                XCTAssertEqual(model[20], "[:]")
-            } catch {
-                XCTFail("error")
-            }
+            let model: [String?] = try decoder.decode(type: [String?].self, from: data)
+            XCTAssertEqual(model[0], "true")
+            XCTAssertEqual(model[1], "false")
+            XCTAssertEqual(model[2], "0")
+            XCTAssertEqual(model[3], "1")
+            XCTAssertEqual(model[4], "2")
+            XCTAssertEqual(model[5], "3")
+            XCTAssertEqual(model[6], "4.5")
+            XCTAssertEqual(model[7], "-6.7")
+            XCTAssertEqual(model[8], nil)
+            XCTAssertEqual(model[9], "[]")
+            XCTAssertEqual(model[10], "[]")
+            XCTAssertEqual(model[11], "[]")
+            XCTAssertEqual(model[12], "[]")
+            XCTAssertEqual(model[13], "[]")
+            XCTAssertEqual(model[14], "[]")
+            XCTAssertEqual(model[15], "[]")
+            XCTAssertEqual(model[16], "[]")
+            XCTAssertEqual(model[17], "[]")
+            XCTAssertEqual(model[18], "[]")
+            XCTAssertEqual(model[19], "[:]")
+            XCTAssertEqual(model[20], "[:]")
+        } catch {
+            XCTFail("error")
         }
     }
 
@@ -947,7 +912,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 []
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             do {
                 let model = try decoder.decode(type: [Bool].self, from: data) 
                 XCTAssertEqual(model.count, 0)
@@ -963,7 +927,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"info": [], "abc": ""}
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             do {
                 let model = try decoder.decode(type: Root.self, from: data)
                 XCTAssertEqual(model.info?.count, 0)
@@ -985,7 +948,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"a": true, "b": ""}
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             do {
                 let model = try decoder.decode(type: Root.self, from: data)
                 XCTAssertEqual(model.info, true)
@@ -998,8 +960,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"key": {"key": {"key": "key"}}}
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
-
             class Root: Codable {
                 var key: Key0?
                 enum CodingKeys: String, CodingKey {
@@ -1037,7 +997,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             var info: String? = nil
             var data: String? = nil
         }
-        let decoder: PowerJSONDecoder = PowerJSONDecoder()
         let model = try? decoder.decode(type: Information.self, from: data)
         XCTAssertEqual(model?.name, "10JQKA")
         XCTAssertEqual(model?.info, nil)
@@ -1061,7 +1020,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"a": [{"gender": 0}, {"gender": 1}, {"gender": 2}]}
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             do {
                 let model: A? = try decoder.decode(type: A.self, from: data)
                 XCTAssert((model?.a[0]?.gender ?? Gender.unknow) == Gender.male)
@@ -1100,7 +1058,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder: PowerJSONDecoder = PowerJSONDecoder()
             decoder.valueConvertTypeStrategy = .useCustom(Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
@@ -1132,7 +1089,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder: PowerJSONDecoder = PowerJSONDecoder()
             decoder.valueConvertTypeStrategy = .useCustom(Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
@@ -1175,8 +1131,6 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-
-            let decoder: PowerJSONDecoder = PowerJSONDecoder()
             decoder.valueConvertTypeStrategy = .useCustom(Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
@@ -1222,8 +1176,6 @@ final class SwiftModelDecodeTests: XCTestCase {
                 }
                 let a: [a]
             }
-
-            let decoder: PowerJSONDecoder = PowerJSONDecoder()
             do {
                 let model: Root? = try decoder.decode(type: Root.self, from: data)
                 XCTAssertEqual(model?.a[0].b[0].c[0].d[0].c, "over")
@@ -1246,7 +1198,6 @@ final class SwiftModelDecodeTests: XCTestCase {
                 return ["baidu": ["baidubaibaidu", "baidu"]]
             }
         }
-        let decoder: PowerJSONDecoder = PowerJSONDecoder()
         do {
             let model: Root = try decoder.decode(type: Root.self, from: data)
             XCTAssertEqual(model.baidu.absoluteString, "http://192.168.0.103")
@@ -1262,7 +1213,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 [false, true]
             """.data(using: String.Encoding.utf8) ?? Data()
-            let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: [Bool].self, from: data)
             print(json)
         } catch {
@@ -1274,7 +1224,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             let string: String = """
                 [false, true]
             """
-            let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: [Bool].self, from: string)
             print(json)
         } catch {
@@ -1284,7 +1233,6 @@ final class SwiftModelDecodeTests: XCTestCase {
         /// JSON -> Decodable
         do {
             let root = JSON(array: [.bool(false), .bool(true)])
-            let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: [Bool].self, from: root)
             print(json)
         } catch {
@@ -1294,7 +1242,6 @@ final class SwiftModelDecodeTests: XCTestCase {
         /// JSON -> Decodable
         do {
             let root = JSON(array: [.bool(false), .bool(true)])
-            let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: [Bool].self, from: root)
             print(json)
         } catch {
@@ -1304,7 +1251,6 @@ final class SwiftModelDecodeTests: XCTestCase {
         /// JSONStructure -> Decodable
         do {
             let root = JSONStructure(json: [true, false])
-            let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: [Bool].self, from: root)
             print(json)
         } catch {
@@ -1323,9 +1269,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             struct Root: Codable {
                 let hello : String
             }
-            let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: Root.self, from: data)
             print(json)
+            XCTAssertEqual(json.hello, "[:]")
         } catch {
             XCTFail("解析失败")
         }
@@ -1341,7 +1287,6 @@ final class SwiftModelDecodeTests: XCTestCase {
             struct Root: Codable {
                 let data : Date
             }
-            let decoder = PowerJSONDecoder()
             let json = try decoder.decode(type: Root.self, from: data)
             print(json)
         } catch {
@@ -1351,6 +1296,7 @@ final class SwiftModelDecodeTests: XCTestCase {
 }
 
 final class SwiftModelEncodeTests: XCTestCase {
+    let encoder = PowerJSONEncoder()
     func testEncode()  {
         struct A : Encodable, MappingEncodingKeysValues {
             var bool: Bool = true
@@ -1378,7 +1324,6 @@ final class SwiftModelEncodeTests: XCTestCase {
             }
         }
         let a = A()
-        let encoder = PowerJSONEncoder()
         do {
             let string: String = try encoder.encode(value: a, to: String.self)
             print(string)
@@ -1402,7 +1347,6 @@ final class SwiftModelEncodeTests: XCTestCase {
         struct C: Encodable {
             var string = "string"
         }
-        let encoder = PowerJSONEncoder()
         let root = Root()
         do {
             let string: String = try encoder.encode(value: root, to: String.self)
@@ -1414,7 +1358,6 @@ final class SwiftModelEncodeTests: XCTestCase {
     }
 
     func testArray0() {
-        let encoder = PowerJSONEncoder()
         do {
             let string: String = try encoder.encode(value: [true, false], to: String.self)
             print(string)
@@ -1425,7 +1368,6 @@ final class SwiftModelEncodeTests: XCTestCase {
     }
 
     func testArray1() {
-        let encoder = PowerJSONEncoder()
         do {
             let string: String = try encoder.encode(value: [[true, true], [false]], to: String.self)
             print(string)
@@ -1442,8 +1384,6 @@ final class SwiftModelEncodeTests: XCTestCase {
         struct A: Encodable {
             var bool = false
         }
-
-        let encoder = PowerJSONEncoder()
         do {
             let string: String = try encoder.encode(value: Root(), to: String.self)
             print(string)
@@ -1468,7 +1408,6 @@ final class SwiftModelEncodeTests: XCTestCase {
         struct C: Encodable {
             var string = "string"
         }
-        let encoder = PowerJSONEncoder()
         let root = Root()
         do {
             let string: String = try encoder.encode(value: root, to: String.self)
@@ -1487,7 +1426,6 @@ final class SwiftModelEncodeTests: XCTestCase {
                     return ["baidu": "google"]
                 }
             }
-            let encoder: PowerJSONEncoder = PowerJSONEncoder()
             do {
                 let model: Any = try encoder.encode(value: Root(), to: JSON.self)
                 print(model)
@@ -1496,7 +1434,6 @@ final class SwiftModelEncodeTests: XCTestCase {
             }
         }
         do {
-            let encoder: PowerJSONEncoder = PowerJSONEncoder()
             do {
                 let model: Any = try encoder.encode(value: [URL.buildURL(string: "http://www.baidu.com"), URL.buildURL(string: "http://www.baidu.com")], to: JSON.self)
                 print(model)
@@ -1513,7 +1450,6 @@ final class SwiftModelEncodeTests: XCTestCase {
                 var baidu: Bool? = nil
             }
             do {
-                let encoder: PowerJSONEncoder = PowerJSONEncoder()
                 let model = try encoder.encode(value: Root(), to: String.self)
                 print(model)
             } catch {
@@ -1522,7 +1458,6 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
         do {
             do {
-                let encoder: PowerJSONEncoder = PowerJSONEncoder()
                 let root: [Bool?]? = [true, nil]
                 let model = try encoder.encode(value: root, to: String.self)
                 print(model)
