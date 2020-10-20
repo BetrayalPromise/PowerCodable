@@ -212,7 +212,7 @@ extension PowerInnerJSONDecoder {
         if let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type {
             self.mappingKeys = type.modelDecodingKeys()
         }
-        if T.self == URL.self, object.isString {
+        if T.self == URL.self, object.isString$ {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
             return try container.decode(T.self)
         }

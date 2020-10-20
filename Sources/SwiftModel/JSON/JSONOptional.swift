@@ -31,7 +31,7 @@ extension Optional where Wrapped: JSONControllable {
         }
 
         set {
-            guard var a = (self as? JSON)?.array else { return }
+            guard var a = (self as? JSON)?.array$ else { return }
             switch newValue {
             case .none: a.remove(at: index)
             case .some(let value):
@@ -47,37 +47,37 @@ extension Optional where Wrapped: JSONControllable {
     /// Returns an array of `JSON` iff `Wrapped == JSON.array(_)`
     public var array: [JSON]? {
         guard let `self` = self as? JSON else { return nil }
-        return self.array
+        return self.array$
     }
 
     /// Returns a `JSON` object iff `Wrapped == JSON.object(_)`
     public var object: [String: JSON]? {
         guard let `self` = self as? JSON else { return nil }
-        return self.object
+        return self.object$
     }
 
     /// Returns a `String` iff `Wrapped == JSON.string(_)`
     public var string: String? {
         guard let `self` = self as? JSON else { return nil }
-        return self.string
+        return self.string$
     }
 
     /// Returns this enum's associated `Int64` iff `self == .integer(_)`, `nil` otherwise.
     public var int64: Int64? {
         guard let `self` = self as? JSON else { return nil }
-        return self.int64
+        return self.integer$
     }
 
     /// Returns a `Bool` iff `Wrapped == JSON.bool(_)`
     public var bool: Bool? {
         guard let `self` = self as? JSON else { return nil }
-        return self.bool
+        return self.bool$
     }
 
     /// Returns a `Double` iff `Wrapped == JSON.double(_)`
     public var double: Double? {
         guard let `self` = self as? JSON else { return nil }
-        return self.double
+        return self.double$
     }
 }
 
@@ -86,12 +86,12 @@ extension Optional where Wrapped: JSONControllable {
     /// Returns an `Int` iff `Wrapped == JSON.integer(_)`
     public var int: Int? {
         guard let `self` = self as? JSON else { return nil }
-        return self.int
+        return self.int$
     }
 
     /// Returns an `Float` iff `Wrapped == JSON.double(_)`
     public var float: Float? {
         guard let `self` = self as? JSON else { return nil }
-        return self.float
+        return self.float$
     }
 }

@@ -238,7 +238,7 @@ extension JSON {
 extension JSON {
 
     /// Returns this enum's associated Dictionary value iff `self == .object(_), `nil` otherwise.
-    public var object: [String: JSON]? {
+    public var object$: [String: JSON]? {
         guard case .object(let o) = self else { return nil }
         return o
     }
@@ -251,7 +251,7 @@ extension JSON {
     }
 
     /// Returns this enum's associated Array value iff `self == .array(_)`, `nil` otherwise.
-    public var array: [JSON]? {
+    public var array$: [JSON]? {
         guard case .array(let a) = self else { return nil }
         return a
     }
@@ -264,13 +264,13 @@ extension JSON {
     }
 
     /// Returns this enum's associated String value iff `self == .string(_)`, `nil` otherwise.
-    public var string: String? {
+    public var string$: String? {
         guard case .string(let s) = self else { return nil }
         return s
     }
 
     /// Returns this enum's associated `Int64` value iff `self == .integer(i)`, `nil` otherwise.
-    public var int64: Int64? {
+    public var integer$: Int64? {
         switch self {
         case .integer(let i): return i
         case .string(let s): return Int64(s)
@@ -279,7 +279,7 @@ extension JSON {
     }
 
     /// Returns this enum's associated Bool value iff `self == .bool(_)`, `nil` otherwise.
-    public var bool: Bool? {
+    public var bool$: Bool? {
         switch self {
         case .bool(let b): return b
         case .string(let s): return Bool(s)
@@ -288,7 +288,7 @@ extension JSON {
     }
 
     /// Returns this enum's associated Double value iff `self == .double(_)`, `nil` otherwise.
-    public var double: Double? {
+    public var double$: Double? {
         switch self {
         case .double(let d): return d
         case .string(let s): return Double(s)
@@ -302,7 +302,7 @@ extension JSON {
 // MARK: Non RFC JSON types
 extension JSON {
     /// Returns this enum's associated `Int64` value as an `Int` iff `self == .integer(_)`, `nil` otherwise.
-    public var int: Int? {
+    public var int$: Int? {
         switch self {
         case .integer(let i): return Int(exactly: i)
         case .string(let s): return Int(s)
@@ -311,7 +311,7 @@ extension JSON {
     }
 
     /// Returns this enum's associated `Double` value as an `Float` iff `self == .double(_)`, `nil` otherwise.
-    public var float: Float? {
+    public var float$: Float? {
         switch self {
         case .double(let d): return Float(d)
         case .string(let s): return Float(s)
@@ -322,7 +322,7 @@ extension JSON {
 }
 
 extension JSON {
-    public var isObject: Bool {
+    public var isObject$: Bool {
         if case .object(_) = self {
             return true
         } else {
@@ -330,7 +330,7 @@ extension JSON {
         }
     }
 
-    public var isArray: Bool {
+    public var isArray$: Bool {
         if case .array(_) = self {
             return true
         } else {
@@ -338,7 +338,7 @@ extension JSON {
         }
     }
 
-    public var isInt: Bool {
+    public var isInt$: Bool {
         if case .integer(_) = self {
             return true
         } else {
@@ -346,7 +346,7 @@ extension JSON {
         }
     }
 
-    public var isDouble: Bool {
+    public var isDouble$: Bool {
         if case .double(_) = self {
             return true
         } else {
@@ -354,7 +354,7 @@ extension JSON {
         }
     }
 
-    public var isBool: Bool {
+    public var isBool$: Bool {
         if case .bool(_) = self {
             return true
         } else {
@@ -362,7 +362,7 @@ extension JSON {
         }
     }
 
-    public var isString: Bool {
+    public var isString$: Bool {
         if case .string(_) = self {
             return true
         } else {
@@ -370,7 +370,7 @@ extension JSON {
         }
     }
 
-    public var isNull: Bool {
+    public var isNull$: Bool {
         if case .null = self {
             return true
         } else {

@@ -1335,9 +1335,21 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
         let a = A()
         do {
-            let string: JSON = try encoder.encode(value: a, to: JSON.self)
-//            print(string.bool)
-            XCTAssertNotEqual(string, "error")
+            let json: JSON = try encoder.encode(value: a, to: JSON.self)
+            XCTAssertEqual(json["bool"], 3)
+            XCTAssertEqual(json["int"], 0)
+            XCTAssertEqual(json["int8"], 1)
+            XCTAssertEqual(json["int16"], 2)
+            XCTAssertEqual(json["int32"], 3)
+            XCTAssertEqual(json["int64"], 4)
+            XCTAssertEqual(json["uint"], 0)
+            XCTAssertEqual(json["uint8"], 1)
+            XCTAssertEqual(json["uint16"], 2)
+            XCTAssertEqual(json["uint32"], 3)
+            XCTAssertEqual(json["uint64"], 4)
+            XCTAssertEqual(json["float"], 100.0)
+            XCTAssertEqual(json["double"], 100.0)
+            XCTAssertEqual(json["hello"], "ABCD")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1357,11 +1369,10 @@ final class SwiftModelEncodeTests: XCTestCase {
         struct C: Encodable {
             var string = "string"
         }
-        let root = Root()
         do {
-            let string: String = try encoder.encode(value: root, to: String.self)
-            print(string)
-            XCTAssertNotEqual(string, "error")
+            let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
+            XCTAssertNotEqual(json["a"]["b"]["c"], "string")
+            XCTAssertNotEqual(json["b"]["b"]["c"], "string")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1369,9 +1380,9 @@ final class SwiftModelEncodeTests: XCTestCase {
 
     func testArray0() {
         do {
-            let string: String = try encoder.encode(value: [true, false], to: String.self)
-            print(string)
-            XCTAssertNotEqual(string, "error")
+            let json: JSON = try encoder.encode(value: [true, false], to: JSON.self)
+            XCTAssertEqual(json[0], true)
+            XCTAssertEqual(json[1], false)
         } catch  {
             XCTFail("解析失败")
         }
@@ -1379,9 +1390,10 @@ final class SwiftModelEncodeTests: XCTestCase {
 
     func testArray1() {
         do {
-            let string: String = try encoder.encode(value: [[true, true], [false]], to: String.self)
-            print(string)
-            XCTAssertNotEqual(string, "error")
+            let json: JSON = try encoder.encode(value: [[true, true], [false]], to: JSON.self)
+            XCTAssertEqual(json[0][0], true)
+            XCTAssertEqual(json[0][1], true)
+            XCTAssertEqual(json[1][0], false)
         } catch  {
             XCTFail("解析失败")
         }
@@ -1395,9 +1407,9 @@ final class SwiftModelEncodeTests: XCTestCase {
             var bool = false
         }
         do {
-            let string: String = try encoder.encode(value: Root(), to: String.self)
-            print(string)
-            XCTAssertNotEqual(string, "error")
+            let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
+            XCTAssertEqual(json["as"][0][0]["bool"], false)
+            XCTAssertEqual(json["as"][0][1]["bool"], false)
         } catch  {
             XCTFail("解析失败")
         }
@@ -1420,9 +1432,10 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
         let root = Root()
         do {
-            let string: String = try encoder.encode(value: root, to: String.self)
-            print(string)
-            XCTAssertNotEqual(string, "error")
+            let json: JSON = try encoder.encode(value: root, to: JSON.self)
+            XCTAssertEqual(json["as"], [])
+            XCTAssertEqual(json["bs"][0]["int"], 0)
+            XCTAssertEqual(json["cs"][0]["string"], "string")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1437,16 +1450,17 @@ final class SwiftModelEncodeTests: XCTestCase {
                 }
             }
             do {
-                let model: Any = try encoder.encode(value: Root(), to: JSON.self)
-                print(model)
+                let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
+                XCTAssertEqual(json["google"], "http://www.baidu.com")
             } catch {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
         do {
             do {
-                let model: Any = try encoder.encode(value: [URL.buildURL(string: "http://www.baidu.com"), URL.buildURL(string: "http://www.baidu.com")], to: JSON.self)
-                print(model)
+                let json: JSON = try encoder.encode(value: [URL.buildURL(string: "http://www.baidu.com"), URL.buildURL(string: "http://www.baidu.com")], to: JSON.self)
+                XCTAssertEqual(json[0], "http://www.baidu.com")
+                XCTAssertEqual(json[1], "http://www.baidu.com")
             } catch {
                 XCTAssertNil(error, error.localizedDescription)
             }
