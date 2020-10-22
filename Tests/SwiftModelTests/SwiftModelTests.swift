@@ -1540,4 +1540,19 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
+
+    func testKey() {
+        struct A: Encodable {
+            var boolBool = false
+        }
+
+        self.encoder.keyEncodingStrategy = .useLowerCase
+        do {
+            let json: JSON = try encoder.encode(value: A(), to: JSON.self)
+            print(json.path().0)
+            print(json["as"]?.path().0 ?? "")
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
 }

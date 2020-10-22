@@ -5,8 +5,24 @@ fileprivate class Storage<Key: CodingKey> {
     private(set) var elements: [KeyValue] = []
     private var hash: [String: KeyValue] = [:]
 
-    func append(key: String, value: JSONValue) {
-        let keyValue: KeyValue = (key, value)
+    func append(key: String, value: JSONValue, encoder: PowerInnerJSONEncoder) {
+        var mappingKey: String = ""
+        switch encoder.keyEncodingStrategy {
+        case .useDefaultCase:
+            mappingKey = key
+        case .useCamelCase(let c):
+            mappingKey = key.toCamelCase(format: c)
+        case .useSnakeCase(let c):
+            mappingKey = key.toSnakeCase(format: c)
+        case .usePascalCase(let c):
+            mappingKey = key.toPascalCase(format: c)
+        case .useUpperCase:
+            mappingKey = key.toUpperCase()
+        case .useLowerCase:
+            mappingKey = key.toLowerCase()
+        }
+
+        let keyValue: KeyValue = (mappingKey, value)
         self.elements.append(keyValue)
         self.hash[key] = keyValue
     }
@@ -35,12 +51,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encodeNil()
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encodeNil()
         }
     }
@@ -50,12 +66,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -65,12 +81,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key: self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -80,12 +96,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -95,12 +111,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -110,12 +126,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -125,12 +141,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -140,12 +156,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -155,12 +171,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -170,12 +186,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -185,12 +201,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -200,12 +216,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -215,12 +231,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -230,12 +246,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -245,12 +261,12 @@ extension EncodingKeyed {
         if self.mapping.keys.contains(key.stringValue) {
             self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container)
+            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
             self.encoder.paths.push(value: Path.index(by: key.stringValue))
             defer { self.encoder.paths.pop() }
-            self.storage.append(key: key.stringValue, value: container)
+            self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
     }
@@ -261,25 +277,29 @@ extension EncodingKeyed {
             if self.mapping.keys.contains(key.stringValue) {
                 let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
                 encoder.wrapper = self.encoder.wrapper
+                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultCase
                 try url.absoluteString.encode(to: encoder)
-                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue)
+                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
             } else {
                 let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
                 encoder.wrapper = self.encoder.wrapper
+                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultCase
                 try url.absoluteString.encode(to: encoder)
-                self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
+                self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
             }
         } else {
             if self.mapping.keys.contains(key.stringValue) {
                 let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
                 encoder.wrapper = self.encoder.wrapper
+                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultCase
                 try value.encode(to: encoder)
-                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue)
+                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
             } else {
                 let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
                 encoder.wrapper = self.encoder.wrapper
+                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultCase
                 try value.encode(to: encoder)
-                self.storage.append(key: key.stringValue, value: encoder.container.jsonValue)
+                self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
             }
         }
     }
@@ -391,13 +411,13 @@ extension EncodingKeyed {
 
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         let container = EncodingKeyed<NestedKey>(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        self.storage.append(key: key.stringValue, value: container)
+        self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
         return KeyedEncodingContainer(container)
     }
 
     mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
         let container = EncodingUnkeyed(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
-        self.storage.append(key: key.stringValue, value: container)
+        self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
         return container
     }
 

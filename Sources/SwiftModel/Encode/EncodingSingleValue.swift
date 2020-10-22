@@ -407,11 +407,13 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
             let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths)
             encoder.wrapper = self.encoder.wrapper
+            encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultCase
             try url.absoluteString.encode(to: encoder)
             self.storage = encoder.jsonValue
         } else {
             let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths)
             encoder.wrapper = self.encoder.wrapper
+            encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultCase
             try value.encode(to: encoder)
             self.storage = encoder.jsonValue
         }
