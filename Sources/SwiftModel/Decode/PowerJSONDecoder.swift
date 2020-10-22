@@ -2,7 +2,7 @@ import Foundation
 
 public final class PowerJSONDecoder {
     /// 值转化策略
-    public var valueConvertTypeStrategy: ValueConvertTypeStrategy = .useDefaultable
+    public var valueConvertTypeStrategy: ValueStrategy = .useDefaultable
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     public var customNilToOptionalType: Bool = false
 

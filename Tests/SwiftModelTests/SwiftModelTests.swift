@@ -1305,7 +1305,11 @@ final class SwiftModelDecodeTests: XCTestCase {
     }
 
     func testData() {
-        
+        print("abcAbcAbcAbcAbc".toCamelCase())
+        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
+        print("abcAbcAbcAbcAbc".toSnakeCase())
+        print("abcAbcAbcAbcAbc".toUpperCase())
+        print("abcAbcAbcAbcAbc".toLowerCase())
     }
 }
 

@@ -394,7 +394,15 @@ public struct JSONStructure: JSONCodingSupport {
 }
 
 /// 类型不一致策略
-public enum ValueConvertTypeStrategy {
+public enum ValueStrategy {
     case useDefaultable
     case useCustom(TypeConvertible)
+}
+
+public enum KeyStrategy {
+    case useSnakeCase(StringCaseFormat.SnakeCase)
+    case useCamelCase(StringCaseFormat.CamelCase)
+    case usePascalCase(StringCaseFormat.PascalCase)
+    case useUpperCase
+    case useLowerCase
 }
