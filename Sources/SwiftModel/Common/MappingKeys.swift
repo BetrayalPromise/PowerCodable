@@ -29,6 +29,7 @@ public extension String {
 }
 
 public enum StringCaseFormat {
+    /// 帕斯卡风格
     public enum PascalCase {
         /// Convert from "My Key ID" to "my-key-id"
         case `default`
@@ -40,6 +41,7 @@ public enum StringCaseFormat {
         case capitalized
     }
 
+    /// 蛇形风格
     public enum SnakeCase {
         /// Convert from "My Key ID" to "my_key_id"
         case `default`
@@ -51,6 +53,7 @@ public enum StringCaseFormat {
         case capitalized
     }
 
+    /// 驼峰风格
     public enum CamelCase {
         /// Convert from "My Key ID" to "myKeyId"
         case `default`

@@ -203,19 +203,6 @@ extension PowerInnerJSONDecoder {
     /// - Returns: 返回处理后的模型
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
         currentJSON = object
-//        guard let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type else {
-//            if T.self == URL.self, object.isString {
-//                let container = DecodingSingleValue(decoder: self, json: currentJSON)
-//                return try container.decode(T.self)
-//            }
-//            return try T.init(from: self)
-//        }
-//        if T.self == URL.self, object.isString {
-//            let container = DecodingSingleValue(decoder: self, json: currentJSON)
-//            return try container.decode(T.self)
-//        }
-//        self.mappingKeys = type.modelDecodingKeys()
-//        return try T.init(from: self)
         if let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type {
             self.mappingKeys = type.modelDecodingKeys()
         }
@@ -223,8 +210,6 @@ extension PowerInnerJSONDecoder {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
             return try container.decode(T.self)
         } else if T.self == Date.self {
-//            let container = DecodingSingleValue(decoder: self, json: currentJSON)
-//            return try container.decode(T.self)
             return try T.init(from: self)
         }
         return try T.init(from: self)

@@ -1268,6 +1268,32 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
     }
 
+    func testNumber() {
+        struct Numbers: Codable {
+            let a: Float
+            let b: Double
+            let c: Float
+            let d: Float
+        }
+        let data: Data = """
+        {
+          "a": "NaN",
+          "b": "NaN",
+          "c": "+Infinity",
+          "d": "-Infinity"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        do {
+            let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
+            XCTAssertEqual(json.a.isNaN, true)
+            XCTAssertEqual(json.b.isNaN, true)
+            XCTAssertEqual(json.c, Float.infinity)
+            XCTAssertEqual(json.d, -Float.infinity)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
+
     func testNull() {
         //        {"hello": null}
         let data: Data = """
@@ -1557,5 +1583,6 @@ final class SwiftModelEncodeTests: XCTestCase {
         } catch  {
             XCTFail("解析失败")
         }
+//        JSONEncoder().nonConformingFloatEncodingStrategy
     }
 }
