@@ -12,6 +12,17 @@ import Foundation
 //    }
 //}
 
+extension PowerJSONDecoder {
+    public enum KeyDecodingStrategy {
+        case useDefaultCase
+        case useSnakeCase(StringCaseFormat.SnakeCase)
+        case useCamelCase(StringCaseFormat.CamelCase)
+        case usePascalCase(StringCaseFormat.PascalCase)
+        case useUpperCase
+        case useLowerCase
+    }
+}
+
 public extension URL {
     init(from json: JSON) throws {
         switch json {

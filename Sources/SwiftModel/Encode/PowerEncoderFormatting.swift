@@ -35,10 +35,19 @@ extension PowerJSONEncoder {
         }
     }
 
+//    public enum KeyEncodingStrategy {
+//        case convertToSnakeCase
+//        case useDefaultKeys
+//        case custom(([CodingKey]) -> CodingKey)
+//    }
+
     public enum KeyEncodingStrategy {
-        case convertToSnakeCase
-        case useDefaultKeys
-        case custom(([CodingKey]) -> CodingKey)
+        case useDefaultCase
+        case useSnakeCase(StringCaseFormat.SnakeCase)
+        case useCamelCase(StringCaseFormat.CamelCase)
+        case usePascalCase(StringCaseFormat.PascalCase)
+        case useUpperCase
+        case useLowerCase
     }
 
     private class Writer {
@@ -241,17 +250,17 @@ extension PowerJSONEncoder {
             return result
         }
 
-        func keyConvertion(key: String) -> String {
+//        func keyConvertion(key: String) -> String {
+//            switch options.keyEncoding {
+//            case .convertToSnakeCase:
+//                return keyConvertion(key: key)
+//            case .useDefaultKeys:
+//                return key
+//            case .custom(_):
+//                fatalError("Unimplemented yet")
+//            }
+//        }
 
-            switch options.keyEncoding {
-            case .convertToSnakeCase:
-                return keyConvertion(key: key)
-            case .useDefaultKeys:
-                return key
-            case .custom(_):
-                fatalError("Unimplemented yet")
-            }
-        }
         func writeJSONObject(object: [JSONTuples]) throws {
             try writer.write("{")
 

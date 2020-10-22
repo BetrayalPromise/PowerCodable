@@ -1152,8 +1152,8 @@ final class SwiftModelDecodeTests: XCTestCase {
         """.data(using: String.Encoding.utf8) ?? Data()
         let json = data.toJSON()
         let age = json["age"]
-        age?.path()
-        json?.path()
+        print(age?.path().0 ?? "")
+        print(json?.path().0 ?? "")
     }
 
     func testNested() {
@@ -1515,6 +1515,29 @@ final class SwiftModelEncodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
-        JSONDecoder
+    }
+
+    func testPath() {
+        struct Root: Encodable {
+            var `as`: [A] = []
+            var bs: [B] = [B()]
+            var cs: [C] = [C(), C()]
+        }
+        struct A: Encodable {
+            var bool = false
+        }
+        struct B: Encodable {
+            var int: Int = 0
+        }
+        struct C: Encodable {
+            var string = "string"
+        }
+        do {
+            let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
+            print(json.path().0)
+            print(json["as"]?.path().0 ?? "")
+        } catch  {
+            XCTFail("解析失败")
+        }
     }
 }

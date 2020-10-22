@@ -30,36 +30,12 @@ public enum JSON: JSONCodingSupport {
     }
 }
 
-public extension JSON {
-    static var level: Int = 0
-    func path() {
-        JSON.level += 1
-        defer {
-            JSON.level -= 1
-        }
-        switch self {
-        case .array(let array):
-            for (i, item) in array.enumerated() {
-                print("level: \(JSON.level) ---- []\(i)")
-                item.path()
-            }
-        case .object(let object):
-            for (key, _) in object {
-                print("level: \(JSON.level) ---- [:]\(key)")
-                object[key]?.path()
-            }
-        case .bool(let bool):
-            print("result: ---- bool: \(bool)")
-        case .integer(let integer):
-            print("result: ---- integer: \(integer)")
-        case .double(let doulbe):
-            print("result: ---- integer: \(doulbe)")
-        case .string(let string):
-            print("result: ---- string: \(string)")
-        case .null:
-            print("result: ---- null")
-        case .unknow:
-            print("unknow")
+extension JSON {
+    func path() -> (String, Error?) {
+        do {
+            return (try JSON.Serializer.serialize(self), nil)
+        } catch {
+            return ("", Error.badValue(self))
         }
     }
 }

@@ -3,7 +3,7 @@ import Foundation
 public class PowerJSONEncoder {
     public var dataEncodingStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
     public var dateEncodingStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
-    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
+    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultCase
     public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
 
     /// 逆向模型转化
@@ -14,6 +14,7 @@ public class PowerJSONEncoder {
     /// - Returns: 输出值
     func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {
         let encoder = PowerInnerJSONEncoder(value: value, paths: [])
+        encoder.wrapper = self
         try value.encode(to: encoder)
         let json = encoder.jsonValue
         let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
@@ -54,7 +55,8 @@ class PowerInnerJSONEncoder: Encoder {
     var container: JSONValue = DefaultJSONValue()
     var paths: [Path] = []
     let value: Encodable
-    var mappingKeys: [String: String]?
+    unowned var wrapper: PowerJSONEncoder?
+    public var keyDecodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultCase
 
     init(value: Encodable, paths: [Path]) {
         self.value = value

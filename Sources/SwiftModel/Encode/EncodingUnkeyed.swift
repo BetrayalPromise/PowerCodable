@@ -54,10 +54,12 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
         if value is URL {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
             let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: self.currentIndex)])
+            encoder.wrapper = self.encoder.wrapper
             try url.absoluteString.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         } else {
             let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: self.currentIndex)])
+            encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         }

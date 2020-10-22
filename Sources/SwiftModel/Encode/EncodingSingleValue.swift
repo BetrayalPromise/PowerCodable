@@ -406,10 +406,12 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         if value is URL {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
             let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths)
+            encoder.wrapper = self.encoder.wrapper
             try url.absoluteString.encode(to: encoder)
             self.storage = encoder.jsonValue
         } else {
             let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths)
+            encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage = encoder.jsonValue
         }
