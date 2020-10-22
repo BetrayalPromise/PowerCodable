@@ -23,6 +23,14 @@ extension PowerJSONDecoder {
     }
 }
 
+extension PowerJSONDecoder {
+    public enum NonConformingFloatEncodingStrategy {
+        case `throw`
+        case zero
+        case convertToString(positiveInfinity: Set<String> = ["infinity", "+infinity"], negativeInfinity: Set<String> = ["-infinity"], nan: Set<String> = ["nan"])
+    }
+}
+
 public extension URL {
     init(from json: JSON) throws {
         switch json {

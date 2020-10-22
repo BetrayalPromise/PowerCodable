@@ -1268,27 +1268,40 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
     }
 
-    func testNumber() {
+    func testNaN() {
         struct Numbers: Codable {
             let a: Float
             let b: Double
             let c: Float
-            let d: Float
+            let d: Double
+            let e: Float
+            let f: Double
+            let g: Float
+            let h: Double
         }
         let data: Data = """
         {
-          "a": "NaN",
-          "b": "NaN",
-          "c": "+Infinity",
-          "d": "-Infinity"
+          "a": "nan",
+          "b": "Nan",
+          "c": "nAn",
+          "d": "naN",
+          "e": "NAn",
+          "f": "NaN",
+          "g": "nAN",
+          "h": "NANn"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
+            self.decoder.nonConformingFloatEncodingStrategy = .convertToString(nan: ["NANn"])
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
             XCTAssertEqual(json.b.isNaN, true)
-            XCTAssertEqual(json.c, Float.infinity)
-            XCTAssertEqual(json.d, -Float.infinity)
+            XCTAssertEqual(json.c.isNaN, true)
+            XCTAssertEqual(json.d.isNaN, true)
+            XCTAssertEqual(json.e.isNaN, true)
+            XCTAssertEqual(json.f.isNaN, true)
+            XCTAssertEqual(json.g.isNaN, true)
+            XCTAssertEqual(json.h.isNaN, true)
         } catch {
             XCTFail("解析失败")
         }

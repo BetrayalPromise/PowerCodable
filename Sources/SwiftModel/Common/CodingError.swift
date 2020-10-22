@@ -10,12 +10,13 @@ public struct CodingError: Swift.Error {
         case invalidUTF8String = 6 // 无效的UTF8字符
         case jsonUnknow = 7 // 使用了JSON.unknow
         case notFoundData = 8 // 无数据
+        case nonUniqueness = 9 // 数据不唯一
     }
 
     /// 可能是系统抛出也可能是本工具抛出的错误
     var error: Error?
     /// 错误码
-    var errorCode: ErrorCode?
+    let errorCode: ErrorCode
 
     /// 类型不支持
     static func unsupportType() -> CodingError {
@@ -42,6 +43,11 @@ public struct CodingError: Swift.Error {
     }
 
     struct Decoding {
+        static func nonUniqueness(sets: Set<String>...) -> CodingError {
+            print("Error: sets(\(sets) can't has intersection")
+            return CodingError(errorCode: .nonUniqueness)
+        }
+
         static func typeMismatch(type: Any.Type, codingPath: [CodingKey] = [], reality: JSON) -> CodingError {
             let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Expected to decode \(type) but found \(reality)) instead.")
             return CodingError(error: DecodingError.typeMismatch(type, context), errorCode: .decodingError)
@@ -66,6 +72,27 @@ public struct CodingError: Swift.Error {
     }
 }
 
+precedencegroup Precedence {
+    associativity: left //左结合
+    higherThan: MultiplicationPrecedence//优先级：比加法高
+//    lowerThan: MultiplicationPrecedence//优先级：比乘法低
+}
 
+infix operator &~: Precedence
+infix operator +~: Precedence
+infix operator -~: Precedence
 
+/// 交集
+func &~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
+    return left.intersection(right)
+}
 
+/// 并集
+func +~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
+    return left.union(right)
+}
+
+/// 补集
+func -~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
+    return left.subtracting(right)
+}

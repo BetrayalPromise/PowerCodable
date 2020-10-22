@@ -10,6 +10,8 @@ public final class PowerJSONDecoder {
     /// 例如 模型字段 var stringData: String经过snake处理成为string_data, 经历camel处理成为stringData, 经历pascal处理成为string-data, 经历upper处理成为STRINGDATE, 经历lower处理成为stringdata, 再进行写一步处理. 该策略是全局的会影响所有的字段解析
     public var keyDecodingStrategy: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
 
+    public var nonConformingFloatEncodingStrategy: PowerJSONDecoder.NonConformingFloatEncodingStrategy = .zero
+
     /// 正向模型转化
     /// - Parameters:
     ///   - type: 顶层模型类型
@@ -106,7 +108,7 @@ extension PowerInnerJSONDecoder {
         case let .double(number):
             switch T.self {
             case is Double.Type:
-                guard let double = Double.init(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
+                guard let double = Double(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
                 return double as! T
             case is Float.Type:
                 guard let float = Float(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
@@ -117,7 +119,23 @@ extension PowerInnerJSONDecoder {
         case let .bool(bool):
             return bool ? 1 : 0
         case let .string(string):
-            guard let number = T(string) else { fallthrough }
+            guard let number = T(string.lowercased()) else {
+                switch self.wrapper?.nonConformingFloatEncodingStrategy ?? .zero {
+                case .zero: return T("0.0") ?? 0.0
+                case .throw: throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
+//                    if positiveInfinity.isDisjoint(with: negativeInfinity) && positiveInfinity.isDisjoint(with: nan) && positiveInfinity.isDisjoint(with: nan) {
+//                        throw CodingError.Decoding.nonUniqueness(set0: positiveInfinity, set1: negativeInfinity, set2: nan)
+//                    }
+                    if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
+                         throw CodingError.Decoding.nonUniqueness(sets: positiveInfinity, negativeInfinity, nan)
+                    }
+                    if positiveInfinity.contains(string) { return T.infinity }
+                    if negativeInfinity.contains(string) { return -T.infinity }
+                    if nan.contains(string) { return T.nan }
+                    throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                }
+            }
             return number
         default:
             throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
