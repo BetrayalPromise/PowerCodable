@@ -192,16 +192,14 @@ extension JSON {
 }
 
 
-// MARK: - JSON Subscripts
-
+// MARK: - JSON 容器处理
 extension JSON {
-    /// Treat this JSON as a JSON object and attempt to get or set its associated Dictionary values.
+    /// object处理
     public subscript(key: String) -> JSON? {
         get {
             guard case .object(let object) = self else { return nil }
             return object[key]
         }
-
         set {
             guard case .object(var object) = self else { return }
             object[key] = newValue
@@ -209,11 +207,7 @@ extension JSON {
         }
     }
 
-    /**
-     Treat this JSON as a JSON array and attempt to get or set its
-     associated Array values.
-     This will do nothing if you attempt to set outside of bounds.
-     */
+    /// array处理
     public subscript(index: Int) -> JSON? {
         get {
             guard case .array(let a) = self, a.indices ~= index else { return nil }
@@ -232,23 +226,20 @@ extension JSON {
     }
 }
 
-
 // MARK: - JSON Accessors
-
 extension JSON {
-
     /// Returns this enum's associated Dictionary value iff `self == .object(_), `nil` otherwise.
     public var object$: [String: JSON]? {
         guard case .object(let o) = self else { return nil }
         return o
     }
 
-    mutating func update(value: [String: JSON]) {
-        guard case .object(let o) = self else { return }
-        var object = o
-        object.updateValue(value.values.first ?? "", forKey: value.keys.first ?? "")
-        self = .object(object)
-    }
+//    mutating func update(value: [String: JSON]) {
+//        guard case .object(let o) = self else { return }
+//        var object = o
+//        object.updateValue(value.values.first ?? "", forKey: value.keys.first ?? "")
+//        self = .object(object)
+//    }
 
     /// Returns this enum's associated Array value iff `self == .array(_)`, `nil` otherwise.
     public var array$: [JSON]? {
@@ -256,12 +247,12 @@ extension JSON {
         return a
     }
 
-    mutating func append(value: JSON) {
-        guard case .array(let a) = self else { return }
-        var array = a
-        array.append(value)
-        self = .array(array)
-    }
+//    mutating func append(value: JSON) {
+//        guard case .array(let a) = self else { return }
+//        var array = a
+//        array.append(value)
+//        self = .array(array)
+//    }
 
     /// Returns this enum's associated String value iff `self == .string(_)`, `nil` otherwise.
     public var string$: String? {
