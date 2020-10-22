@@ -1305,11 +1305,30 @@ final class SwiftModelDecodeTests: XCTestCase {
     }
 
     func testData() {
-        print("abcAbcAbcAbcAbc".toCamelCase())
-        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
-        print("abcAbcAbcAbcAbc".toSnakeCase())
-        print("abcAbcAbcAbcAbc".toUpperCase())
-        print("abcAbcAbcAbcAbc".toLowerCase())
+//        print("abcAbcAbcAbcAbc".toCamelCase())
+//        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
+//        print("abcAbcAbcAbcAbc".toSnakeCase())
+//        print("abcAbcAbcAbcAbc".toUpperCase())
+//        print("abcAbcAbcAbcAbc".toLowerCase())
+
+        let data: Data = """
+        {
+            "string_data": "string"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        self.decoder.keyDecodingStrategy = .useSnakeCase(StringCaseFormat.SnakeCase.default)
+        defer {
+            self.decoder.keyDecodingStrategy = .useDefaultCase
+        }
+        do {
+            struct Root: Codable {
+                let stringData: String
+            }
+            let json = try decoder.decode(type: Root.self, from: data)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
     }
 }
 

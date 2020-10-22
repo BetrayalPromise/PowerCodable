@@ -400,6 +400,7 @@ public enum ValueStrategy {
 }
 
 public enum KeyStrategy {
+    case useDefaultCase
     case useSnakeCase(StringCaseFormat.SnakeCase)
     case useCamelCase(StringCaseFormat.CamelCase)
     case usePascalCase(StringCaseFormat.PascalCase)

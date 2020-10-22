@@ -6,7 +6,9 @@ public final class PowerJSONDecoder {
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     public var customNilToOptionalType: Bool = false
 
-//    public var dateDecodingStrategy: PowerJSONDecoder.DateDecodingStrategy = .deferredToDate
+    /// 这个策略是指模型的字段在经过策略处理后(snake camel, pascal, upper, lower)该字段会已这种处理后的表现形式在进行解码处理
+    /// 例如 模型字段 var stringData: String经过snake处理成为string_data, 经历camel处理成为stringData, 经历pascal处理成为string-data, 经历upper处理成为STRINGDATE, 经历lower处理成为stringdata, 再进行写一步处理. 该策略是全局的会影响所有的字段解析
+    public var keyDecodingStrategy: KeyStrategy = .useDefaultCase
 
     /// 正向模型转化
     /// - Parameters:
