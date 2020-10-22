@@ -31,6 +31,12 @@ extension PowerJSONDecoder {
     }
 }
 
+extension Set where Element == String {
+    static let positiveInfinitys: Set<String> = ["infinity", "+infinity"]
+    static let negativeInfinitys: Set<String> = ["-infinity"]
+    static let nons: Set<String> = ["nan"]
+}
+
 public extension URL {
     init(from json: JSON) throws {
         switch json {

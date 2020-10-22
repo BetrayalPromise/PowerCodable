@@ -1278,6 +1278,14 @@ final class SwiftModelDecodeTests: XCTestCase {
             let f: Double
             let g: Float
             let h: Double
+
+            let i: Float
+            let j: Float
+            let k: Float
+
+            let l: Double
+            let m: Double
+            let n: Double
         }
         let data: Data = """
         {
@@ -1288,11 +1296,17 @@ final class SwiftModelDecodeTests: XCTestCase {
           "e": "NAn",
           "f": "NaN",
           "g": "nAN",
-          "h": "NANn"
+          "h": "NAN",
+          "i": "-infinity",
+          "j": "infinity",
+          "k": "+infinity",
+          "l": "-infinity",
+          "m": "infinity",
+          "n": "+infinity"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            self.decoder.nonConformingFloatEncodingStrategy = .convertToString(nan: ["NANn"])
+            self.decoder.nonConformingFloatEncodingStrategy = .convertToString()
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
             XCTAssertEqual(json.b.isNaN, true)
@@ -1302,6 +1316,12 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json.f.isNaN, true)
             XCTAssertEqual(json.g.isNaN, true)
             XCTAssertEqual(json.h.isNaN, true)
+            XCTAssertEqual(json.i, -Float.infinity)
+            XCTAssertEqual(json.j, Float.infinity)
+            XCTAssertEqual(json.k, Float.infinity)
+            XCTAssertEqual(json.l, -Double.infinity)
+            XCTAssertEqual(json.m, Double.infinity)
+            XCTAssertEqual(json.n, Double.infinity)
         } catch {
             XCTFail("解析失败")
         }

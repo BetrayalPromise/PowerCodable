@@ -10,6 +10,9 @@ public final class PowerJSONDecoder {
     /// 例如 模型字段 var stringData: String经过snake处理成为string_data, 经历camel处理成为stringData, 经历pascal处理成为string-data, 经历upper处理成为STRINGDATE, 经历lower处理成为stringdata, 再进行写一步处理. 该策略是全局的会影响所有的字段解析
     public var keyDecodingStrategy: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
 
+    /// throw相碰到(infinity -infinity +infinity, nan)就抛出异常
+    /// zero项相碰到(infinity -infinity +infinity, nan)就设置为0
+    /// convertToString若使用默认值碰到(infinity -infinity +infinity, nan)及其大小写混合都处理(增强容错能力), 一旦自定义了集合,则会严格按照给定的集合查找
     public var nonConformingFloatEncodingStrategy: PowerJSONDecoder.NonConformingFloatEncodingStrategy = .zero
 
     /// 正向模型转化
@@ -119,24 +122,55 @@ extension PowerInnerJSONDecoder {
         case let .bool(bool):
             return bool ? 1 : 0
         case let .string(string):
-            guard let number = T(string.lowercased()) else {
-                switch self.wrapper?.nonConformingFloatEncodingStrategy ?? .zero {
-                case .zero: return T("0.0") ?? 0.0
-                case .throw: throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
-                case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
-//                    if positiveInfinity.isDisjoint(with: negativeInfinity) && positiveInfinity.isDisjoint(with: nan) && positiveInfinity.isDisjoint(with: nan) {
-//                        throw CodingError.Decoding.nonUniqueness(set0: positiveInfinity, set1: negativeInfinity, set2: nan)
-//                    }
-                    if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
-                         throw CodingError.Decoding.nonUniqueness(sets: positiveInfinity, negativeInfinity, nan)
-                    }
-                    if positiveInfinity.contains(string) { return T.infinity }
-                    if negativeInfinity.contains(string) { return -T.infinity }
-                    if nan.contains(string) { return T.nan }
+            switch self.wrapper?.nonConformingFloatEncodingStrategy ?? .zero {
+            case .zero:
+                if string.lowercased() == "nan" || string.lowercased() == "infinity" || string.lowercased() == "+infinity" || string.lowercased() == "-infinity" {
+                    return T("0.0") ?? 0.0
+                }
+                guard let number = T(string.lowercased()) else { fallthrough }
+                return number
+            case .throw:
+                if string.lowercased() == "nan" || string.lowercased() == "infinity" || string.lowercased() == "+infinity" || string.lowercased() == "-infinity" {
                     throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
                 }
+                guard let number = T(string.lowercased()) else {
+                    throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                }
+                 return number
+            case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
+                if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
+                    throw CodingError.Decoding.nonUniqueness(sets: positiveInfinity, negativeInfinity, nan)
+                }
+                if positiveInfinity == Set.positiveInfinitys {
+                    if positiveInfinity.contains(string.lowercased()) {
+                        return T.infinity
+                    }
+                } else {
+                    if positiveInfinity.contains(string) {
+                        return T.infinity
+                    }
+                }
+
+                if negativeInfinity == Set.negativeInfinitys {
+                    if negativeInfinity.contains(string.lowercased()) {
+                        return -T.infinity
+                    }
+                } else {
+                    if negativeInfinity.contains(string) {
+                        return -T.infinity
+                    }
+                }
+                if nan == Set.nons {
+                    if nan.contains(string.lowercased()) {
+                        return T.nan
+                    }
+                } else {
+                    if nan.contains(string) {
+                        return T.nan
+                    }
+                }
+                throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
             }
-            return number
         default:
             throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
         }
