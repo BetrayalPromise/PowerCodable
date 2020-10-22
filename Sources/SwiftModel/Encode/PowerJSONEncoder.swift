@@ -3,7 +3,7 @@ import Foundation
 public class PowerJSONEncoder {
     public var dataEncodingStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
     public var dateEncodingStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
-    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultCase
+    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
     public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
 
     /// 逆向模型转化
@@ -57,7 +57,7 @@ class PowerInnerJSONEncoder: Encoder {
     var paths: [Path] = []
     let value: Encodable
     unowned var wrapper: PowerJSONEncoder?
-    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultCase
+    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
 
     init(value: Encodable, paths: [Path]) {
         self.value = value

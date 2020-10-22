@@ -42,12 +42,12 @@ extension PowerJSONEncoder {
 //    }
 
     public enum KeyEncodingStrategy {
-        case useDefaultCase
-        case useSnakeCase(StringCaseFormat.SnakeCase)
-        case useCamelCase(StringCaseFormat.CamelCase)
-        case usePascalCase(StringCaseFormat.PascalCase)
-        case useUpperCase
-        case useLowerCase
+        case useDefaultKeys
+        case useSnakeKeys(StringCaseFormat.SnakeCase)
+        case useCamelKeys(StringCaseFormat.CamelCase)
+        case usePascalKeys(StringCaseFormat.PascalCase)
+        case useUpperKeys
+        case useLowerKeys
     }
 
     private class Writer {

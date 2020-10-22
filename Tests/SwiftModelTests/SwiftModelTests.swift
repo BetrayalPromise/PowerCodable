@@ -1316,9 +1316,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.keyDecodingStrategy = .useSnakeCase(StringCaseFormat.SnakeCase.default)
+        self.decoder.keyDecodingStrategy = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.keyDecodingStrategy = .useDefaultCase
+            self.decoder.keyDecodingStrategy = .useDefaultKeys
         }
         do {
             struct Root: Codable {
@@ -1546,11 +1546,14 @@ final class SwiftModelEncodeTests: XCTestCase {
             var boolBool = false
         }
 
-        self.encoder.keyEncodingStrategy = .useLowerCase
+        self.encoder.keyEncodingStrategy = .useSnakeKeys(.default)
+        defer {
+            self.encoder.keyEncodingStrategy = .useDefaultKeys
+        }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
-            print(json.path().0)
-            print(json["as"]?.path().0 ?? "")
+            XCTAssertNil(json["boolBool"])
+            XCTAssertNotNil(json["bool_bool"])
         } catch  {
             XCTFail("解析失败")
         }

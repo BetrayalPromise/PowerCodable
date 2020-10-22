@@ -27,24 +27,24 @@ public struct Path {
 }
 
 public extension Array where Element == Path {
-    mutating func push(value: Element, options: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultCase) {
+    mutating func push(value: Element, options: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys) {
         switch value.container {
         case .array:
             self.append(value)
         case .object:
             var key: String = ""
             switch options {
-            case .useDefaultCase:
+            case .useDefaultKeys:
                 key = value.indexPath
-            case .useCamelCase(let c):
+            case .useCamelKeys(let c):
                 key = value.indexPath.toCamelCase(format: c)
-            case .useSnakeCase(let c):
+            case .useSnakeKeys(let c):
                 key = value.indexPath.toSnakeCase(format: c)
-            case .usePascalCase(let c):
+            case .usePascalKeys(let c):
                 key = value.indexPath.toPascalCase(format: c)
-            case .useUpperCase:
+            case .useUpperKeys:
                 key = value.indexPath.toUpperCase()
-            case .useLowerCase:
+            case .useLowerKeys:
                 key = value.indexPath.toLowerCase()
             }
             self.append(Path(information: Container.object.rawValue + key, container: Container.object, indexPath: key))
