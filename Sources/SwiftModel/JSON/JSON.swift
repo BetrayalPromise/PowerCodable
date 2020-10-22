@@ -19,13 +19,13 @@ public enum JSON: JSONCodingSupport {
 
     typealias Wrapper = JSON
 
-    var dataWrapper: Data {
+    var dataWrapper: Data? {
         do {
             let string: String = try JSON.Serializer.serialize(self)
-            return string.data(using: String.Encoding.utf8) ?? Data()
+            return string.data(using: String.Encoding.utf8)
         } catch  {
             print(error.localizedDescription)
-            return Data()
+            return nil
         }
     }
 }

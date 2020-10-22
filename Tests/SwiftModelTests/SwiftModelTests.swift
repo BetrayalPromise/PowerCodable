@@ -1360,9 +1360,8 @@ final class SwiftModelEncodeTests: XCTestCase {
                 return value
             }
         }
-        let a = A()
         do {
-            let json: JSON = try encoder.encode(value: a, to: JSON.self)
+            let json: JSON = try encoder.encode(value: A(), to: JSON.self)
             XCTAssertEqual(json["bool"], 3)
             XCTAssertEqual(json["int"], 0)
             XCTAssertEqual(json["int8"], 1)
@@ -1501,8 +1500,8 @@ final class SwiftModelEncodeTests: XCTestCase {
                 var baidu: Bool? = nil
             }
             do {
-                let model = try encoder.encode(value: Root(), to: String.self)
-                print(model)
+                let model = try encoder.encode(value: Root(), to: JSON.self)
+                XCTAssertEqual(model["baidu"], JSON.null)
             } catch {
                 XCTAssertNil(error, error.localizedDescription)
             }
@@ -1516,5 +1515,6 @@ final class SwiftModelEncodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
+        JSONDecoder
     }
 }

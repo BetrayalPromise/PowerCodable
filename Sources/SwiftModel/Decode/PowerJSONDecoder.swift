@@ -17,8 +17,11 @@ public final class PowerJSONDecoder {
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: JSONCodingSupport {
+        guard let data: Data = from.dataWrapper else {
+            throw CodingError.notFoundData()
+        }
         do {
-            let json: JSON = try JSON.Parser.parse(from.dataWrapper)
+            let json: JSON = try JSON.Parser.parse(data)
             let decoder = PowerInnerJSONDecoder(json: json)
             decoder.wrapper = self
             return try decoder.unboxDecodable(object: json)

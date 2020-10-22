@@ -341,22 +341,22 @@ extension MappingEncodingKeysValues {
 
 protocol JSONCodingSupport {
     /// JSON的二进制数据
-    var dataWrapper: Data { get }
-
+    var dataWrapper: Data? { get }
+    /// 关联类型
     associatedtype Wrapper
 }
 
 extension Data: JSONCodingSupport {
     typealias Wrapper = Data
-    var dataWrapper: Data {
+    var dataWrapper: Data? {
         return self
     }
 }
 
 extension String: JSONCodingSupport {
     public typealias Wrapper = String
-    public var dataWrapper: Data {
-        return self.data(using: Encoding.utf8) ?? Data()
+    public var dataWrapper: Data? {
+        return self.data(using: Encoding.utf8)
     }
 }
 
@@ -364,11 +364,11 @@ extension String: JSONCodingSupport {
 public struct JSONStructure: JSONCodingSupport {
     public typealias Wrapper = Any
 
-    public var dataWrapper: Data {
+    public var dataWrapper: Data? {
         do {
             return try JSONSerialization.data(withJSONObject: self.json, options: JSONSerialization.WritingOptions.prettyPrinted)
         } catch {
-            return Data()
+            return nil
         }
     }
     /// JSON实体

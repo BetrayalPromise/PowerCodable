@@ -9,6 +9,7 @@ public struct CodingError: Swift.Error {
         case encodingError = 4 // 编码错误
         case invalidUTF8String = 6 // 无效的UTF8字符
         case jsonUnknow = 7 // 使用了JSON.unknow
+        case notFoundData = 8 // 无数据
     }
 
     /// 可能是系统抛出也可能是本工具抛出的错误
@@ -34,6 +35,10 @@ public struct CodingError: Swift.Error {
     /// 无效的json
     static func unknowJSON() -> CodingError {
         return CodingError(errorCode: .jsonUnknow)
+    }
+
+    static func notFoundData() -> CodingError {
+        return CodingError(errorCode: .notFoundData)
     }
 
     struct Decoding {
