@@ -65,6 +65,10 @@ public enum StringCaseFormat {
 
 public extension String {
     func toCamelCase(format: StringCaseFormat.CamelCase = .default) -> String {
+        if !self.verifyField() {
+            print("Error: invalid field, value = \(self)")
+            return ""
+        }
         let tokens = tokenize()
         switch format {
         case .default:
@@ -82,6 +86,10 @@ public extension String {
     }
 
     func toSnakeCase(format: StringCaseFormat.SnakeCase = .lower, use separator: String = "_") -> String {
+        if !self.verifyField() {
+            print("Error: invalid field, value = \(self)")
+            return ""
+        }
         let tokens = tokenize()
         switch format {
         case .lower, .default:
@@ -94,6 +102,10 @@ public extension String {
     }
 
     func toPascalCase(format: StringCaseFormat.PascalCase = .lower, use separator: String = "-") -> String {
+        if !self.verifyField() {
+            print("Error: invalid field, value = \(self)")
+            return ""
+        }
         let tokens = tokenize()
         switch format {
         case .lower, .default:
@@ -106,10 +118,18 @@ public extension String {
     }
 
     func toUpperCase() -> String {
+        if !self.verifyField() {
+            print("Error: invalid field, value = \(self)")
+            return ""
+        }
         return self.uppercased()
     }
 
     func toLowerCase() -> String {
+        if !self.verifyField() {
+            print("Error: invalid field, value = \(self)")
+            return ""
+        }
         return self.lowercased()
     }
 
