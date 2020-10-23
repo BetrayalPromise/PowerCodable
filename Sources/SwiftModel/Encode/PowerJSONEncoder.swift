@@ -1,15 +1,23 @@
 import Foundation
 
-public class PowerJSONEncoder {
-    public struct Strategy {
-        public var data: PowerJSONEncoder.DataEncodingStrategy = .base64
-        public var date: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
+public struct EncodingStrategy {
+    public var keys: Keys = Keys()
+    public var values: Values = Values()
+    public var output: PowerJSONEncoder.OutputFormatting = []
+
+    public struct Keys {
         public var key: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
-        public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
-        public var nonConformingFloat: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
     }
 
-    var strategy = Strategy()
+    public struct Values {
+        public var date: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
+        public var data: PowerJSONEncoder.DataEncodingStrategy = .base64
+        public var nonConformingFloat: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
+    }
+}
+
+public class PowerJSONEncoder {
+    public var strategy = EncodingStrategy()
 
     /// 逆向模型转化
     /// - Parameters:
@@ -22,7 +30,7 @@ public class PowerJSONEncoder {
         encoder.wrapper = self
         try value.encode(to: encoder)
         let json = encoder.jsonValue
-        let options = Formatter.Options(formatting: self.strategy.outputFormatting, dataEncoding: self.strategy.data, dateEncoding: self.strategy.date, keyEncoding: self.strategy.key)
+        let options = Formatter.Options(formatting: self.strategy.output, dataEncoding: self.strategy.values.data, dateEncoding: self.strategy.values.date, keyEncoding: self.strategy.keys.key)
         let formatter = Formatter(topLevel: json, options: options, encoder: encoder)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {
@@ -62,8 +70,8 @@ class PowerInnerJSONEncoder: Encoder {
     let value: Encodable
     unowned var wrapper: PowerJSONEncoder?
     
-    var strategy: PowerJSONEncoder.Strategy {
-        return self.wrapper?.strategy ?? PowerJSONEncoder.Strategy()
+    var strategy: EncodingStrategy {
+        return self.wrapper?.strategy ?? EncodingStrategy()
     }
 
     init(value: Encodable, paths: [Path]) {

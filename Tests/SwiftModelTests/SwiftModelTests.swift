@@ -27,9 +27,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             let modelA: A = try decoder.decode(type: A.self, from: data)
             XCTAssertEqual(modelA.a, false)
 
-            self.decoder.strategy.value = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
+            self.decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
             defer {
-                self.decoder.strategy.value = .useDefaultValues
+                self.decoder.strategy.values.commonMapping = .useDefaultValues
             }
             let modelB: B = try decoder.decode(type: B.self, from: data)
             XCTAssertEqual(modelB.a, false)
@@ -1093,7 +1093,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.value = .useCustomValues(delegete: Adapter())
+            decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1124,7 +1124,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.value = .useCustomValues(delegete: Adapter())
+            decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1166,7 +1166,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.value = .useCustomValues(delegete: Adapter())
+            decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1341,7 +1341,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            self.decoder.strategy.nonConformingFloat = .convertToString()
+            self.decoder.strategy.values.nonConformingFloatMapping = .convertToString()
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
             XCTAssertEqual(json.b.isNaN, true)
@@ -1414,9 +1414,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.key = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.keys.commonMapping = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.strategy.key = .useDefaultKeys
+            self.decoder.strategy.keys.commonMapping = .useDefaultKeys
         }
         do {
             struct Root: Codable {
@@ -1644,9 +1644,9 @@ final class SwiftModelEncodeTests: XCTestCase {
             var boolBool = false
         }
 
-        self.encoder.strategy.key = .useSnakeKeys(.default)
+        self.encoder.strategy.keys.key = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.key = .useDefaultKeys
+            self.encoder.strategy.keys.key = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -1663,7 +1663,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let b = -Float.infinity
             let c = Float.infinity
         }
-        self.encoder.strategy.nonConformingFloat = .null
+        self.encoder.strategy.values.nonConformingFloat = .null
         do {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
