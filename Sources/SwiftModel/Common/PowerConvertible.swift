@@ -395,6 +395,8 @@ public struct JSONStructure: JSONCodingSupport {
 
 /// 类型不一致策略
 public enum ValueStrategy {
-    case useDefaultable
-    case useCustom(TypeConvertible)
+    /// 只能处理nil转可选类型;默认不特殊处理nil
+    case useDefaultable(ignoreEmpty: Bool = true)
+    /// 只能处理nil转可选类型;默认不特殊处理nil
+    case useCustom(delegete: TypeConvertible, ignoreEmpty: Bool = true)
 }

@@ -7,7 +7,7 @@ fileprivate class Storage<Key: CodingKey> {
 
     func append(key: String, value: JSONValue, encoder: PowerInnerJSONEncoder) {
         var mappingKey: String = ""
-        switch encoder.keyEncodingStrategy {
+        switch encoder.strategy.key {
         case .useDefaultKeys:
             mappingKey = key
         case .useCamelKeys(let c):
@@ -277,13 +277,11 @@ extension EncodingKeyed {
             if self.mapping.keys.contains(key.stringValue) {
                 let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
                 encoder.wrapper = self.encoder.wrapper
-                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultKeys
                 try url.absoluteString.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
             } else {
                 let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
                 encoder.wrapper = self.encoder.wrapper
-                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultKeys
                 try url.absoluteString.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
             }
@@ -291,13 +289,11 @@ extension EncodingKeyed {
             if self.mapping.keys.contains(key.stringValue) {
                 let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
                 encoder.wrapper = self.encoder.wrapper
-                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultKeys
                 try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
             } else {
                 let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
                 encoder.wrapper = self.encoder.wrapper
-                encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultKeys
                 try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
             }

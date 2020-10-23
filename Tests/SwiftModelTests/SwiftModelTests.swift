@@ -1058,7 +1058,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.valueConvertTypeStrategy = .useCustom(Adapter())
+            decoder.strategy.value = .useCustom(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1089,7 +1089,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.valueConvertTypeStrategy = .useCustom(Adapter())
+            decoder.strategy.value = .useCustom(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1131,7 +1131,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.valueConvertTypeStrategy = .useCustom(Adapter())
+            decoder.strategy.value = .useCustom(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1306,7 +1306,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            self.decoder.nonConformingFloatDecodingStrategy = .convertToString()
+            self.decoder.strategy.nonConformingFloat = .convertToString()
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
             XCTAssertEqual(json.b.isNaN, true)
@@ -1379,9 +1379,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.keyDecodingStrategy = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.key = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.keyDecodingStrategy = .useDefaultKeys
+            self.decoder.strategy.key = .useDefaultKeys
         }
         do {
             struct Root: Codable {
@@ -1609,9 +1609,9 @@ final class SwiftModelEncodeTests: XCTestCase {
             var boolBool = false
         }
 
-        self.encoder.keyEncodingStrategy = .useSnakeKeys(.default)
+        self.encoder.strategy.key = .useSnakeKeys(.default)
         defer {
-            self.encoder.keyEncodingStrategy = .useDefaultKeys
+            self.encoder.strategy.key = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -1628,7 +1628,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let b = -Float.infinity
             let c = Float.infinity
         }
-        self.encoder.nonConformingFloatEncodingStrategy = .null
+        self.encoder.strategy.nonConformingFloat = .null
         do {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)

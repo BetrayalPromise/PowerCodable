@@ -15,8 +15,13 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
     }
 
     func decodeNil() -> Bool {
-        if self.decoder.wrapper?.customNilToOptionalType ?? false {
-            return false
+        if self.json == .null {
+            switch self.decoder.wrapper?.strategy.value ?? .useDefaultable(ignoreEmpty: true) {
+            case .useDefaultable(ignoreEmpty: let ignore):
+                return ignore == true ? true :  decoder.unboxNil(object: json)
+            case .useCustom(delegete: _, ignoreEmpty: let ignore):
+                return ignore == true ? true :  decoder.unboxNil(object: json)
+            }
         }
         return decoder.unboxNil(object: json)
     }

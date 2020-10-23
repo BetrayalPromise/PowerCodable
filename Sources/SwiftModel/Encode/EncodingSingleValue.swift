@@ -89,7 +89,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
 
     func encode(_ value: Double) throws {
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.nonConformingFloatEncodingStrategy ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloat ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -141,7 +141,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
 
     func encode(_ value: Float) throws {
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.nonConformingFloatEncodingStrategy ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloat ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -439,13 +439,11 @@ class EncodingSingleValue: SingleValueEncodingContainer {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
             let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths)
             encoder.wrapper = self.encoder.wrapper
-            encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultKeys
             try url.absoluteString.encode(to: encoder)
             self.storage = encoder.jsonValue
         } else {
             let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths)
             encoder.wrapper = self.encoder.wrapper
-            encoder.keyEncodingStrategy = self.encoder.wrapper?.keyEncodingStrategy ?? .useDefaultKeys
             try value.encode(to: encoder)
             self.storage = encoder.jsonValue
         }

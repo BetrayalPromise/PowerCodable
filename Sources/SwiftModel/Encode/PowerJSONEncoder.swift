@@ -1,15 +1,15 @@
 import Foundation
 
 public class PowerJSONEncoder {
-    struct EncodingStrategy {
-        var data: PowerJSONEncoder.DataEncodingStrategy = .base64
+    public struct Strategy {
+        public var data: PowerJSONEncoder.DataEncodingStrategy = .base64
+        public var date: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
+        public var key: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
+        public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
+        public var nonConformingFloat: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
     }
 
-    public var dataEncodingStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
-    public var dateEncodingStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
-    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
-    public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
-    public var nonConformingFloatEncodingStrategy: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
+    var strategy = Strategy()
 
     /// 逆向模型转化
     /// - Parameters:
@@ -20,10 +20,9 @@ public class PowerJSONEncoder {
     func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {
         let encoder = PowerInnerJSONEncoder(value: value, paths: [])
         encoder.wrapper = self
-        encoder.keyEncodingStrategy = self.keyEncodingStrategy
         try value.encode(to: encoder)
         let json = encoder.jsonValue
-        let options = Formatter.Options(formatting: self.outputFormatting, dataEncoding: self.dataEncodingStrategy, dateEncoding: self.dateEncodingStrategy, keyEncoding: self.keyEncodingStrategy)
+        let options = Formatter.Options(formatting: self.strategy.outputFormatting, dataEncoding: self.strategy.data, dateEncoding: self.strategy.date, keyEncoding: self.strategy.key)
         let formatter = Formatter(topLevel: json, options: options, encoder: encoder)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {
@@ -62,7 +61,10 @@ class PowerInnerJSONEncoder: Encoder {
     var paths: [Path] = []
     let value: Encodable
     unowned var wrapper: PowerJSONEncoder?
-    public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
+    
+    var strategy: PowerJSONEncoder.Strategy {
+        return self.wrapper?.strategy ?? PowerJSONEncoder.Strategy()
+    }
 
     init(value: Encodable, paths: [Path]) {
         self.value = value
