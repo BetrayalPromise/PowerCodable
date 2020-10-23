@@ -3,6 +3,41 @@ import XCTest
 
 final class SwiftModelDecodeTests: XCTestCase {
     let decoder = PowerJSONDecoder()
+
+    func testNil() {
+        let data: Data = """
+            {"a": null}
+        """.data(using: String.Encoding.utf8) ?? Data()
+
+        struct A: Decodable {
+            let a: Bool
+        }
+
+        struct B: Decodable {
+            let a: Bool?
+        }
+
+        struct Adapter: TypeConvertible {
+            func toBool(path: JSONPath, value: JSONNull) -> Bool {
+                return false
+            }
+        }
+
+        do {
+            let modelA: A = try decoder.decode(type: A.self, from: data)
+            XCTAssertEqual(modelA.a, false)
+
+            self.decoder.strategy.value = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
+            defer {
+                self.decoder.strategy.value = .useDefaultValues
+            }
+            let modelB: B = try decoder.decode(type: B.self, from: data)
+            XCTAssertEqual(modelB.a, false)
+        } catch {
+            XCTFail("测试失败")
+        }
+    }
+
     func testBool() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}, "", "dfadfad"]
@@ -1058,7 +1093,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.value = .useCustom(delegete: Adapter())
+            decoder.strategy.value = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1089,7 +1124,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.value = .useCustom(delegete: Adapter())
+            decoder.strategy.value = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1131,7 +1166,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.value = .useCustom(delegete: Adapter())
+            decoder.strategy.value = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)

@@ -13,6 +13,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encodeNil() throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .null; return
         }
@@ -38,6 +39,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Bool) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .bool(value); return
         }
@@ -63,6 +65,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: String) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .string(value); return
         }
@@ -88,6 +91,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Double) throws {
+        debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
             switch self.encoder.wrapper?.strategy.nonConformingFloat ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
@@ -140,6 +144,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Float) throws {
+        debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
             switch self.encoder.wrapper?.strategy.nonConformingFloat ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
@@ -185,6 +190,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Int) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -210,6 +216,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Int8) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -235,6 +242,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Int16) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -260,6 +268,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Int32) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -285,6 +294,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: Int64) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -310,6 +320,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: UInt) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -335,6 +346,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: UInt8) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -360,6 +372,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: UInt16) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -385,6 +398,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: UInt32) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -410,6 +424,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode(_ value: UInt64) throws {
+        debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
@@ -435,6 +450,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 
     func encode<T>(_ value: T) throws where T : Encodable {
+        debugPrint(self.storage)
         if value is URL {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
             let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths)
