@@ -1,10 +1,15 @@
 import Foundation
 
 public class PowerJSONEncoder {
+    struct EncodingStrategy {
+        var data: PowerJSONEncoder.DataEncodingStrategy = .base64
+    }
+
     public var dataEncodingStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
     public var dateEncodingStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
     public var keyEncodingStrategy: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
     public var outputFormatting: PowerJSONEncoder.OutputFormatting = []
+    public var nonConformingFloatEncodingStrategy: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
 
     /// 逆向模型转化
     /// - Parameters:

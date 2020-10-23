@@ -50,6 +50,18 @@ extension PowerJSONEncoder {
         case useLowerKeys
     }
 
+    public enum NonConformingFloatEncodingStrategy {
+        case `throw`
+        case convertToString(positiveInfinity: String = "+infinity", negativeInfinity: String = "-infinity", nan: String = "nan")
+        case null
+        case bool(Bool)
+        case integer(Int64)
+        case double(Double)
+        case string(String)
+        case array([JSON])
+        case object([String: JSON])
+    }
+
     private class Writer {
         private static let IndentationData: Data = {
             let data = "    ".data(using: .utf8)!

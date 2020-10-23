@@ -13,7 +13,7 @@ public final class PowerJSONDecoder {
     /// throw相碰到(infinity -infinity +infinity, nan)就抛出异常
     /// zero项相碰到(infinity -infinity +infinity, nan)就设置为0
     /// convertToString若使用默认值碰到(infinity -infinity +infinity, nan)及其大小写混合都处理(增强容错能力), 一旦自定义了集合,则会严格按照给定的集合查找
-    public var nonConformingFloatEncodingStrategy: PowerJSONDecoder.NonConformingFloatEncodingStrategy = .zero
+    public var nonConformingFloatDecodingStrategy: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .zero
 
     /// 正向模型转化
     /// - Parameters:
@@ -122,7 +122,7 @@ extension PowerInnerJSONDecoder {
         case let .bool(bool):
             return bool ? 1 : 0
         case let .string(string):
-            switch self.wrapper?.nonConformingFloatEncodingStrategy ?? .zero {
+            switch self.wrapper?.nonConformingFloatDecodingStrategy ?? .zero {
             case .zero:
                 if string.lowercased() == "nan" || string.lowercased() == "infinity" || string.lowercased() == "+infinity" || string.lowercased() == "-infinity" {
                     return T("0.0") ?? 0.0

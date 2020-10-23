@@ -1268,7 +1268,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
     }
 
-    func testNaN() {
+    func testNumber() {
         struct Numbers: Codable {
             let a: Float
             let b: Double
@@ -1306,7 +1306,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
-            self.decoder.nonConformingFloatEncodingStrategy = .convertToString()
+            self.decoder.nonConformingFloatDecodingStrategy = .convertToString()
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
             XCTAssertEqual(json.b.isNaN, true)
@@ -1322,6 +1322,10 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json.l, -Double.infinity)
             XCTAssertEqual(json.m, Double.infinity)
             XCTAssertEqual(json.n, Double.infinity)
+
+            XCTAssertTrue(json.l.isInfinite)
+            XCTAssertTrue(json.m.isInfinite)
+            XCTAssertTrue(json.n.isInfinite)
         } catch {
             XCTFail("解析失败")
         }
@@ -1616,6 +1620,20 @@ final class SwiftModelEncodeTests: XCTestCase {
         } catch  {
             XCTFail("解析失败")
         }
-//        JSONEncoder().nonConformingFloatEncodingStrategy
+    }
+
+    func testNumber() {
+        struct A: Encodable {
+            let a = Float.nan
+            let b = -Float.infinity
+            let c = Float.infinity
+        }
+        self.encoder.nonConformingFloatEncodingStrategy = .null
+        do {
+            let json = try encoder.encode(value: A(), to: String.self)
+            print(json)
+        } catch  {
+            XCTFail("解析失败")
+        }
     }
 }

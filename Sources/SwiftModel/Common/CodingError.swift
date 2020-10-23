@@ -65,6 +65,11 @@ public struct CodingError: Swift.Error {
     }
 
     struct Encoding {
+        static func invalidValue(value: Any, codingPath: [CodingKey] = [], reality: JSON) -> CodingError {
+            let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Expected to eecode \(value) but found \(reality)) instead.")
+            return CodingError(error: EncodingError.invalidValue(value, context), errorCode: .encodingError)
+        }
+
         static func invalidUTF8String(value: String) -> CodingError {
             debugPrint(value)
             return CodingError(errorCode: CodingError.ErrorCode.invalidUTF8String)
