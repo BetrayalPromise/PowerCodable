@@ -1388,7 +1388,7 @@ final class SwiftModelDecodeTests: XCTestCase {
     func testDate() {
         let data: Data = """
         {
-            "date": "2020-06-27T16:09:00+00:00"
+            "date": "1603539281"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
@@ -1400,6 +1400,15 @@ final class SwiftModelDecodeTests: XCTestCase {
         } catch {
             XCTFail("解析失败")
         }
+
+        let now = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        print(now.formatted(format:  "%y|%Y|%m|%d|%I|%H|%M|%S|%w|%z|%Z") ?? "")
+
+        let string = "1603539281"
+        print(string.toDate())
     }
 
     func testData() {

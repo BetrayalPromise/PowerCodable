@@ -17,6 +17,8 @@ public struct DecodingStrategy {
         public var nonConformingFloatMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .zero
         /// 常规的值转化策略
         public var commonMapping: ValueStrategy = .useDefaultValues
+
+//        public var dateMapping: PowerJSONDecoder.DateDecodingStrategy = .utc
     }
 }
 
