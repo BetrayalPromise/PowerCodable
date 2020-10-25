@@ -7,6 +7,8 @@ public struct EncodingStrategy {
     public var date: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
     public var data: PowerJSONEncoder.DataEncodingStrategy = .base64
     public var nonConformingFloat: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
+
+    public var valuesMapping: PowerJSONEncoder.ValueStrategy = .useDefaultValues
 }
 
 public class PowerJSONEncoder {
@@ -94,7 +96,7 @@ class PowerInnerJSONEncoder: Encoder {
     }
 }
 
-extension PowerInnerJSONEncoder: ValueConvertible {}
+extension PowerInnerJSONEncoder: EncodingValueConvertible {}
 
 extension PowerInnerJSONEncoder: JSONValue {
     var jsonValue: JSON {

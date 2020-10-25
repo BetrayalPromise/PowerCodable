@@ -31,7 +31,7 @@ extension Dictionary where Key == String, Value == JSON {
 }
 
 /// 基础类型转换处理
-public protocol ValueConvertible {
+public protocol DecodingValueConvertible {
     // MARK: Bool
     func toBool(path: JSONPath, value: JSONNull) -> Bool
     func toBool(path: JSONPath, value: JSONBool) -> Bool
@@ -185,7 +185,7 @@ public protocol ValueConvertible {
 }
 
 // MARK: - BOOL -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toBool(path: JSONPath, value: JSONNull) -> Bool { return false }
     func toBool(path: JSONPath, value: JSONBool) -> Bool { return value }
     func toBool(path: JSONPath, value: JSONInteger) -> Bool { return value == 1 ? true : false }
@@ -196,7 +196,7 @@ extension ValueConvertible {
 }
 
 // MARK: - INT -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toInt(path: JSONPath, value: JSONNull) -> Int { return 0 }
     func toInt(path: JSONPath, value: JSONBool) -> Int { return value == true ? 1 : 0 }
     func toInt(path: JSONPath, value: JSONInteger) -> Int { return Int(value) }
@@ -207,7 +207,7 @@ extension ValueConvertible {
 }
 
 // MARK: - INT8 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toInt8(path: JSONPath, value: JSONNull) -> Int8 { return 0 }
     func toInt8(path: JSONPath, value: JSONBool) -> Int8 { return value == true ? 1 : 0 }
     func toInt8(path: JSONPath, value: JSONInteger) -> Int8 { return Int8(value) }
@@ -218,7 +218,7 @@ extension ValueConvertible {
 }
 
 // MARK: - INT16 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toInt16(path: JSONPath, value: JSONNull) -> Int16 { return 0 }
     func toInt16(path: JSONPath, value: JSONBool) -> Int16 { return value == true ? 1 : 0 }
     func toInt16(path: JSONPath, value: JSONInteger) -> Int16 { return Int16(value) }
@@ -229,7 +229,7 @@ extension ValueConvertible {
 }
 
 // MARK: - INT32 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toInt32(path: JSONPath, value: JSONNull) -> Int32 { return 0 }
     func toInt32(path: JSONPath, value: JSONBool) -> Int32 { return value == true ? 1 : 0 }
     func toInt32(path: JSONPath, value: JSONInteger) -> Int32 { return Int32(value) }
@@ -240,7 +240,7 @@ extension ValueConvertible {
 }
 
 // MARK: - INT64 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toInt64(path: JSONPath, value: JSONNull) -> Int64 { return 0 }
     func toInt64(path: JSONPath, value: JSONBool) -> Int64 { return value == true ? 1 : 0 }
     func toInt64(path: JSONPath, value: JSONInteger) -> Int64 { return Int64(value) }
@@ -251,7 +251,7 @@ extension ValueConvertible {
 }
 
 // MARK: - UINT -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toUInt(path: JSONPath, value: JSONNull) -> UInt { return 0 }
     func toUInt(path: JSONPath, value: JSONBool) -> UInt { return value == true ? 1 : 0 }
     func toUInt(path: JSONPath, value: JSONInteger) -> UInt { return value >= 0 ? UInt(value) : 0 }
@@ -262,7 +262,7 @@ extension ValueConvertible {
 }
 
 // MARK: - UInt8 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toUInt8(path: JSONPath, value: JSONNull) -> UInt8 { return 0 }
     func toUInt8(path: JSONPath, value: JSONBool) -> UInt8 { return value == true ? 1 : 0 }
     func toUInt8(path: JSONPath, value: JSONInteger) -> UInt8 { return value >= 0 ? UInt8(value) : 0 }
@@ -273,7 +273,7 @@ extension ValueConvertible {
 }
 
 // MARK: - UInt16 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toUInt16(path: JSONPath, value: JSONNull) -> UInt16 { return 0 }
     func toUInt16(path: JSONPath, value: JSONBool) -> UInt16 { return value == true ? 1 : 0 }
     func toUInt16(path: JSONPath, value: JSONInteger) -> UInt16  { return value >= 0 ? UInt16(value) : 0 }
@@ -284,7 +284,7 @@ extension ValueConvertible {
 }
 
 // MARK: - UInt32 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toUInt32(path: JSONPath, value: JSONNull) -> UInt32 { return 0 }
     func toUInt32(path: JSONPath, value: JSONBool) -> UInt32 { return value == true ? 1 : 0 }
     func toUInt32(path: JSONPath, value: JSONInteger) -> UInt32 { return value >= 0 ? UInt32(value) : 0 }
@@ -295,7 +295,7 @@ extension ValueConvertible {
 }
 
 // MARK: - UInt64 -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toUInt64(path: JSONPath, value: JSONNull) -> UInt64 { return 0 }
     func toUInt64(path: JSONPath, value: JSONBool) -> UInt64 { return value == true ? 1 : 0 }
     func toUInt64(path: JSONPath, value: JSONInteger) -> UInt64 { return value >= 0 ? UInt64(value) : 0 }
@@ -306,7 +306,7 @@ extension ValueConvertible {
 }
 
 // MARK: - Float -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toFloat(path: JSONPath, value: JSONNull) -> Float { return 0 }
     func toFloat(path: JSONPath, value: JSONBool) -> Float { return value == true ? 1 : 0 }
     func toFloat(path: JSONPath, value: JSONInteger) -> Float { return Float(value) }
@@ -317,7 +317,7 @@ extension ValueConvertible {
 }
 
 // MARK: - Double -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toDouble(path: JSONPath, value: JSONNull) ->  Double { return 0 }
     func toDouble(path: JSONPath, value: JSONBool) -> Double { return value == true ? 1 : 0 }
     func toDouble(path: JSONPath, value: JSONInteger) -> Double { return Double(value) }
@@ -328,7 +328,7 @@ extension ValueConvertible {
 }
 
 // MARK: - String -
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toString(path: JSONPath, value: JSONNull) -> String { return "null" }
     func toString(path: JSONPath, value: JSONBool) -> String { return value == true ? "true" : "false" }
     func toString(path: JSONPath, value: JSONInteger) -> String { return String(value) }
@@ -338,7 +338,7 @@ extension ValueConvertible {
     func toString(path: JSONPath, value: JSONArray) -> String { return "[]" }
 }
 
-extension ValueConvertible {
+extension DecodingValueConvertible {
     func toData(path: JSONPath, value: JSONNull) -> Data {
         return Data()
     }
@@ -368,17 +368,17 @@ extension ValueConvertible {
     }
     
     func toData(path: JSONPath, value: JSONObject) -> Data {
-        debugPrint("Error: must implement ValueConvertible Protocal method \(#function), default return Data()")
+        debugPrint("Error: must implement DecodingValueConvertible Protocal method \(#function), default return Data()")
         return Data()
     }
 
     func toData(path: JSONPath, value: JSONArray) -> Data {
-        debugPrint("Error: must implement ValueConvertible Protocal method \(#function), default return Data()")
+        debugPrint("Error: must implement DecodingValueConvertible Protocal method \(#function), default return Data()")
         return Data()
     }
 }
 
-extension ValueConvertible {
+extension DecodingValueConvertible {
     /// 正无穷
     func toPositiveInfinity(path: JSONPath, value: JSONString) -> Set<String> {
         return ["+infinity", "infinity"]
@@ -393,6 +393,10 @@ extension ValueConvertible {
     func toNan(path: JSONPath, value: JSONString) -> Set<String> {
         return ["nan"]
     }
+}
+
+public protocol EncodingValueConvertible {
+
 }
 
 public protocol MappingDecodingKeys {
@@ -479,6 +483,6 @@ public struct JSONStructure: JSONCodingSupport {
 public enum ValueStrategy {
     /// 默认处理
     case useDefaultValues
-    /// delegete指实现ValueConvertible协议(类结构题枚举或者自定义的实体) mappingEmptyValue指nil值是否能通过delegate处理nil获取自定义处理的值,不能则获取默认处理方式
-    case useCustomValues(delegete: ValueConvertible, enableMappingEmptyValue: Bool = true)
+    /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体) mappingEmptyValue指nil值是否能通过delegate处理nil获取自定义处理的值,不能则获取默认处理方式
+    case useCustomValues(delegete: DecodingValueConvertible)
 }

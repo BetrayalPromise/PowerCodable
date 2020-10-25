@@ -17,7 +17,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let a: Bool?
         }
 
-        struct Adapter: ValueConvertible {
+        struct Adapter: DecodingValueConvertible {
             func toBool(path: JSONPath, value: JSONNull) -> Bool {
                 return false
             }
@@ -27,7 +27,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let modelA: A = try decoder.decode(type: A.self, from: data)
             XCTAssertEqual(modelA.a, false)
 
-            self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
+            self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
             defer {
                 self.decoder.strategy.valuesMapping = .useDefaultValues
             }
@@ -1066,7 +1066,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         do {
-            struct Adapter: ValueConvertible {
+            struct Adapter: DecodingValueConvertible {
                 func toInt(path: JSONPath, value: JSONInteger) -> Int {
                     if path == "[:]gender" && value == 4 {
                         return 0
@@ -1102,7 +1102,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
         do {
-            struct Adapter: ValueConvertible {
+            struct Adapter: DecodingValueConvertible {
                 func toInt(path: JSONPath, value: JSONFloating) -> Int {
                     if path == "[:]gender" && value == 3.5 {
                         return 0
@@ -1134,7 +1134,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         do {
-            struct Adapter: ValueConvertible {
+            struct Adapter: DecodingValueConvertible {
                 func toInt(path: JSONPath, value: JSONInteger) -> Int {
                     if path == "[:]gender" && value > 2 {
                         return 0
@@ -1341,13 +1341,13 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         """.data(using: String.Encoding.utf8) ?? Data()
 
-        struct Adapter: ValueConvertible {
+        struct Adapter: DecodingValueConvertible {
             func toNan(path: JSONPath, value: JSONString) -> Set<String> {
                 return ["nan", "Nan", "nAn", "naN", "NAn", "NaN", "nAN", "NAN"]
             }
         }
 
-        self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
+        self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
         do {
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)

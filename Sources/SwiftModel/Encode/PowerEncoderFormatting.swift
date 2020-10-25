@@ -40,6 +40,14 @@ extension PowerJSONEncoder {
 //        case useDefaultKeys
 //        case custom(([CodingKey]) -> CodingKey)
 //    }
+    
+    /// 类型不一致策略
+    public enum ValueStrategy {
+        /// 默认处理
+        case useDefaultValues
+        /// delegete指实现ValueConvertible协议(类结构题枚举或者自定义的实体)
+        case useCustomValues(delegete: EncodingValueConvertible)
+    }
 
     public enum KeyEncodingStrategy {
         case useDefaultKeys
