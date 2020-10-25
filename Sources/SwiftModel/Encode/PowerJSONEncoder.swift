@@ -20,7 +20,7 @@ public class PowerJSONEncoder {
     /// - Throws: 解析异常
     /// - Returns: 输出值
     func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {
-        let encoder = PowerInnerJSONEncoder(value: value, paths: [])
+        let encoder = PowerInnerJSONEncoder(value: value)
         encoder.wrapper = self
         try value.encode(to: encoder)
         let json = encoder.jsonValue
@@ -60,7 +60,10 @@ class PowerInnerJSONEncoder: Encoder {
 
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var container: JSONValue = DefaultJSONValue()
-    var paths: [Path] = []
+    var paths: [Path] {
+        get { return self.wrapper?.paths ?? [] }
+        set { self.wrapper?.paths = newValue }
+    }
     let value: Encodable
     unowned var wrapper: PowerJSONEncoder?
     
@@ -68,9 +71,8 @@ class PowerInnerJSONEncoder: Encoder {
         return self.wrapper?.strategy ?? EncodingStrategy()
     }
 
-    init(value: Encodable, paths: [Path]) {
+    init(value: Encodable) {
         self.value = value
-        self.paths = paths
     }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {

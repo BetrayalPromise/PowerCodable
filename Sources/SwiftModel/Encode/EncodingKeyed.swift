@@ -315,7 +315,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
+                let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
                 encoder.wrapper = self.encoder.wrapper
                 try url.absoluteString.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
@@ -323,7 +323,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.paths + [Path.index(by: key.stringValue)])
+                let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
                 encoder.wrapper = self.encoder.wrapper
                 try url.absoluteString.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
@@ -333,7 +333,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value, paths: self.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
+                let encoder = PowerInnerJSONEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
@@ -341,7 +341,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value, paths: self.paths + [Path.index(by: key.stringValue)])
+                let encoder = PowerInnerJSONEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)

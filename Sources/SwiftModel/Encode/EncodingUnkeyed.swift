@@ -65,13 +65,19 @@ extension EncodingUnkeyed {
             self.currentIndex += 1
         }
         if value is URL {
+            self.paths.push(value: Path.index(by: self.currentIndex))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
-            let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.paths + [Path.index(by: self.currentIndex)])
+            let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
             encoder.wrapper = self.encoder.wrapper
             try url.absoluteString.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         } else {
-            let encoder = PowerInnerJSONEncoder(value: value, paths: self.paths + [Path.index(by: self.currentIndex)])
+            self.paths.push(value: Path.index(by: self.currentIndex))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
+            let encoder = PowerInnerJSONEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
