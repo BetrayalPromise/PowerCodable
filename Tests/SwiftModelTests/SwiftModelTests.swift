@@ -1411,7 +1411,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         print(string.toDate())
     }
 
-    func testData() {
+    func testKeyMapping() {
 //        print("abcAbcAbcAbcAbc".toCamelCase())
 //        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
 //        print("abcAbcAbcAbcAbc".toSnakeCase())
@@ -1430,6 +1430,30 @@ final class SwiftModelDecodeTests: XCTestCase {
         do {
             struct Root: Codable {
                 let stringData: String
+            }
+            let json = try decoder.decode(type: Root.self, from: data)
+            print(json)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testData() {
+        let data: Data = """
+        {
+            "data0": "0xff055008",
+            "data1": true,
+            "data2": null,
+            "data3": [true]
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+
+        do {
+            struct Root: Codable {
+                let data0: Data
+                let data1: Data
+                let data2: Data
+                let data3: Data
             }
             let json = try decoder.decode(type: Root.self, from: data)
             print(json)

@@ -157,6 +157,14 @@ public protocol TypeConvertible {
     func toString(path: JSONPath, value: JSONString) -> String
     func toString(path: JSONPath, value: JSONObject) -> String
     func toString(path: JSONPath, value: JSONArray) -> String
+
+    func toData(path: JSONPath, value: JSONNull) -> Data
+    func toData(path: JSONPath, value: JSONBool) -> Data
+    func toData(path: JSONPath, value: JSONInteger) -> Data
+    func toData(path: JSONPath, value: JSONFloating) -> Data
+    func toData(path: JSONPath, value: JSONString) -> Data
+    func toData(path: JSONPath, value: JSONObject) -> Data
+    func toData(path: JSONPath, value: JSONArray) -> Data
 }
 
 // MARK: - BOOL -
@@ -311,6 +319,46 @@ extension TypeConvertible {
     func toString(path: JSONPath, value: JSONString) -> String  { return value }
     func toString(path: JSONPath, value: JSONObject) -> String { return "[:]" }
     func toString(path: JSONPath, value: JSONArray) -> String { return "[]" }
+}
+
+extension TypeConvertible {
+    func toData(path: JSONPath, value: JSONNull) -> Data {
+        return Data()
+    }
+
+    func toData(path: JSONPath, value: JSONBool) -> Data {
+        let size = MemoryLayout.size(ofValue: value)
+        var value = value
+        return Data(bytes: &value, count: size)
+    }
+
+    func toData(path: JSONPath, value: JSONInteger) -> Data {
+        let size = MemoryLayout.size(ofValue: value)
+        var value = value
+        return Data(bytes: &value, count: size)
+    }
+
+    func toData(path: JSONPath, value: JSONFloating) -> Data {
+        let size = MemoryLayout.size(ofValue: value)
+        var value = value
+        return Data(bytes: &value, count: size)
+    }
+    
+    func toData(path: JSONPath, value: JSONString) -> Data {
+        let size = MemoryLayout.size(ofValue: value)
+        var value = value
+        return Data(bytes: &value, count: size)
+    }
+    
+    func toData(path: JSONPath, value: JSONObject) -> Data {
+        debugPrint("Error: must implement TypeConvertible Protocal method \(#function), default return Data()")
+        return Data()
+    }
+
+    func toData(path: JSONPath, value: JSONArray) -> Data {
+        debugPrint("Error: must implement TypeConvertible Protocal method \(#function), default return Data()")
+        return Data()
+    }
 }
 
 public protocol MappingDecodingKeys {

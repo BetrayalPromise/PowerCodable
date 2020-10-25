@@ -273,6 +273,9 @@ extension PowerInnerJSONDecoder {
             return try container.decode(T.self)
         } else if T.self == Date.self {
             return try T.init(from: self)
+        } else if T.self == Data.self {
+            let container = DecodingSingleValue(decoder: self, json: currentJSON)
+            return try container.decode(T.self)
         }
         return try T.init(from: self)
     }

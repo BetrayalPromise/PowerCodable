@@ -1,17 +1,6 @@
 import Foundation
 
 extension PowerJSONDecoder {
-    public enum DateDecodingStrategy {
-        case deferredToDate, utc
-        case gmt
-        case secondsSince1970
-        case millisecondsSince1970
-        case iso8601
-        case formatted(DateFormatter)
-    }
-}
-
-extension PowerJSONDecoder {
     public enum KeyDecodingStrategy {
         case useDefaultKeys
         case useSnakeKeys(StringCaseFormat.SnakeCase)
