@@ -97,20 +97,20 @@ extension JSON: JSONConvertible {
 }
 
 extension JSON {
-    init(array: [JSON]) {
+    public init(array: [JSON]) {
         self = .array(array)
     }
 
-    init(object: [String: JSON]) {
+    public init(object: [String: JSON]) {
         self = .object(object)
     }
 
-    static func emptyArray() -> JSON {
-        return JSON(array: [])
+    public init(emptyArray: ()) {
+        self = JSON(array: [])
     }
 
-    static func emptyObject() -> JSON {
-        return JSON(object: [:])
+    public init(emptyObject: ()) {
+        self = JSON(object: [:])
     }
 }
 

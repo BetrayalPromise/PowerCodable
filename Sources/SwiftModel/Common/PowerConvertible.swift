@@ -465,7 +465,9 @@ extension MappingDecodingKeys {
 
 public protocol MappingEncodingKeysValues {
     /// 可转变的keys
+    /// /// 优先级是策略中最高的 如果制定了编码器的Key策略,同时也实现了该协议,最终是该协议生效而不是设置编码器Key的生效
     static func modelEncodingKeys() -> [String: String]
+    /// 可转变的JSON,上面的函数设置会影响JSONPath
     static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON
 }
 

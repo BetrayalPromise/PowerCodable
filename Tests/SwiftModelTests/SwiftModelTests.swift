@@ -1701,6 +1701,37 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
     }
 
+    func testValue() {
+        struct A: Encodable, MappingEncodingKeysValues {
+            var boolBool = false
+
+            static func modelEncodingKeys() -> [String : String] {
+                return ["boolBool": "a"]
+            }
+
+            static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
+                if path == "[:]a" {
+                    return JSON.init(nilLiteral: ())
+                }
+                return value
+            }
+        }
+
+        self.encoder.strategy.keysMapping = .useSnakeKeys(.default)
+        defer {
+            self.encoder.strategy.keysMapping = .useDefaultKeys
+        }
+        do {
+            let json: JSON = try encoder.encode(value: A(), to: JSON.self)
+            let string: String = try encoder.encode(value: A(), to: String.self)
+            print(string)
+            XCTAssertNil(json["boolBool"])
+            XCTAssertNotNil(json["a"])
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
+
     func testNumber() {
         struct A: Encodable {
             let a = Float.nan
