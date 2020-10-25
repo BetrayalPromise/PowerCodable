@@ -46,18 +46,25 @@ struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
 }
 
 extension EncodingKeyed {
+    var paths: [Path] {
+        get { return self.encoder.wrapper?.paths ?? [] }
+        set { self.encoder.wrapper?.paths = newValue }
+    }
+}
+
+extension EncodingKeyed {
     mutating func encodeNil(forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encodeNil()
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encodeNil()
         }
@@ -66,15 +73,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Bool, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -83,15 +90,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: String, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -100,15 +107,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Double, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -117,15 +124,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Float, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -134,15 +141,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Int, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -151,15 +158,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Int8, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -168,15 +175,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Int16, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -185,15 +192,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Int32, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -202,15 +209,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: Int64, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -219,15 +226,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: UInt, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -236,15 +243,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: UInt8, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -253,15 +260,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: UInt16, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -270,15 +277,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: UInt32, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -287,15 +294,15 @@ extension EncodingKeyed {
     mutating func encode(_ value: UInt64, forKey key: Key) throws {
         let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.encoder.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, encoder: self.encoder)
             try container.encode(value)
         } else {
-            self.encoder.paths.push(value: Path.index(by: key.stringValue))
-            defer { self.encoder.paths.pop() }
-            debugPrint(self.encoder.paths.jsonPath)
+            self.paths.push(value: Path.index(by: key.stringValue))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
             self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
             try container.encode(value)
         }
@@ -305,36 +312,36 @@ extension EncodingKeyed {
         if value is URL {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
             if self.mapping.keys.contains(key.stringValue) {
-                self.encoder.paths.push(value: Path.index(by: key.stringValue))
-                defer { self.encoder.paths.pop() }
-                debugPrint(self.encoder.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
+                self.paths.push(value: Path.index(by: key.stringValue))
+                defer { self.paths.pop() }
+                debugPrint(self.paths.jsonPath)
+                let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
                 encoder.wrapper = self.encoder.wrapper
                 try url.absoluteString.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
             } else {
-                self.encoder.paths.push(value: Path.index(by: key.stringValue))
-                defer { self.encoder.paths.pop() }
-                debugPrint(self.encoder.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
+                self.paths.push(value: Path.index(by: key.stringValue))
+                defer { self.paths.pop() }
+                debugPrint(self.paths.jsonPath)
+                let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.paths + [Path.index(by: key.stringValue)])
                 encoder.wrapper = self.encoder.wrapper
                 try url.absoluteString.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
             }
         } else {
             if self.mapping.keys.contains(key.stringValue) {
-                self.encoder.paths.push(value: Path.index(by: key.stringValue))
-                defer { self.encoder.paths.pop() }
-                debugPrint(self.encoder.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
+                self.paths.push(value: Path.index(by: key.stringValue))
+                defer { self.paths.pop() }
+                debugPrint(self.paths.jsonPath)
+                let encoder = PowerInnerJSONEncoder(value: value, paths: self.paths + [Path.index(by:  self.mapping[key.stringValue] ?? "")])
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
             } else {
-                self.encoder.paths.push(value: Path.index(by: key.stringValue))
-                defer { self.encoder.paths.pop() }
-                debugPrint(self.encoder.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths + [Path.index(by: key.stringValue)])
+                self.paths.push(value: Path.index(by: key.stringValue))
+                defer { self.paths.pop() }
+                debugPrint(self.paths.jsonPath)
+                let encoder = PowerInnerJSONEncoder(value: value, paths: self.paths + [Path.index(by: key.stringValue)])
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)

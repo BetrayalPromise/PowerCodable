@@ -13,7 +13,16 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
         self.json = json
         self.decoder = decoder
     }
+}
 
+extension DecodingSingleValue {
+    var paths: [Path] {
+        get { return self.decoder.wrapper?.paths ?? [] }
+        set { self.decoder.wrapper?.paths = newValue }
+    }
+}
+
+extension DecodingSingleValue {
     func decodeNil() -> Bool {
         debugPrint(self.json)
         return decoder.unboxNil(object: json)
@@ -103,55 +112,55 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
             case .null:
                 switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.decoder.paths.jsonPath, value: NSNull()) as! T
+                    return self.decoder.toData(path: self.paths.jsonPath, value: NSNull()) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: let enableMappingEmptyValue):
                     if enableMappingEmptyValue {
-                        return delegete.toData(path: self.decoder.paths.jsonPath, value: NSNull()) as! T
+                        return delegete.toData(path: self.paths.jsonPath, value: NSNull()) as! T
                     } else {
-                        return self.decoder.toData(path: self.decoder.paths.jsonPath, value: NSNull()) as! T
+                        return self.decoder.toData(path: self.paths.jsonPath, value: NSNull()) as! T
                     }
                 }
             case .bool(let bool):
                 switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.decoder.paths.jsonPath, value: bool) as! T
+                    return self.decoder.toData(path: self.paths.jsonPath, value: bool) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
-                    return delegete.toData(path: self.decoder.paths.jsonPath, value: bool) as! T
+                    return delegete.toData(path: self.paths.jsonPath, value: bool) as! T
                 }
             case .integer(let integer):
                 switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.decoder.paths.jsonPath, value: integer) as! T
+                    return self.decoder.toData(path: self.paths.jsonPath, value: integer) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
-                    return delegete.toData(path: self.decoder.paths.jsonPath, value: integer) as! T
+                    return delegete.toData(path: self.paths.jsonPath, value: integer) as! T
                 }
             case .double(let double):
                 switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.decoder.paths.jsonPath, value: double) as! T
+                    return self.decoder.toData(path: self.paths.jsonPath, value: double) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
-                    return delegete.toData(path: self.decoder.paths.jsonPath, value: double) as! T
+                    return delegete.toData(path: self.paths.jsonPath, value: double) as! T
                 }
             case .string(let string):
                 switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.decoder.paths.jsonPath, value: string) as! T
+                    return self.decoder.toData(path: self.paths.jsonPath, value: string) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
-                    return delegete.toData(path: self.decoder.paths.jsonPath, value: string) as! T
+                    return delegete.toData(path: self.paths.jsonPath, value: string) as! T
                 }
             case .object(let object):
                 switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.decoder.paths.jsonPath, value: object) as! T
+                    return self.decoder.toData(path: self.paths.jsonPath, value: object) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
-                    return delegete.toData(path: self.decoder.paths.jsonPath, value: object) as! T
+                    return delegete.toData(path: self.paths.jsonPath, value: object) as! T
                 }
             case .array(let array):
                 switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.decoder.paths.jsonPath, value: array) as! T
+                    return self.decoder.toData(path: self.paths.jsonPath, value: array) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
-                    return delegete.toData(path: self.decoder.paths.jsonPath, value: array) as! T
+                    return delegete.toData(path: self.paths.jsonPath, value: array) as! T
                 }
             case .unknow:
                 throw CodingError.invalidTypeTransform()

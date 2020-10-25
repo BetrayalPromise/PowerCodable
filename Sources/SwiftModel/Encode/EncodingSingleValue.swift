@@ -11,13 +11,22 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         self.codingPath = codingPath
         self.userInfo = userInfo
     }
+}
 
+extension EncodingSingleValue {
+    var paths: [Path] {
+        get { return self.encoder.wrapper?.paths ?? [] }
+        set { self.encoder.wrapper?.paths = newValue }
+    }
+}
+
+extension EncodingSingleValue {
     func encodeNil() throws {
         debugPrint(self.storage)
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .null; return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(nilLiteral: ()))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(nilLiteral: ()))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -43,7 +52,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .bool(value); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(booleanLiteral: value))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(booleanLiteral: value))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -69,7 +78,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .string(value); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(stringLiteral: value))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(stringLiteral: value))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -122,7 +131,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .double(value); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(floatLiteral: value))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(floatLiteral: value))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -168,7 +177,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .double(Double(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(floatLiteral: Double(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(floatLiteral: Double(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -194,7 +203,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: value))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: value))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -220,7 +229,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -246,7 +255,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -272,7 +281,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -298,7 +307,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -324,7 +333,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -350,7 +359,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -376,7 +385,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -402,7 +411,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -428,7 +437,7 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
             self.storage = .integer(Int64(value)); return
         }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.encoder.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
+        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
         switch json {
         case .object(let object):
             self.storage = .object(object)
@@ -453,12 +462,12 @@ class EncodingSingleValue: SingleValueEncodingContainer {
         debugPrint(self.storage)
         if value is URL {
             guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
-            let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.encoder.paths)
+            let encoder = PowerInnerJSONEncoder(value: url.absoluteString, paths: self.paths)
             encoder.wrapper = self.encoder.wrapper
             try url.absoluteString.encode(to: encoder)
             self.storage = encoder.jsonValue
         } else {
-            let encoder = PowerInnerJSONEncoder(value: value, paths: self.encoder.paths)
+            let encoder = PowerInnerJSONEncoder(value: value, paths: self.paths)
             encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage = encoder.jsonValue

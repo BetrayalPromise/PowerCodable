@@ -10,6 +10,7 @@ public struct DecodingStrategy {
 
 public final class PowerJSONDecoder {
     public var strategy = DecodingStrategy()
+    public var paths: [Path] = []
 
     /// 正向模型转化
     /// - Parameters:
@@ -39,7 +40,11 @@ final class PowerInnerJSONDecoder: Decoder {
     var currentJSON: JSON
     unowned var wrapper: PowerJSONDecoder?
     var mappingKeys: [String: [String]]?
-    var paths: [Path] = []
+
+    var paths: [Path] {
+        get { return self.wrapper?.paths ?? [] }
+        set { self.wrapper?.paths = newValue }
+    }
 
     init(json: JSON, at codingPath: [CodingKey] = []) {
         self.codingPath = codingPath

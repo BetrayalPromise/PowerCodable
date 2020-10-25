@@ -11,6 +11,7 @@ public struct EncodingStrategy {
 
 public class PowerJSONEncoder {
     public var strategy = EncodingStrategy()
+    public var paths: [Path] = []
 
     /// 逆向模型转化
     /// - Parameters:
