@@ -7,7 +7,7 @@ fileprivate class Storage<Key: CodingKey> {
 
     func append(key: String, value: JSONValue, encoder: PowerInnerJSONEncoder) {
         var mappingKey: String = ""
-        switch encoder.strategy.keys.key {
+        switch encoder.strategy.keysMapping {
         case .useDefaultKeys:
             mappingKey = key
         case .useCamelKeys(let c):

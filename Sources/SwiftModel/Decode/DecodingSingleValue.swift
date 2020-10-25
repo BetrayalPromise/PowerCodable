@@ -101,7 +101,7 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
         } else if type == Data.self {
             switch self.json {
             case .null:
-                switch self.decoder.wrapper?.strategy.values.commonMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
                     return self.decoder.toData(path: self.decoder.paths.jsonPath, value: NSNull()) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: let enableMappingEmptyValue):
@@ -112,42 +112,42 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
                     }
                 }
             case .bool(let bool):
-                switch self.decoder.wrapper?.strategy.values.commonMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
                     return self.decoder.toData(path: self.decoder.paths.jsonPath, value: bool) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
                     return delegete.toData(path: self.decoder.paths.jsonPath, value: bool) as! T
                 }
             case .integer(let integer):
-                switch self.decoder.wrapper?.strategy.values.commonMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
                     return self.decoder.toData(path: self.decoder.paths.jsonPath, value: integer) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
                     return delegete.toData(path: self.decoder.paths.jsonPath, value: integer) as! T
                 }
             case .double(let double):
-                switch self.decoder.wrapper?.strategy.values.commonMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
                     return self.decoder.toData(path: self.decoder.paths.jsonPath, value: double) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
                     return delegete.toData(path: self.decoder.paths.jsonPath, value: double) as! T
                 }
             case .string(let string):
-                switch self.decoder.wrapper?.strategy.values.commonMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
                     return self.decoder.toData(path: self.decoder.paths.jsonPath, value: string) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
                     return delegete.toData(path: self.decoder.paths.jsonPath, value: string) as! T
                 }
             case .object(let object):
-                switch self.decoder.wrapper?.strategy.values.commonMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
                     return self.decoder.toData(path: self.decoder.paths.jsonPath, value: object) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):
                     return delegete.toData(path: self.decoder.paths.jsonPath, value: object) as! T
                 }
             case .array(let array):
-                switch self.decoder.wrapper?.strategy.values.commonMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
                 case .useDefaultValues:
                     return self.decoder.toData(path: self.decoder.paths.jsonPath, value: array) as! T
                 case .useCustomValues(delegete: let delegete, enableMappingEmptyValue: _):

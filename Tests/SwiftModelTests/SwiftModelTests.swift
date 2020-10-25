@@ -17,7 +17,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let a: Bool?
         }
 
-        struct Adapter: TypeConvertible {
+        struct Adapter: ValueConvertible {
             func toBool(path: JSONPath, value: JSONNull) -> Bool {
                 return false
             }
@@ -27,9 +27,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             let modelA: A = try decoder.decode(type: A.self, from: data)
             XCTAssertEqual(modelA.a, false)
 
-            self.decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
+            self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
             defer {
-                self.decoder.strategy.values.commonMapping = .useDefaultValues
+                self.decoder.strategy.valuesMapping = .useDefaultValues
             }
             let modelB: B = try decoder.decode(type: B.self, from: data)
             XCTAssertEqual(modelB.a, false)
@@ -1066,7 +1066,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         do {
-            struct Adapter: TypeConvertible {
+            struct Adapter: ValueConvertible {
                 func toInt(path: JSONPath, value: JSONInteger) -> Int {
                     if path == "[:]gender" && value == 4 {
                         return 0
@@ -1093,7 +1093,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1102,7 +1102,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
         do {
-            struct Adapter: TypeConvertible {
+            struct Adapter: ValueConvertible {
                 func toInt(path: JSONPath, value: JSONFloating) -> Int {
                     if path == "[:]gender" && value == 3.5 {
                         return 0
@@ -1124,7 +1124,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1134,7 +1134,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         do {
-            struct Adapter: TypeConvertible {
+            struct Adapter: ValueConvertible {
                 func toInt(path: JSONPath, value: JSONInteger) -> Int {
                     if path == "[:]gender" && value > 2 {
                         return 0
@@ -1166,7 +1166,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.values.commonMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1340,8 +1340,15 @@ final class SwiftModelDecodeTests: XCTestCase {
           "n": "+infinity"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
+
+        struct Adapter: ValueConvertible {
+            func toNan(path: JSONPath, value: JSONString) -> Set<String> {
+                return ["nan", "Nan", "nAn", "naN", "NAn", "NaN", "nAN", "NAN"]
+            }
+        }
+
+        self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter(), enableMappingEmptyValue: true)
         do {
-            self.decoder.strategy.values.nonConformingFloatMapping = .convertToString()
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
             XCTAssertEqual(json.b.isNaN, true)
@@ -1423,9 +1430,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.keys.commonMapping = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.keysMapping = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.strategy.keys.commonMapping = .useDefaultKeys
+            self.decoder.strategy.keysMapping = .useDefaultKeys
         }
         do {
             struct Root: Codable {
@@ -1677,9 +1684,9 @@ final class SwiftModelEncodeTests: XCTestCase {
             var boolBool = false
         }
 
-        self.encoder.strategy.keys.key = .useSnakeKeys(.default)
+        self.encoder.strategy.keysMapping = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keys.key = .useDefaultKeys
+            self.encoder.strategy.keysMapping = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -1696,7 +1703,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let b = -Float.infinity
             let c = Float.infinity
         }
-        self.encoder.strategy.values.nonConformingFloat = .null
+        self.encoder.strategy.nonConformingFloat = .null
         do {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)

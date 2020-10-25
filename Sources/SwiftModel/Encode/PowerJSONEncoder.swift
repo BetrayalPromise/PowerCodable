@@ -1,19 +1,12 @@
 import Foundation
 
 public struct EncodingStrategy {
-    public var keys: Keys = Keys()
-    public var values: Values = Values()
     public var output: PowerJSONEncoder.OutputFormatting = []
+    public var keysMapping: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
 
-    public struct Keys {
-        public var key: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
-    }
-
-    public struct Values {
-        public var date: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
-        public var data: PowerJSONEncoder.DataEncodingStrategy = .base64
-        public var nonConformingFloat: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
-    }
+    public var date: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
+    public var data: PowerJSONEncoder.DataEncodingStrategy = .base64
+    public var nonConformingFloat: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
 }
 
 public class PowerJSONEncoder {
@@ -30,7 +23,7 @@ public class PowerJSONEncoder {
         encoder.wrapper = self
         try value.encode(to: encoder)
         let json = encoder.jsonValue
-        let options = Formatter.Options(formatting: self.strategy.output, dataEncoding: self.strategy.values.data, dateEncoding: self.strategy.values.date, keyEncoding: self.strategy.keys.key)
+        let options = Formatter.Options(formatting: self.strategy.output, dataEncoding: self.strategy.data, dateEncoding: self.strategy.date, keyEncoding: self.strategy.keysMapping)
         let formatter = Formatter(topLevel: json, options: options, encoder: encoder)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {
@@ -98,7 +91,7 @@ class PowerInnerJSONEncoder: Encoder {
     }
 }
 
-extension PowerInnerJSONEncoder: TypeConvertible {}
+extension PowerInnerJSONEncoder: ValueConvertible {}
 
 extension PowerInnerJSONEncoder: JSONValue {
     var jsonValue: JSON {
