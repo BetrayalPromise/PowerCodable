@@ -1464,7 +1464,10 @@ final class SwiftModelDecodeTests: XCTestCase {
                 let data3: Data
             }
             let json = try decoder.decode(type: Root.self, from: data)
-            print(json)
+            XCTAssertNotEqual(json.data0.count, 0)
+            XCTAssertNotEqual(json.data1.count, 0)
+            XCTAssertEqual(json.data2.count, 0)
+            XCTAssertEqual(json.data3.count, 0)
         } catch {
             XCTFail("解析失败")
         }
@@ -1705,6 +1708,18 @@ final class SwiftModelEncodeTests: XCTestCase {
             let c = Float.infinity
         }
         self.encoder.strategy.nonConformingFloatValuesMapping = .null
+        do {
+            let json = try encoder.encode(value: A(), to: String.self)
+            print(json)
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testData() {
+        struct A: Encodable {
+            let a: Data = Data()
+        }
         do {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
