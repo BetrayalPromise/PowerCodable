@@ -158,6 +158,7 @@ public protocol DecodingValueConvertible {
     func toString(path: JSONPath, value: JSONObject) -> String
     func toString(path: JSONPath, value: JSONArray) -> String
 
+    // MARK: - Data
     func toData(path: JSONPath, value: JSONNull) -> Data
     func toData(path: JSONPath, value: JSONBool) -> Data
     func toData(path: JSONPath, value: JSONInteger) -> Data
@@ -166,17 +167,28 @@ public protocol DecodingValueConvertible {
     func toData(path: JSONPath, value: JSONObject) -> Data
     func toData(path: JSONPath, value: JSONArray) -> Data
 
+    func toURL(path: JSONPath, value: JSONNull) throws -> URL
+    func toURL(path: JSONPath, value: JSONBool) throws -> URL
+    func toURL(path: JSONPath, value: JSONInteger) throws -> URL
+    func toURL(path: JSONPath, value: JSONFloating) throws -> URL
+    func toURL(path: JSONPath, value: JSONString) throws -> URL
+    func toURL(path: JSONPath, value: JSONObject) throws -> URL
+    func toURL(path: JSONPath, value: JSONArray) throws -> URL
 
+
+    // MARK: - Infinity +Infinity
     /// 正无穷只针对字符串的处理
     /// - Parameters:
     ///   - path: 编码路径
     ///   - value: 实际值
     func toPositiveInfinity(path: JSONPath, value: JSONString) -> Set<String>
+    // MARK: - -Infinity
         /// 负无穷只针对字符串的处理
     /// - Parameters:
     ///   - path: 编码路径
     ///   - value: 实际值
     func toNegativeInfinity(path: JSONPath, value: JSONString) -> Set<String>
+    // MARK: - nan
     /// 不存在只针对字符串的处理
     /// - Parameters:
     ///   - path: 编码路径
@@ -379,6 +391,43 @@ extension DecodingValueConvertible {
 }
 
 extension DecodingValueConvertible {
+    func toURL(path: JSONPath, value: JSONNull) throws -> URL {
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        throw CodingError.invalidTypeTransform()
+    }
+
+    func toURL(path: JSONPath, value: JSONBool) throws -> URL {
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        throw CodingError.invalidTypeTransform()
+    }
+
+    func toURL(path: JSONPath, value: JSONInteger) throws -> URL {
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        throw CodingError.invalidTypeTransform()
+    }
+
+    func toURL(path: JSONPath, value: JSONFloating) throws -> URL {
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        throw CodingError.invalidTypeTransform()
+    }
+
+    func toURL(path: JSONPath, value: JSONString) throws -> URL {
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        return try URL.buildURL(string: value)
+    }
+
+    func toURL(path: JSONPath, value: JSONObject) throws -> URL {
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        throw CodingError.invalidTypeTransform()
+    }
+
+    func toURL(path: JSONPath, value: JSONArray) throws -> URL {
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        throw CodingError.invalidTypeTransform()
+    }
+}
+
+extension DecodingValueConvertible {
     /// 正无穷
     func toPositiveInfinity(path: JSONPath, value: JSONString) -> Set<String> {
         return ["+infinity", "infinity"]
@@ -479,10 +528,12 @@ public struct JSONStructure: JSONCodingSupport {
     }
 }
 
-/// 类型不一致策略
-public enum ValueStrategy {
-    /// 默认处理
-    case useDefaultValues
-    /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体) mappingEmptyValue指nil值是否能通过delegate处理nil获取自定义处理的值,不能则获取默认处理方式
-    case useCustomValues(delegete: DecodingValueConvertible)
+extension PowerJSONDecoder {
+    /// 类型不一致策略
+    public enum ValueDecodingStrategy {
+        /// 默认处理
+        case useDefaultValues
+        /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体) mappingEmptyValue指nil值是否能通过delegate处理nil获取自定义处理的值,不能则获取默认处理方式
+        case useCustomValues(delegete: DecodingValueConvertible)
+    }
 }

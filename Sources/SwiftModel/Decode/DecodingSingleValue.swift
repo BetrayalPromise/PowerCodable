@@ -102,10 +102,47 @@ extension DecodingSingleValue {
         debugPrint(self.json)
         if type == URL.self {
             switch self.json {
+            case .unknow: throw CodingError.invalidTypeTransform()
+            case .null:
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: NSNull()) as! T
+                case .useCustomValues(delegete: let delegate):
+                    if self.decoder.wrapper?.enableMappingEmptyValue ?? false {
+                        return delegate.toData(path: self.paths.jsonPath, value: NSNull()) as! T
+                    } else {
+                        return self.decoder.toData(path: self.paths.jsonPath, value: NSNull()) as! T
+                    }
+                }
+            case .bool(let bool):
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: bool) as! T
+                case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: bool) as! T
+                }
+            case .integer(let integer):
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: integer) as! T
+                case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: integer) as! T
+                }
+            case .double(let double):
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: double) as! T
+                case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: double) as! T
+                }
             case .string(let string):
-                do { return try URL.buildURL(string: string) as! T } catch { throw error }
-            default:
-                throw CodingError.invalidTypeTransform()
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: string) as! T
+                case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: string) as! T
+                }
+            case .object(let object):
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                 case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: object) as! T
+                 case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: object) as! T
+                 }
+            case .array(let array):
+                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                 case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: array) as! T
+                 case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: array) as! T
+                 }
             }
         } else if type == Data.self {
             switch self.json {

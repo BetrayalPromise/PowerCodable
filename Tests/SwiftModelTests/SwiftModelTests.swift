@@ -1703,7 +1703,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let b = -Float.infinity
             let c = Float.infinity
         }
-        self.encoder.strategy.nonConformingFloat = .null
+        self.encoder.strategy.nonConformingFloatValuesMapping = .null
         do {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)

@@ -102,7 +102,7 @@ extension EncodingSingleValue {
     func encode(_ value: Double) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloat ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloatValuesMapping ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -155,7 +155,7 @@ extension EncodingSingleValue {
     func encode(_ value: Float) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloat ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloatValuesMapping ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
