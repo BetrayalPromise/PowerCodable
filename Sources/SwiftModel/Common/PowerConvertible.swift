@@ -412,8 +412,11 @@ extension DecodingValueConvertible {
     }
 
     func toURL(path: JSONPath, value: JSONString) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
-        return try URL.buildURL(string: value)
+        do {
+            return try URL.buildURL(string: value)
+        } catch {
+            debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        }
     }
 
     func toURL(path: JSONPath, value: JSONObject) throws -> URL {
