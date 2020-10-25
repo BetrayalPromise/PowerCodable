@@ -11,6 +11,15 @@ extension PowerJSONDecoder {
     }
 }
 
+extension PowerJSONDecoder {
+    public enum NonConformingFloatDecodingStrategy {
+        /// 解码为0
+        case convertToZero(positiveInfinity: Set<String> = ["infinity", "+infinity"], negativeInfinity: Set<String> = ["-infinity"], nan: Set<String> = ["nan"])
+        /// 解码为制定一的字符串
+        case convertToString(positiveInfinity: Set<String> = ["infinity", "+infinity"], negativeInfinity: Set<String> = ["-infinity"], nan: Set<String> = ["nan"])
+    }
+}
+
 public extension URL {
     init(from json: JSON) throws {
         switch json {

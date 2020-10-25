@@ -4,8 +4,9 @@ public struct DecodingStrategy {
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     /// 这个策略是指模型的字段在经过策略处理后(snake camel, pascal, upper, lower)该字段会已这种处理后的表现形式在进行解码处理
     /// 例如 模型字段 var stringData: String经过snake处理成为string_data, 经历camel处理成为stringData, 经历pascal处理成为string-data, 经历upper处理成为STRINGDATE, 经历lower处理成为stringdata, 再进行写一步处理. 该策略是全局的会影响所有的字段解析
-    var keysMapping: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
-    var valuesMapping: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
+    public var keysMapping: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
+    public var valuesMapping: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
+    public var nonConformingFloatValuesMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
 }
 
 public final class PowerJSONDecoder {
@@ -125,27 +126,37 @@ extension PowerInnerJSONDecoder {
         case let .bool(bool):
             return bool ? 1 : 0
         case let .string(string):
-            switch self.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                if self.toPositiveInfinity(path: self.paths.jsonPath, value: string).contains(string) {
+            switch self.wrapper?.strategy.nonConformingFloatValuesMapping ?? .convertToZero() {
+            case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
+                if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
+                    throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                }
+                if positiveInfinity.contains(string) {
                     return T.infinity
-                } else if self.toNegativeInfinity(path: self.paths.jsonPath, value: string).contains(string) {
+                } else if negativeInfinity.contains(string) {
                     return -T.infinity
-                } else if self.toNan(path: self.paths.jsonPath, value: string).contains(string) {
+                } else if nan.contains(string) {
                     return T.nan
                 }
-                debugPrint("Error: \(string) can't transform. return default value 0")
-                return 0
-            case .useCustomValues(delegete: let delegete):
-                if delegete.toPositiveInfinity(path: self.paths.jsonPath, value: string).contains(string) {
+                guard let number = T(string) else {
+                    throw CodingError.invalidTypeTransform()
+                }
+                return number
+            case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
+                if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
+                    throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                }
+                if positiveInfinity.contains(string) {
                     return T.infinity
-                } else if delegete.toNegativeInfinity(path: self.paths.jsonPath, value: string).contains(string) {
+                } else if negativeInfinity.contains(string) {
                     return -T.infinity
-                } else if delegete.toNan(path: self.paths.jsonPath, value: string).contains(string) {
+                } else if nan.contains(string) {
                     return T.nan
                 }
-                debugPrint("Error: \(string) can't transform. return default value 0")
-                return 0
+                guard let number = T(string) else {
+                    throw CodingError.invalidTypeTransform()
+                }
+                return number
             }
         default:
             throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)

@@ -167,6 +167,7 @@ public protocol DecodingValueConvertible {
     func toData(path: JSONPath, value: JSONObject) -> Data
     func toData(path: JSONPath, value: JSONArray) -> Data
 
+    // MARK: - URL
     func toURL(path: JSONPath, value: JSONNull) throws -> URL
     func toURL(path: JSONPath, value: JSONBool) throws -> URL
     func toURL(path: JSONPath, value: JSONInteger) throws -> URL
@@ -174,26 +175,6 @@ public protocol DecodingValueConvertible {
     func toURL(path: JSONPath, value: JSONString) throws -> URL
     func toURL(path: JSONPath, value: JSONObject) throws -> URL
     func toURL(path: JSONPath, value: JSONArray) throws -> URL
-
-
-    // MARK: - Infinity +Infinity
-    /// 正无穷只针对字符串的处理
-    /// - Parameters:
-    ///   - path: 编码路径
-    ///   - value: 实际值
-    func toPositiveInfinity(path: JSONPath, value: JSONString) -> Set<String>
-    // MARK: - -Infinity
-        /// 负无穷只针对字符串的处理
-    /// - Parameters:
-    ///   - path: 编码路径
-    ///   - value: 实际值
-    func toNegativeInfinity(path: JSONPath, value: JSONString) -> Set<String>
-    // MARK: - nan
-    /// 不存在只针对字符串的处理
-    /// - Parameters:
-    ///   - path: 编码路径
-    ///   - value: 实际值
-    func toNan(path: JSONPath, value: JSONString) -> Set<String>
 }
 
 // MARK: - BOOL -
@@ -428,23 +409,6 @@ extension DecodingValueConvertible {
     func toURL(path: JSONPath, value: JSONArray) throws -> URL {
         debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
-    }
-}
-
-extension DecodingValueConvertible {
-    /// 正无穷
-    func toPositiveInfinity(path: JSONPath, value: JSONString) -> Set<String> {
-        return ["+infinity", "infinity"]
-    }
-
-    /// 负无穷
-    func toNegativeInfinity(path: JSONPath, value: JSONString) -> Set<String> {
-        return ["-infinity"]
-    }
-
-    /// 不存在
-    func toNan(path: JSONPath, value: JSONString) -> Set<String> {
-        return ["nan"]
     }
 }
 

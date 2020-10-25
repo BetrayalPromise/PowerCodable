@@ -1338,17 +1338,10 @@ final class SwiftModelDecodeTests: XCTestCase {
           "k": "+infinity",
           "l": "-infinity",
           "m": "infinity",
-          "n": "+infinity"
+          "n": "+infInitY"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
 
-        struct Adapter: DecodingValueConvertible {
-            func toNan(path: JSONPath, value: JSONString) -> Set<String> {
-                return ["nan", "Nan", "nAn", "naN", "NAn", "NaN", "nAN", "NAN"]
-            }
-        }
-
-        self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
         do {
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
@@ -1738,7 +1731,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let b = -Float.infinity
             let c = Float.infinity
         }
-        self.encoder.strategy.nonConformingFloatValuesMapping = .null
+//        self.encoder.strategy.nonConformingFloatValuesMapping = .null
         do {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
