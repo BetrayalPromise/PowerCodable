@@ -11,6 +11,7 @@ public struct DecodingStrategy {
 public final class PowerJSONDecoder {
     public var strategy = DecodingStrategy()
     public var paths: [Path] = []
+    /// 仅仅针对nil值转为T?的处理,false则不能接受自定义的nil处理,true着接受自定义的nil处理
     var enableMappingEmptyValue: Bool = false
 
     /// 正向模型转化

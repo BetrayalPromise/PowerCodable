@@ -416,6 +416,7 @@ extension DecodingValueConvertible {
             return try URL.buildURL(string: value)
         } catch {
             debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+            throw CodingError.invalidTypeTransform()
         }
     }
 

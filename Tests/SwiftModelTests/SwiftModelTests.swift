@@ -24,6 +24,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         do {
+            self.decoder.enableMappingEmptyValue = true
             let modelA: A = try decoder.decode(type: A.self, from: data)
             XCTAssertEqual(modelA.a, false)
 
