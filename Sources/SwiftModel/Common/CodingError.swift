@@ -44,7 +44,7 @@ public struct CodingError: Swift.Error {
 
     struct Decoding {
         static func nonUniqueness(sets: Set<String>...) -> CodingError {
-            print("Error: sets(\(sets) can't has intersection")
+            print("Error: sets(\(sets) can not has intersection")
             return CodingError(errorCode: .nonUniqueness)
         }
 

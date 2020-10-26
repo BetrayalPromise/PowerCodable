@@ -4,9 +4,13 @@ public struct DecodingStrategy {
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     /// 这个策略是指模型的字段在经过策略处理后(snake camel, pascal, upper, lower)该字段会已这种处理后的表现形式在进行解码处理
     /// 例如 模型字段 var stringData: String经过snake处理成为string_data, 经历camel处理成为stringData, 经历pascal处理成为string-data, 经历upper处理成为STRINGDATE, 经历lower处理成为stringdata, 再进行写一步处理. 该策略是全局的会影响所有的字段解析
-    public var keysMapping: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
-    public var valuesMapping: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
-    public var nonConformingFloatValuesMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
+    public var keyMapping: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
+    /// 针对一般情况下的值处理
+    public var valueMapping: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
+    /// 针对转Data处理
+    public var dataValueMapping: PowerJSONDecoder.DataDecodingStrategy = .useDefaultValues
+    /// 针对浮点型值(nan, +infinity, -infinity)处理
+    public var nonConformingFloatValueMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
 }
 
 public final class PowerJSONDecoder {
@@ -126,7 +130,7 @@ extension PowerInnerJSONDecoder {
         case let .bool(bool):
             return bool ? 1 : 0
         case let .string(string):
-            switch self.wrapper?.strategy.nonConformingFloatValuesMapping ?? .convertToZero() {
+            switch self.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToZero() {
             case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
                     throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
@@ -245,7 +249,7 @@ extension PowerInnerJSONDecoder {
         if let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type {
             self.mappingKeys = type.modelDecodingKeys()
         }
-        if T.self == URL.self, object.isString$ {
+        if T.self == URL.self {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
             return try container.decode(T.self)
         } else if T.self == Date.self {
@@ -272,7 +276,7 @@ extension PowerInnerJSONDecoder {
     /// - Parameter object: json对象
     /// - Returns: 是否为空
     func unboxNil(object: JSON) -> Bool {
-        switch self.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
             return object == .null
         case .useCustomValues(delegete: _):
@@ -290,39 +294,39 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Bool {
         switch object {
         case let .bool(bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: bool)
             }
         case let .integer(integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: integer)
             }
         case let .double(double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: double)
             }
         case let .string(string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: string)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: array)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: object)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toBool(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toBool(path: self.paths.jsonPath, value: Null())
             }
         case .unknow:
             throw CodingError.unknowJSON()
@@ -332,37 +336,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Int {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toInt(path: self.paths.jsonPath, value: double)
             }
@@ -374,37 +378,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Int8 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt8(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toInt8(path: self.paths.jsonPath, value: double)
             }
@@ -416,37 +420,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Int16 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt16(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toInt16(path: self.paths.jsonPath, value: double)
             }
@@ -458,37 +462,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Int32 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt32(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toInt32(path: self.paths.jsonPath, value: double)
             }
@@ -500,37 +504,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Int64 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toInt64(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toInt64(path: self.paths.jsonPath, value: double)
             }
@@ -542,37 +546,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> UInt {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt(path: self.paths.jsonPath, value: double)
             }
@@ -584,37 +588,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> UInt8 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt8(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt8(path: self.paths.jsonPath, value: double)
             }
@@ -626,37 +630,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> UInt16 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt16(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt16(path: self.paths.jsonPath, value: double)
             }
@@ -668,37 +672,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> UInt32 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt32(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt32(path: self.paths.jsonPath, value: double)
             }
@@ -710,37 +714,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> UInt64 {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toUInt64(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toUInt64(path: self.paths.jsonPath, value: double)
             }
@@ -752,37 +756,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Float {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toFloat(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toFloat(path: self.paths.jsonPath, value: double)
             }
@@ -794,37 +798,37 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> Double {
         switch object {
         case .bool(let bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: bool)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: object)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: array)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: Null())
             }
         case .string(let string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: string)
             }
         case .integer(let integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: integer)
             }
         case .double(let double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toDouble(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toDouble(path: self.paths.jsonPath, value: double)
             }
@@ -836,39 +840,39 @@ extension PowerInnerJSONDecoder {
     func unbox(object: JSON) throws -> String {
         switch object {
         case let .bool(bool):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: bool)
             case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: bool)
             }
         case let .integer(integer):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: integer)
             case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: integer)
             }
         case let .double(double):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: double)
             case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: double)
             }
         case let .string(string):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: string)
             case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: string)
             }
         case .array(let array):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: array)
             case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: array)
             }
         case .object(let object):
-            switch self.wrapper?.strategy.valuesMapping {
+            switch self.wrapper?.strategy.valueMapping {
             case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: object)
             case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: object)
             }
         case .null:
-            switch self.wrapper?.strategy.valuesMapping {
-            case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: NSNull())
-            case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: NSNull())
+            switch self.wrapper?.strategy.valueMapping {
+            case .useDefaultValues, .none: return self.toString(path: self.paths.jsonPath, value: Null())
+            case .useCustomValues(delegete: let delegate): return delegate.toString(path: self.paths.jsonPath, value: Null())
             }
         case .unknow:
             throw CodingError.unknowJSON()

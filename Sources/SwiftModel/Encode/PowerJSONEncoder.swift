@@ -2,11 +2,11 @@ import Foundation
 
 public struct EncodingStrategy {
     public var output: PowerJSONEncoder.OutputFormatting = []
-    public var keysMapping: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
-    public var dateValuesMapping: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
-    public var dataValuesMapping: PowerJSONEncoder.DataEncodingStrategy = .base64
-    public var nonConformingFloatValuesMapping: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
-    public var valuesMapping: PowerJSONEncoder.ValueEncodingStrategy = .useDefaultValues
+    public var keyMapping: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
+    public var dateValueMapping: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
+    public var dataValueMapping: PowerJSONEncoder.DataEncodingStrategy = .base64
+    public var nonConformingFloatValueMapping: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
+    public var valueMapping: PowerJSONEncoder.ValueEncodingStrategy = .useDefaultValues
 }
 
 public class PowerJSONEncoder {
@@ -24,7 +24,7 @@ public class PowerJSONEncoder {
         encoder.wrapper = self
         try value.encode(to: encoder)
         let json = encoder.jsonValue
-        let options = Formatter.Options(formatting: self.strategy.output, dataEncoding: self.strategy.dataValuesMapping, dateEncoding: self.strategy.dateValuesMapping, keyEncoding: self.strategy.keysMapping)
+        let options = Formatter.Options(formatting: self.strategy.output, dataEncoding: self.strategy.dataValueMapping, dateEncoding: self.strategy.dateValueMapping, keyEncoding: self.strategy.keyMapping)
         let formatter = Formatter(topLevel: json, options: options, encoder: encoder)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {

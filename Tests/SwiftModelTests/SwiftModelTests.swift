@@ -28,9 +28,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             let modelA: A = try decoder.decode(type: A.self, from: data)
             XCTAssertEqual(modelA.a, false)
 
-            self.decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
+            self.decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
             defer {
-                self.decoder.strategy.valuesMapping = .useDefaultValues
+                self.decoder.strategy.valueMapping = .useDefaultValues
             }
             let modelB: B = try decoder.decode(type: B.self, from: data)
             XCTAssertEqual(modelB.a, false)
@@ -1094,7 +1094,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1104,7 +1104,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         do {
             struct Adapter: DecodingValueConvertible {
-                func toInt(path: JSONPath, value: JSONFloating) -> Int {
+                func toInt(path: JSONPath, value: JSONDouble) -> Int {
                     if path == "[:]gender" && value == 3.5 {
                         return 0
                     }
@@ -1125,7 +1125,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1167,7 +1167,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valuesMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1424,9 +1424,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.keysMapping = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.keyMapping = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.strategy.keysMapping = .useDefaultKeys
+            self.decoder.strategy.keyMapping = .useDefaultKeys
         }
         do {
             struct Root: Codable {
@@ -1458,7 +1458,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
             let json = try decoder.decode(type: Root.self, from: data)
             XCTAssertNotEqual(json.data0.count, 0)
-            XCTAssertNotEqual(json.data1.count, 0)
+            XCTAssertEqual(json.data1.count, 0)
             XCTAssertEqual(json.data2.count, 0)
             XCTAssertEqual(json.data3.count, 0)
         } catch {
@@ -1488,16 +1488,10 @@ final class SwiftModelEncodeTests: XCTestCase {
             static func modelEncodingKeys() -> [String: String] {
                 return ["string": "hello"]
             }
-            static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
-                if path == "[:]bool" {
-                    return JSON(integerLiteral: 3)
-                }
-                return value
-            }
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
-            XCTAssertEqual(json["bool"], 3)
+            XCTAssertEqual(json["bool"], true)
             XCTAssertEqual(json["int"], 0)
             XCTAssertEqual(json["int8"], 1)
             XCTAssertEqual(json["int16"], 2)
@@ -1681,9 +1675,9 @@ final class SwiftModelEncodeTests: XCTestCase {
             var boolBool = false
         }
 
-        self.encoder.strategy.keysMapping = .useSnakeKeys(.default)
+        self.encoder.strategy.keyMapping = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keysMapping = .useDefaultKeys
+            self.encoder.strategy.keyMapping = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -1710,9 +1704,9 @@ final class SwiftModelEncodeTests: XCTestCase {
             }
         }
 
-        self.encoder.strategy.keysMapping = .useSnakeKeys(.default)
+        self.encoder.strategy.keyMapping = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keysMapping = .useDefaultKeys
+            self.encoder.strategy.keyMapping = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)

@@ -104,42 +104,42 @@ extension DecodingSingleValue {
             switch self.json {
             case .unknow: throw CodingError.invalidTypeTransform()
             case .null:
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
-                case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: NSNull()) as! T
+                switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: Null()) as! T
                 case .useCustomValues(delegete: let delegate):
                     if self.decoder.wrapper?.enableMappingEmptyValue ?? false {
-                        return delegate.toData(path: self.paths.jsonPath, value: NSNull()) as! T
+                        return delegate.toData(path: self.paths.jsonPath, value: Null()) as! T
                     } else {
-                        return self.decoder.toData(path: self.paths.jsonPath, value: NSNull()) as! T
+                        return self.decoder.toData(path: self.paths.jsonPath, value: Null()) as! T
                     }
                 }
             case .bool(let bool):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
                 case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: bool) as! T
                 case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: bool) as! T
                 }
             case .integer(let integer):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
                 case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: integer) as! T
                 case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: integer) as! T
                 }
             case .double(let double):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
                 case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: double) as! T
                 case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: double) as! T
                 }
             case .string(let string):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
                 case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: string) as! T
                 case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: string) as! T
                 }
             case .object(let object):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
                  case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: object) as! T
                  case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: object) as! T
                  }
             case .array(let array):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
                  case .useDefaultValues: return try self.decoder.toURL(path: self.paths.jsonPath, value: array) as! T
                  case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: array) as! T
                  }
@@ -147,57 +147,93 @@ extension DecodingSingleValue {
         } else if type == Data.self {
             switch self.json {
             case .null:
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
                 case .useDefaultValues:
-                    return self.decoder.toData(path: self.paths.jsonPath, value: NSNull()) as! T
-                case .useCustomValues(delegete: let delegete):
-                    if self.decoder.wrapper?.enableMappingEmptyValue ?? false {
-                        return delegete.toData(path: self.paths.jsonPath, value: NSNull()) as! T
-                    } else {
-                        return self.decoder.toData(path: self.paths.jsonPath, value: NSNull()) as! T
-                    }
+                    debugPrint("Error: null can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useHexadecimalValues:
+                    debugPrint("Error: null can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useCustomValues(delegete: let delegate):
+                    return delegate.toData(path: self.paths.jsonPath, value: Null()) as! T
+                case .useMemoryValues:
+                    return self.decoder.toData(path: self.paths.jsonPath, value: Null()) as! T
                 }
             case .bool(let bool):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
                 case .useDefaultValues:
+                    debugPrint("Error: \(bool) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useHexadecimalValues:
+                    debugPrint("Error: \(bool) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useCustomValues(delegete: let delegate):
+                    return delegate.toData(path: self.paths.jsonPath, value: bool) as! T
+                case .useMemoryValues:
                     return self.decoder.toData(path: self.paths.jsonPath, value: bool) as! T
-                case .useCustomValues(delegete: let delegete):
-                    return delegete.toData(path: self.paths.jsonPath, value: bool) as! T
                 }
             case .integer(let integer):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
                 case .useDefaultValues:
+                    debugPrint("Error: \(integer) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useHexadecimalValues:
+                    debugPrint("Error: \(integer) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useCustomValues(delegete: let delegate):
+                    return delegate.toData(path: self.paths.jsonPath, value: integer) as! T
+                case .useMemoryValues:
                     return self.decoder.toData(path: self.paths.jsonPath, value: integer) as! T
-                case .useCustomValues(delegete: let delegete):
-                    return delegete.toData(path: self.paths.jsonPath, value: integer) as! T
                 }
             case .double(let double):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
                 case .useDefaultValues:
+                    debugPrint("Error: \(double) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useHexadecimalValues:
+                    debugPrint("Error: \(double) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useCustomValues(delegete: let delegate):
+                    return delegate.toData(path: self.paths.jsonPath, value: double) as! T
+                case .useMemoryValues:
                     return self.decoder.toData(path: self.paths.jsonPath, value: double) as! T
-                case .useCustomValues(delegete: let delegete):
-                    return delegete.toData(path: self.paths.jsonPath, value: double) as! T
                 }
             case .string(let string):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
                 case .useDefaultValues:
+                    return (string.dataWrapper ?? Data()) as! T
+                case .useHexadecimalValues:
+                    return Data(hexString: string) as! T
+                case .useCustomValues(delegete: let delegate):
+                    return delegate.toData(path: self.paths.jsonPath, value: string) as! T
+                case .useMemoryValues:
                     return self.decoder.toData(path: self.paths.jsonPath, value: string) as! T
-                case .useCustomValues(delegete: let delegete):
-                    return delegete.toData(path: self.paths.jsonPath, value: string) as! T
                 }
             case .object(let object):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
                 case .useDefaultValues:
+                    debugPrint("Error: \(object) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useHexadecimalValues:
+                    debugPrint("Error: \(object) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useCustomValues(delegete: let delegate):
+                    return delegate.toData(path: self.paths.jsonPath, value: object) as! T
+                case .useMemoryValues:
                     return self.decoder.toData(path: self.paths.jsonPath, value: object) as! T
-                case .useCustomValues(delegete: let delegete):
-                    return delegete.toData(path: self.paths.jsonPath, value: object) as! T
                 }
             case .array(let array):
-                switch self.decoder.wrapper?.strategy.valuesMapping ?? .useDefaultValues {
+                switch self.decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
                 case .useDefaultValues:
+                    debugPrint("Error: \(array) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useHexadecimalValues:
+                    debugPrint("Error: \(array) can not transform to Data, return Data() as default")
+                    return Data() as! T
+                case .useCustomValues(delegete: let delegate):
+                    return delegate.toData(path: self.paths.jsonPath, value: array) as! T
+                case .useMemoryValues:
                     return self.decoder.toData(path: self.paths.jsonPath, value: array) as! T
-                case .useCustomValues(delegete: let delegete):
-                    return delegete.toData(path: self.paths.jsonPath, value: array) as! T
                 }
             case .unknow:
                 throw CodingError.invalidTypeTransform()

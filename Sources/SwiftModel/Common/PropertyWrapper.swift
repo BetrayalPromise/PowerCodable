@@ -3,7 +3,7 @@ import Foundation
 #if swift(>=5.1)
 public struct Ignore: Codable {
     private static var optionalValue: Any? = nil
-    private static var nonoptionalValue: Any = NSNull()
+    private static var nonoptionalValue: Any = Null()
 
     @propertyWrapper
     public struct OptionalCoding<WrappedType: Codable>: Codable {

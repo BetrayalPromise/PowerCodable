@@ -23,86 +23,38 @@ extension EncodingSingleValue {
 extension EncodingSingleValue {
     func encodeNil() throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .null; return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(nilLiteral: ()))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .null
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Null())
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Null())
         }
     }
 
     func encode(_ value: Bool) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .bool(value); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(booleanLiteral: value))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .bool(value)
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
         }
     }
 
     func encode(_ value: String) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .string(value); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(stringLiteral: value))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .string(value)
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
         }
     }
 
     func encode(_ value: Double) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloatValuesMapping ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -112,50 +64,27 @@ extension EncodingSingleValue {
                 } else if value == -Double.infinity {
                     self.storage = JSON(stringLiteral: negativeInfinity); return
                 }
-            case .null:
-                self.storage = .null
-            case .bool(let bool):
-                self.storage = .bool(bool)
-            case .integer(let integer):
-                self.storage = .integer(integer)
-            case .double(let double):
-                self.storage = .double(double)
-            case .string(let string):
-                self.storage = .string(string)
-            case .array(let array):
-                self.storage = .array(array)
-            case .object(let object):
-                self.storage = .object(object)
+            case .null: self.storage = .null; return
+            case .bool(let bool): self.storage = .bool(bool); return
+            case .integer(let integer): self.storage = .integer(integer); return
+            case .double(let double): self.storage = .double(double); return
+            case .string(let string): self.storage = .string(string); return
+            case .array(let array): self.storage = .array(array); return
+            case .object(let object): self.storage = .object(object); return
             }
         }
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .double(value); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(floatLiteral: value))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .double(value)
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
         }
     }
 
     func encode(_ value: Float) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloatValuesMapping ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToString() {
             case .throw: throw CodingError.Encoding.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -174,287 +103,111 @@ extension EncodingSingleValue {
             case .object(let object): self.storage = .object(object); return
             }
         }
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .double(Double(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(floatLiteral: Double(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .double(Double(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Double(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Double(value))
         }
     }
 
     func encode(_ value: Int) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: value))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: Int8) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: Int16) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: Int32) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: Int64) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
         }
     }
 
     func encode(_ value: UInt) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt8) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt16) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt32) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt64) throws {
         debugPrint(self.storage)
-        guard let keyValue: MappingEncodingKeysValues = self.encoder.value as? MappingEncodingKeysValues else {
-            self.storage = .integer(Int64(value)); return
-        }
-        let json: JSON = type(of: keyValue).modelEncodingValues(path: self.paths.jsonPath, value: JSON(integerLiteral: IntegerLiteralType(value)))
-        switch json {
-        case .object(let object):
-            self.storage = .object(object)
-        case .array(let array):
-            self.storage = .array(array)
-        case .null:
-            self.storage = .null
-        case .bool(let bool):
-            self.storage = .bool(bool)
-        case .string(let string):
-            self.storage = .string(string)
-        case .integer(let integer):
-            self.storage = .integer(integer)
-        case .double(let double):
-            self.storage = .double(double)
-        case .unknow:
-            self.storage = .integer(Int64(value))
+        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+        case .useCustomValues(delegete: let delegete):
+            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
         }
     }
 
