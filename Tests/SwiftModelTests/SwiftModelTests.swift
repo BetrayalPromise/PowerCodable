@@ -17,7 +17,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let a: Bool?
         }
 
-        struct Adapter: DecodingValueConvertible {
+        struct Adapter: DecodingValueMappable {
             func toBool(path: JSONPath, value: JSONNull) -> Bool {
                 return false
             }
@@ -974,7 +974,7 @@ final class SwiftModelDecodeTests: XCTestCase {
 
     func testDictionary() {
         do {
-            struct Root: Codable, MappingDecodingKeys {
+            struct Root: Codable, DecodingKeyMappable {
                 static func modelDecodingKeys() -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
@@ -1067,7 +1067,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         do {
-            struct Adapter: DecodingValueConvertible {
+            struct Adapter: DecodingValueMappable {
                 func toInt(path: JSONPath, value: JSONInteger) -> Int {
                     if path == "[:]gender" && value == 4 {
                         return 0
@@ -1103,7 +1103,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
         do {
-            struct Adapter: DecodingValueConvertible {
+            struct Adapter: DecodingValueMappable {
                 func toInt(path: JSONPath, value: JSONDouble) -> Int {
                     if path == "[:]gender" && value == 3.5 {
                         return 0
@@ -1135,7 +1135,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         do {
-            struct Adapter: DecodingValueConvertible {
+            struct Adapter: DecodingValueMappable {
                 func toInt(path: JSONPath, value: JSONInteger) -> Int {
                     if path == "[:]gender" && value > 2 {
                         return 0
@@ -1227,7 +1227,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             "baidubaibaidu": "http://192.168.0.103"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        struct Root :Codable, MappingDecodingKeys {
+        struct Root :Codable, DecodingKeyMappable {
             let baidu: URL
 
             static func modelDecodingKeys() -> [String: [String]] {
@@ -1470,7 +1470,7 @@ final class SwiftModelDecodeTests: XCTestCase {
 final class SwiftModelEncodeTests: XCTestCase {
     let encoder = PowerJSONEncoder()
     func testEncode()  {
-        struct A : Encodable, MappingEncodingKeysValues {
+        struct A : Encodable, EncodingKeyMappable {
             var bool: Bool = true
             var int: Int = 0
             var int8: Int8 = 1
@@ -1598,7 +1598,7 @@ final class SwiftModelEncodeTests: XCTestCase {
 
     func testURL() {
         do {
-            struct Root: Codable, MappingEncodingKeysValues {
+            struct Root: Codable, EncodingKeyMappable {
                 let baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
                 static func modelEncodingKeys() -> [String: String] {
                     return ["baidu": "google"]
@@ -1689,7 +1689,7 @@ final class SwiftModelEncodeTests: XCTestCase {
     }
 
     func testValue() {
-        struct A: Encodable, MappingEncodingKeysValues {
+        struct A: Encodable, EncodingKeyMappable {
             var boolBool = false
 
             static func modelEncodingKeys() -> [String : String] {

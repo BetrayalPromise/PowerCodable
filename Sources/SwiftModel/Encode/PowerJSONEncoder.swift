@@ -94,7 +94,7 @@ class PowerInnerJSONEncoder: Encoder {
     }
 }
 
-extension PowerInnerJSONEncoder: EncodingValueConvertible {}
+extension PowerInnerJSONEncoder: EncodingValueMappable {}
 
 extension PowerInnerJSONEncoder: JSONValue {
     var jsonValue: JSON {

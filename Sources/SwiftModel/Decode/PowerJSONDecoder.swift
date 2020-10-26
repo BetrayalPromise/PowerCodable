@@ -91,7 +91,7 @@ extension PowerInnerJSONDecoder {
     }
 }
 
-extension PowerInnerJSONDecoder: DecodingValueConvertible {}
+extension PowerInnerJSONDecoder: DecodingValueMappable {}
 
 // MARK: - Keyed和Unkeyed解码
 extension PowerInnerJSONDecoder {
@@ -246,7 +246,7 @@ extension PowerInnerJSONDecoder {
     /// - Returns: 返回处理后的模型
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
         currentJSON = object
-        if let type: MappingDecodingKeys.Type = T.self as? MappingDecodingKeys.Type {
+        if let type: DecodingKeyMappable.Type = T.self as? DecodingKeyMappable.Type {
             self.mappingKeys = type.modelDecodingKeys()
         }
         if T.self == URL.self {

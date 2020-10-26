@@ -39,7 +39,7 @@ struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
-        if let value: MappingEncodingKeysValues = encoder.value as? MappingEncodingKeysValues {
+        if let value: EncodingKeyMappable = encoder.value as? EncodingKeyMappable {
             self.mapping = type(of: value).modelEncodingKeys()
         }
     }

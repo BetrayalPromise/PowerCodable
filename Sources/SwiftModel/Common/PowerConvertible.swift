@@ -39,8 +39,20 @@ public struct Null {
     }
 }
 
-/// 基础类型转换处理
-public protocol DecodingValueConvertible {
+// MARK: - 解码key转化协议
+public protocol DecodingKeyMappable {
+    /// 可接受的keys
+    static func modelDecodingKeys() -> [String: [String]]
+}
+
+extension DecodingKeyMappable {
+    static func modelDecodingKeys() -> [String: [String]] {
+        return ["": []]
+    }
+}
+
+// MARK: - 解码value转化协议
+public protocol DecodingValueMappable {
     // MARK: Bool
     func toBool(path: JSONPath, value: JSONNull) -> Bool
     func toBool(path: JSONPath, value: JSONBool) -> Bool
@@ -187,7 +199,7 @@ public protocol DecodingValueConvertible {
 }
 
 // MARK: - BOOL -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toBool(path: JSONPath, value: JSONNull) -> Bool { return false }
     func toBool(path: JSONPath, value: JSONBool) -> Bool { return value }
     func toBool(path: JSONPath, value: JSONInteger) -> Bool { return value == 1 ? true : false }
@@ -198,7 +210,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - INT -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toInt(path: JSONPath, value: JSONNull) -> Int { return 0 }
     func toInt(path: JSONPath, value: JSONBool) -> Int { return value == true ? 1 : 0 }
     func toInt(path: JSONPath, value: JSONInteger) -> Int { return Int(value) }
@@ -209,7 +221,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - INT8 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toInt8(path: JSONPath, value: JSONNull) -> Int8 { return 0 }
     func toInt8(path: JSONPath, value: JSONBool) -> Int8 { return value == true ? 1 : 0 }
     func toInt8(path: JSONPath, value: JSONInteger) -> Int8 { return Int8(value) }
@@ -220,7 +232,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - INT16 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toInt16(path: JSONPath, value: JSONNull) -> Int16 { return 0 }
     func toInt16(path: JSONPath, value: JSONBool) -> Int16 { return value == true ? 1 : 0 }
     func toInt16(path: JSONPath, value: JSONInteger) -> Int16 { return Int16(value) }
@@ -231,7 +243,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - INT32 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toInt32(path: JSONPath, value: JSONNull) -> Int32 { return 0 }
     func toInt32(path: JSONPath, value: JSONBool) -> Int32 { return value == true ? 1 : 0 }
     func toInt32(path: JSONPath, value: JSONInteger) -> Int32 { return Int32(value) }
@@ -242,7 +254,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - INT64 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toInt64(path: JSONPath, value: JSONNull) -> Int64 { return 0 }
     func toInt64(path: JSONPath, value: JSONBool) -> Int64 { return value == true ? 1 : 0 }
     func toInt64(path: JSONPath, value: JSONInteger) -> Int64 { return Int64(value) }
@@ -253,7 +265,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - UINT -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toUInt(path: JSONPath, value: JSONNull) -> UInt { return 0 }
     func toUInt(path: JSONPath, value: JSONBool) -> UInt { return value == true ? 1 : 0 }
     func toUInt(path: JSONPath, value: JSONInteger) -> UInt { return value >= 0 ? UInt(value) : 0 }
@@ -264,7 +276,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - UInt8 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toUInt8(path: JSONPath, value: JSONNull) -> UInt8 { return 0 }
     func toUInt8(path: JSONPath, value: JSONBool) -> UInt8 { return value == true ? 1 : 0 }
     func toUInt8(path: JSONPath, value: JSONInteger) -> UInt8 { return value >= 0 ? UInt8(value) : 0 }
@@ -275,7 +287,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - UInt16 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toUInt16(path: JSONPath, value: JSONNull) -> UInt16 { return 0 }
     func toUInt16(path: JSONPath, value: JSONBool) -> UInt16 { return value == true ? 1 : 0 }
     func toUInt16(path: JSONPath, value: JSONInteger) -> UInt16  { return value >= 0 ? UInt16(value) : 0 }
@@ -286,7 +298,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - UInt32 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toUInt32(path: JSONPath, value: JSONNull) -> UInt32 { return 0 }
     func toUInt32(path: JSONPath, value: JSONBool) -> UInt32 { return value == true ? 1 : 0 }
     func toUInt32(path: JSONPath, value: JSONInteger) -> UInt32 { return value >= 0 ? UInt32(value) : 0 }
@@ -297,7 +309,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - UInt64 -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toUInt64(path: JSONPath, value: JSONNull) -> UInt64 { return 0 }
     func toUInt64(path: JSONPath, value: JSONBool) -> UInt64 { return value == true ? 1 : 0 }
     func toUInt64(path: JSONPath, value: JSONInteger) -> UInt64 { return value >= 0 ? UInt64(value) : 0 }
@@ -308,7 +320,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - Float -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toFloat(path: JSONPath, value: JSONNull) -> Float { return 0 }
     func toFloat(path: JSONPath, value: JSONBool) -> Float { return value == true ? 1 : 0 }
     func toFloat(path: JSONPath, value: JSONInteger) -> Float { return Float(value) }
@@ -319,7 +331,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - Double -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toDouble(path: JSONPath, value: JSONNull) ->  Double { return 0 }
     func toDouble(path: JSONPath, value: JSONBool) -> Double { return value == true ? 1 : 0 }
     func toDouble(path: JSONPath, value: JSONInteger) -> Double { return Double(value) }
@@ -330,7 +342,7 @@ extension DecodingValueConvertible {
 }
 
 // MARK: - String -
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toString(path: JSONPath, value: JSONNull) -> String { return "null" }
     func toString(path: JSONPath, value: JSONBool) -> String { return value == true ? "true" : "false" }
     func toString(path: JSONPath, value: JSONInteger) -> String { return String(value) }
@@ -340,7 +352,7 @@ extension DecodingValueConvertible {
     func toString(path: JSONPath, value: JSONArray) -> String { return "[]" }
 }
 
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toData(path: JSONPath, value: JSONNull) -> Data {
         return Data()
     }
@@ -370,34 +382,34 @@ extension DecodingValueConvertible {
     }
     
     func toData(path: JSONPath, value: JSONObject) -> Data {
-        debugPrint("Error: must implement DecodingValueConvertible Protocal method \(#function), return Data() as default")
+        debugPrint("Error: must implement MappingDecodingValueConvertible Protocal method \(#function), return Data() as default")
         return Data()
     }
 
     func toData(path: JSONPath, value: JSONArray) -> Data {
-        debugPrint("Error: must implement DecodingValueConvertible Protocal method \(#function), return Data() as default")
+        debugPrint("Error: must implement MappingDecodingValueConvertible Protocal method \(#function), return Data() as default")
         return Data()
     }
 }
 
-extension DecodingValueConvertible {
+extension DecodingValueMappable {
     func toURL(path: JSONPath, value: JSONNull) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONBool) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONInteger) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONDouble) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
@@ -405,23 +417,37 @@ extension DecodingValueConvertible {
         do {
             return try URL.buildURL(string: value)
         } catch {
-            debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+            debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
             throw CodingError.invalidTypeTransform()
         }
     }
 
     func toURL(path: JSONPath, value: JSONObject) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONArray) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement DecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 }
 
-public protocol EncodingValueConvertible {
+// MARK: - 编码key转化协议
+public protocol EncodingKeyMappable {
+    /// 可转变的keys
+    /// /// 优先级是策略中最高的 如果制定了编码器的Key策略,同时也实现了该协议,最终是该协议生效而不是设置编码器Key的生效
+    static func modelEncodingKeys() -> [String: String]
+}
+
+extension EncodingKeyMappable {
+    static func modelEncodingKeys() -> [String: String] {
+        return ["": ""]
+    }
+}
+
+// MARK: - 编码value转化协议
+public protocol EncodingValueMappable {
     func toJSON(path: JSONPath, value: JSONNull) -> JSON
     func toJSON(path: JSONPath, value: JSONBool) -> JSON
     func toJSON(path: JSONPath, value: JSONInteger) -> JSON
@@ -431,7 +457,7 @@ public protocol EncodingValueConvertible {
     func toJSON(path: JSONPath, value: JSONArray) -> JSON
 }
 
-extension EncodingValueConvertible {
+extension EncodingValueMappable {
     func toJSON(path: JSONPath, value: JSONNull) -> JSON {
         return JSON(nilLiteral: ())
     }
@@ -458,29 +484,6 @@ extension EncodingValueConvertible {
 
     func toJSON(path: JSONPath, value: JSONArray) -> JSON {
         return JSON(array: value)
-    }
-}
-
-public protocol MappingDecodingKeys {
-    /// 可接受的keys
-    static func modelDecodingKeys() -> [String: [String]]
-}
-
-extension MappingDecodingKeys {
-    static func modelDecodingKeys() -> [String: [String]] {
-        return ["": []]
-    }
-}
-
-public protocol MappingEncodingKeysValues {
-    /// 可转变的keys
-    /// /// 优先级是策略中最高的 如果制定了编码器的Key策略,同时也实现了该协议,最终是该协议生效而不是设置编码器Key的生效
-    static func modelEncodingKeys() -> [String: String]
-}
-
-extension MappingEncodingKeysValues {
-    static func modelEncodingKeys() -> [String: String] {
-        return ["": ""]
     }
 }
 
