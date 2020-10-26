@@ -53,7 +53,7 @@ extension DecodingKeyMappable {
 
 // MARK: - 解码value转化协议
 public protocol DecodingValueMappable {
-    // MARK: Bool
+    // MARK: - Bool
     func toBool(path: JSONPath, value: JSONNull) -> Bool
     func toBool(path: JSONPath, value: JSONBool) -> Bool
     func toBool(path: JSONPath, value: JSONInteger) -> Bool
@@ -71,7 +71,7 @@ public protocol DecodingValueMappable {
     func toInt(path: JSONPath, value: JSONObject) -> Int
     func toInt(path: JSONPath, value: JSONArray) -> Int
 
-    // MARK:  - Int8
+    // MARK: - Int8
     func toInt8(path: JSONPath, value: JSONNull) -> Int8
     func toInt8(path: JSONPath, value: JSONBool) -> Int8
     func toInt8(path: JSONPath, value: JSONInteger) -> Int8
@@ -198,7 +198,7 @@ public protocol DecodingValueMappable {
     func toURL(path: JSONPath, value: JSONArray) throws -> URL
 }
 
-// MARK: - BOOL -
+// MARK: - BOOL
 extension DecodingValueMappable {
     func toBool(path: JSONPath, value: JSONNull) -> Bool { return false }
     func toBool(path: JSONPath, value: JSONBool) -> Bool { return value }
@@ -209,7 +209,7 @@ extension DecodingValueMappable {
     func toBool(path: JSONPath, value: JSONArray) -> Bool { return false }
 }
 
-// MARK: - INT -
+// MARK: - INT
 extension DecodingValueMappable {
     func toInt(path: JSONPath, value: JSONNull) -> Int { return 0 }
     func toInt(path: JSONPath, value: JSONBool) -> Int { return value == true ? 1 : 0 }
@@ -220,7 +220,7 @@ extension DecodingValueMappable {
     func toInt(path: JSONPath, value: JSONArray) -> Int { return 0 }
 }
 
-// MARK: - INT8 -
+// MARK: - INT8
 extension DecodingValueMappable {
     func toInt8(path: JSONPath, value: JSONNull) -> Int8 { return 0 }
     func toInt8(path: JSONPath, value: JSONBool) -> Int8 { return value == true ? 1 : 0 }
@@ -231,7 +231,7 @@ extension DecodingValueMappable {
     func toInt8(path: JSONPath, value: JSONArray) -> Int8 { return 0 }
 }
 
-// MARK: - INT16 -
+// MARK: - INT16
 extension DecodingValueMappable {
     func toInt16(path: JSONPath, value: JSONNull) -> Int16 { return 0 }
     func toInt16(path: JSONPath, value: JSONBool) -> Int16 { return value == true ? 1 : 0 }
@@ -242,7 +242,7 @@ extension DecodingValueMappable {
     func toInt16(path: JSONPath, value: JSONArray) -> Int16 { return 0 }
 }
 
-// MARK: - INT32 -
+// MARK: - INT32
 extension DecodingValueMappable {
     func toInt32(path: JSONPath, value: JSONNull) -> Int32 { return 0 }
     func toInt32(path: JSONPath, value: JSONBool) -> Int32 { return value == true ? 1 : 0 }
@@ -253,7 +253,7 @@ extension DecodingValueMappable {
     func toInt32(path: JSONPath, value: JSONArray) -> Int32 { return 0 }
 }
 
-// MARK: - INT64 -
+// MARK: - INT64
 extension DecodingValueMappable {
     func toInt64(path: JSONPath, value: JSONNull) -> Int64 { return 0 }
     func toInt64(path: JSONPath, value: JSONBool) -> Int64 { return value == true ? 1 : 0 }
@@ -264,7 +264,7 @@ extension DecodingValueMappable {
     func toInt64(path: JSONPath, value: JSONArray) -> Int64  { return 0 }
 }
 
-// MARK: - UINT -
+// MARK: - UINT
 extension DecodingValueMappable {
     func toUInt(path: JSONPath, value: JSONNull) -> UInt { return 0 }
     func toUInt(path: JSONPath, value: JSONBool) -> UInt { return value == true ? 1 : 0 }
@@ -275,7 +275,7 @@ extension DecodingValueMappable {
     func toUInt(path: JSONPath, value: JSONArray) -> UInt { return 0 }
 }
 
-// MARK: - UInt8 -
+// MARK: - UInt8
 extension DecodingValueMappable {
     func toUInt8(path: JSONPath, value: JSONNull) -> UInt8 { return 0 }
     func toUInt8(path: JSONPath, value: JSONBool) -> UInt8 { return value == true ? 1 : 0 }
@@ -286,7 +286,7 @@ extension DecodingValueMappable {
     func toUInt8(path: JSONPath, value: JSONArray) -> UInt8 { return 0 }
 }
 
-// MARK: - UInt16 -
+// MARK: - UInt16
 extension DecodingValueMappable {
     func toUInt16(path: JSONPath, value: JSONNull) -> UInt16 { return 0 }
     func toUInt16(path: JSONPath, value: JSONBool) -> UInt16 { return value == true ? 1 : 0 }
@@ -297,7 +297,7 @@ extension DecodingValueMappable {
     func toUInt16(path: JSONPath, value: JSONArray) -> UInt16 { return 0 }
 }
 
-// MARK: - UInt32 -
+// MARK: - UInt32
 extension DecodingValueMappable {
     func toUInt32(path: JSONPath, value: JSONNull) -> UInt32 { return 0 }
     func toUInt32(path: JSONPath, value: JSONBool) -> UInt32 { return value == true ? 1 : 0 }
@@ -308,7 +308,7 @@ extension DecodingValueMappable {
     func toUInt32(path: JSONPath, value: JSONArray) -> UInt32 { return 0 }
 }
 
-// MARK: - UInt64 -
+// MARK: - UInt64
 extension DecodingValueMappable {
     func toUInt64(path: JSONPath, value: JSONNull) -> UInt64 { return 0 }
     func toUInt64(path: JSONPath, value: JSONBool) -> UInt64 { return value == true ? 1 : 0 }
@@ -319,7 +319,7 @@ extension DecodingValueMappable {
     func toUInt64(path: JSONPath, value: JSONArray) -> UInt64  { return 0 }
 }
 
-// MARK: - Float -
+// MARK: - Float
 extension DecodingValueMappable {
     func toFloat(path: JSONPath, value: JSONNull) -> Float { return 0 }
     func toFloat(path: JSONPath, value: JSONBool) -> Float { return value == true ? 1 : 0 }
@@ -330,7 +330,7 @@ extension DecodingValueMappable {
     func toFloat(path: JSONPath, value: JSONArray) -> Float { return 0 }
 }
 
-// MARK: - Double -
+// MARK: - Double
 extension DecodingValueMappable {
     func toDouble(path: JSONPath, value: JSONNull) ->  Double { return 0 }
     func toDouble(path: JSONPath, value: JSONBool) -> Double { return value == true ? 1 : 0 }
@@ -341,7 +341,7 @@ extension DecodingValueMappable {
     func toDouble(path: JSONPath, value: JSONArray) ->  Double { return 0 }
 }
 
-// MARK: - String -
+// MARK: - String
 extension DecodingValueMappable {
     func toString(path: JSONPath, value: JSONNull) -> String { return "null" }
     func toString(path: JSONPath, value: JSONBool) -> String { return value == true ? "true" : "false" }

@@ -1,5 +1,6 @@
 import Foundation
 
+/// 策略统一封装
 public struct DecodingStrategy {
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     /// 这个策略是指模型的字段在经过策略处理后(snake camel, pascal, upper, lower)该字段会已这种处理后的表现形式在进行解码处理
@@ -15,8 +16,9 @@ public struct DecodingStrategy {
 
 public final class PowerJSONDecoder {
     public var strategy = DecodingStrategy()
+    /// 编码路径
     public var paths: [Path] = []
-    /// 仅仅针对nil值转为T?的处理,false则不能接受自定义的nil处理,true着接受自定义的nil处理
+    /// 仅仅针对nil值转为T?的处理,false则不能接受自定义的nil处理,true则接受自定义的nil处理
     var enableMappingEmptyValue: Bool = false
 
     /// 正向模型转化
@@ -136,11 +138,11 @@ extension PowerInnerJSONDecoder {
                     throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
                 }
                 if positiveInfinity.contains(string) {
-                    return T.infinity
+                    return 0
                 } else if negativeInfinity.contains(string) {
-                    return -T.infinity
+                    return 0
                 } else if nan.contains(string) {
-                    return T.nan
+                    return 0
                 }
                 guard let number = T(string) else {
                     throw CodingError.invalidTypeTransform()

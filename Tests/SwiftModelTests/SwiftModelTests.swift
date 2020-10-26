@@ -1725,7 +1725,6 @@ final class SwiftModelEncodeTests: XCTestCase {
             let b = -Float.infinity
             let c = Float.infinity
         }
-//        self.encoder.strategy.nonConformingFloatValuesMapping = .null
         do {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
@@ -1739,8 +1738,9 @@ final class SwiftModelEncodeTests: XCTestCase {
             let a: Data = Data()
         }
         do {
-            let json = try encoder.encode(value: A(), to: String.self)
-            print(json)
+            let json = try encoder.encode(value: A(), to: JSON.self)
+            /// Data本质上就是二进制的数组
+            XCTAssertEqual(json["a"].array$?.count, 0)
         } catch  {
             XCTFail("解析失败")
         }
