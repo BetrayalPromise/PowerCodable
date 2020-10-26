@@ -189,7 +189,13 @@ public extension String {
 
 
 extension DateFormatter {
-    ///
+//    static func timestamp() -> DateFormatter {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+//        formatter.timeZone = TimeZone.current
+//        return formatter
+//    }
+
     static func utc() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
@@ -344,7 +350,7 @@ extension Double {
 extension String {
     func toDate() -> Date {
         guard let interval: TimeInterval = TimeInterval(self) else {
-            debugPrint("\(self) cant't transform to TimeInterval, return current date as default")
+            debugPrint("\(self) can not transform to TimeInterval, return current date as default")
             return Date()
         }
         return Date(timeIntervalSince1970: interval)

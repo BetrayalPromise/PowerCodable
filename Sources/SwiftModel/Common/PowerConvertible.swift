@@ -188,6 +188,15 @@ public protocol DecodingValueMappable {
     func toData(path: JSONPath, value: JSONObject) -> Data
     func toData(path: JSONPath, value: JSONArray) -> Data
 
+    // MARK: - Date
+    func toDate(path: JSONPath, value: JSONNull) -> Date
+    func toDate(path: JSONPath, value: JSONBool) -> Date
+    func toDate(path: JSONPath, value: JSONInteger) -> Date
+    func toDate(path: JSONPath, value: JSONDouble) -> Date
+    func toDate(path: JSONPath, value: JSONString) -> Date
+    func toDate(path: JSONPath, value: JSONObject) -> Date
+    func toDate(path: JSONPath, value: JSONArray) -> Date
+
     // MARK: - URL
     func toURL(path: JSONPath, value: JSONNull) throws -> URL
     func toURL(path: JSONPath, value: JSONBool) throws -> URL
@@ -394,22 +403,22 @@ extension DecodingValueMappable {
 
 extension DecodingValueMappable {
     func toURL(path: JSONPath, value: JSONNull) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) can not transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONBool) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) can not transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONInteger) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) can not transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONDouble) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) can not transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
@@ -417,19 +426,173 @@ extension DecodingValueMappable {
         do {
             return try URL.buildURL(string: value)
         } catch {
-            debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
+            debugPrint("Error: \(value) can not transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
             throw CodingError.invalidTypeTransform()
         }
     }
 
     func toURL(path: JSONPath, value: JSONObject) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) can not transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
     }
 
     func toURL(path: JSONPath, value: JSONArray) throws -> URL {
-        debugPrint("Error: \(value) cant't transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
+        debugPrint("Error: \(value) can not transform to URL, throws exception, or implement MappingDecodingValueConvertible Protocal method \(#function) to custom")
         throw CodingError.invalidTypeTransform()
+    }
+}
+
+extension DecodingValueMappable {
+    func toDate(path: JSONPath, value: JSONNull) -> Date {
+        debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+        return Date()
+    }
+
+    func toDate(path: JSONPath, value: JSONBool) -> Date {
+        debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+        return Date()
+    }
+
+    func toDate(path: JSONPath, value: JSONInteger) -> Date {
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+             return Date()
+         }
+         switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+         case .useCostomValues:
+             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+             case .useDefaultValues:
+                 debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+                 return Date()
+             case .useCustomValues(delegete: let delegete):
+                 return delegete.toDate(path: path, value: value)
+             }
+         case .useTimestamp:
+             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+             case .useDefaultValues:
+                return Date(timeIntervalSince1970: TimeInterval(value))
+             case .useCustomValues(delegete: let delegete):
+                 return delegete.toDate(path: path, value: value)
+             }
+         case .useUTC:
+             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+             case .useDefaultValues:
+                 debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                 return Date()
+             case .useCustomValues(delegete: let delegete):
+                 return delegete.toDate(path: path, value: value)
+             }
+         case .useISO8601:
+             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+             case .useDefaultValues:
+                 debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                 return Date()
+             case .useCustomValues(delegete: let delegete):
+                 return delegete.toDate(path: path, value: value)
+             }
+         }
+    }
+
+    func toDate(path: JSONPath, value: JSONDouble) -> Date {
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Date()
+        }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+        case .useCostomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useTimestamp:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                return Date(timeIntervalSince1970: value)
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useUTC:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useISO8601:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        }
+    }
+
+    func toDate(path: JSONPath, value: JSONString) -> Date {
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Date()
+        }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+        case .useCostomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useTimestamp:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                guard let v = TimeInterval(value) else {
+                    debugPrint("Error: \(value) can not transform to TimeInterval, return Data() as default")
+                    return Date()
+                }
+                return Date(timeIntervalSince1970: v)
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useUTC:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                let formatter = DateFormatter.utc()
+                guard let date: Date = formatter.date(from: value) else {
+                    debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                    return Date()
+                }
+                return date
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useISO8601:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                let formatter = DateFormatter.iso8601()
+                guard let date: Date = formatter.date(from: value) else {
+                    debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                    return Date()
+                }
+                return date
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        }
+    }
+
+    func toDate(path: JSONPath, value: JSONObject) -> Date {
+        debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+        return Date()
+    }
+
+    func toDate(path: JSONPath, value: JSONArray) -> Date {
+        debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+        return Date()
     }
 }
 

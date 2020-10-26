@@ -144,6 +144,228 @@ extension DecodingSingleValue {
                  case .useCustomValues(delegete: let delegate): return try delegate.toURL(path: self.paths.jsonPath, value: array) as! T
                  }
             }
+        } else if type == Date.self {
+            switch self.json {
+            case .unknow:
+                throw CodingError.invalidTypeTransform()
+            case .null:
+                switch self.decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+                case .useCostomValues:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    }
+                case .useTimestamp:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    }
+                case .useUTC:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    }
+                case .useISO8601:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: Null()) as! T
+                    }
+                }
+            case .bool(let bool):
+                switch self.decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+                case .useCostomValues:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    }
+                case .useTimestamp:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    }
+                case .useUTC:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    }
+                case .useISO8601:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: bool) as! T
+                    }
+                }
+            case .string(let string):
+                switch self.decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+                case .useCostomValues:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: string) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: string) as! T
+                    }
+                case .useTimestamp:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: string) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: string) as! T
+                    }
+                case .useUTC:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: string) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: string) as! T
+                    }
+                case .useISO8601:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: string) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: string) as! T
+                    }
+                }
+            case .integer(let integer):
+                switch self.decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+                case .useCostomValues:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    }
+                case .useTimestamp:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    }
+                case .useUTC:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    }
+                case .useISO8601:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: integer) as! T
+                    }
+                }
+            case .double(let double):
+                switch self.decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+                case .useCostomValues:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: double) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: double) as! T
+                    }
+                case .useTimestamp:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: double) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: double) as! T
+                    }
+                case .useUTC:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: double) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: double) as! T
+                    }
+                case .useISO8601:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: double) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: double) as! T
+                    }
+                }
+            case .object(let object):
+                switch self.decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+                case .useCostomValues:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: object) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: object) as! T
+                    }
+                case .useTimestamp:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: object) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: object) as! T
+                    }
+                case .useUTC:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: object) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: object) as! T
+                    }
+                case .useISO8601:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: object) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: object) as! T
+                    }
+                }
+            case .array(let array):
+                switch self.decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+                case .useCostomValues:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: array) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: array) as! T
+                    }
+                case .useTimestamp:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: array) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: array) as! T
+                    }
+                case .useUTC:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: array) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: array) as! T
+                    }
+                case .useISO8601:
+                    switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+                    case .useDefaultValues:
+                        return self.decoder.toDate(path: self.paths.jsonPath, value: array) as! T
+                    case .useCustomValues(delegete: let delegete):
+                        return delegete.toDate(path: self.paths.jsonPath, value: array) as! T
+                    }
+                }
+            }
         } else if type == Data.self {
             switch self.json {
             case .null:

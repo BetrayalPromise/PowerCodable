@@ -36,6 +36,17 @@ extension PowerJSONDecoder {
         /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体)
         case useCustomValues(delegete: DecodingValueMappable)
     }
+
+    public enum DateDecodingStrategy {
+        /// 时间戳(数值或者字符串)转Date不会处理时区
+        case useTimestamp
+        /// utc时间格式字符串转转Date
+        case useUTC
+        /// iso8601时间格式字符串转转Date
+        case useISO8601
+        /// 根据 valueMapping设定的值
+        case useCostomValues
+    }
 }
 
 public extension URL {

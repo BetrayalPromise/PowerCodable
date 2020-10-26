@@ -1396,8 +1396,8 @@ final class SwiftModelDecodeTests: XCTestCase {
             struct Root: Codable {
                 let date : Date
             }
-            let json = try decoder.decode(type: Root.self, from: data)
-            print(json)
+            let model: Root = try decoder.decode(type: Root.self, from: data)
+            print(model)
         } catch {
             XCTFail("解析失败")
         }

@@ -10,6 +10,8 @@ public struct DecodingStrategy {
     public var valueMapping: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
     /// 针对转Data处理
     public var dataValueMapping: PowerJSONDecoder.DataDecodingStrategy = .useDefaultValues
+    /// 针对转Date处理
+    public var dateValueMapping: PowerJSONDecoder.DateDecodingStrategy = .useTimestamp
     /// 针对浮点型值(nan, +infinity, -infinity)处理
     public var nonConformingFloatValueMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
 }
@@ -255,7 +257,8 @@ extension PowerInnerJSONDecoder {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
             return try container.decode(T.self)
         } else if T.self == Date.self {
-            return try T.init(from: self)
+            let container = DecodingSingleValue(decoder: self, json: currentJSON)
+            return try container.decode(T.self)
         } else if T.self == Data.self {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
             return try container.decode(T.self)
