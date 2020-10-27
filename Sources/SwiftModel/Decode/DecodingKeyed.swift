@@ -39,6 +39,8 @@ class DecodingKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
             mappingKey = key.stringValue.toUpperCase()
         case .useLowerKeys:
             mappingKey = key.stringValue.toLowerCase()
+        case .useCustom(let closure):
+            mappingKey = closure(self.paths).stringValue
         }
         guard let object = self.json[mappingKey] else {
             if self.json.count == 0 {

@@ -20,6 +20,8 @@ fileprivate class Storage<Key: CodingKey> {
             mappingKey = key.toUpperCase()
         case .useLowerKeys:
             mappingKey = key.toLowerCase()
+        case .useCustom(let closure):
+            mappingKey = closure(encoder.paths).stringValue
         }
 
         let keyValue: KeyValue = (mappingKey, value)

@@ -74,6 +74,8 @@ public extension Array where Element == Path {
                 key = value.indexPath.toUpperCase()
             case .useLowerKeys:
                 key = value.indexPath.toLowerCase()
+            case .useCustom(let closure):
+                key = closure(self).stringValue
             }
             self.append(Path(information: Container.object.rawValue + key, container: Container.object, indexPath: key))
         }

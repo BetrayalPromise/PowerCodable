@@ -65,6 +65,7 @@ extension PowerJSONEncoder {
         case usePascalKeys(StringCaseFormat.PascalCase)
         case useUpperKeys
         case useLowerKeys
+        case useCustom(([CodingKey]) -> CodingKey)
     }
 
     public enum NonConformingFloatEncodingStrategy {
