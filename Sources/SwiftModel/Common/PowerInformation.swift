@@ -18,11 +18,11 @@ public struct Path {
     let indexPath: String
 
     static func index(by: String) -> Path {
-        return Path(information: Container.array.rawValue + by, container: .object, indexPath: by)
+        return Path(information: Container.object.rawValue + by, container: .object, indexPath: by)
     }
 
     static func index(by: Int) -> Path {
-        return Path(information: Container.object.rawValue + "\(by)", container: .array, indexPath: "\(by)")
+        return Path(information: Container.array.rawValue + "\(by)", container: .array, indexPath: "\(by)")
     }
 }
 
