@@ -34,7 +34,7 @@ extension PowerJSONDecoder {
         /// 读取内存中的值, 所有类型都可以
         case useMemoryValues
         /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体)
-        case useCustomValues(delegete: DecodingValueMappable)
+        case useCustomValues
     }
 
     public enum DateDecodingStrategy {
