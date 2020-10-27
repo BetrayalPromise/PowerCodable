@@ -11,7 +11,7 @@ public struct DecodingStrategy {
     /// 针对转Data处理
     public var dataValueMapping: PowerJSONDecoder.DataDecodingStrategy = .useDefaultValues
     /// 针对转Date处理
-    public var dateValueMapping: PowerJSONDecoder.DateDecodingStrategy = .useTimestamp
+    public var dateValueMapping: PowerJSONDecoder.DateDecodingStrategy = .secondsSince1970(json: .second)
     /// 针对浮点型值(nan, +infinity, -infinity)处理
     public var nonConformingFloatValueMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
 }

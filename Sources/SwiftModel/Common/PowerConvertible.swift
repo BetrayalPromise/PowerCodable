@@ -680,124 +680,83 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toDate(path: JSONPath, value: JSONNull) -> Date {
         guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
-             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-             return Date()
-         }
-        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
-        case .useCostomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch  {
+                debugPrint("Error: \(error) can not transform to Date, return Date() as default")
                 return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
             }
-        case .useTimestamp:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useUTC:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useISO8601:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
+        case .secondsSince1970(json: _):
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .utc, .deferredToDate:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .iso8601:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
         }
     }
 
     func toDate(path: JSONPath, value: JSONBool) -> Date {
         guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
-             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-             return Date()
-         }
-        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
-        case .useCostomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch  {
+                debugPrint("Error: \(error) can not transform to Date, return Date() as default")
                 return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
             }
-        case .useTimestamp:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useUTC:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useISO8601:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
+        case .secondsSince1970:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .utc, .deferredToDate:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .iso8601:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
         }
     }
 
     func toDate(path: JSONPath, value: JSONInteger) -> Date {
         guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
-             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-             return Date()
-         }
-         switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
-         case .useCostomValues:
-             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-             case .useDefaultValues:
-                 debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                 return Date()
-             case .useCustomValues(delegete: let delegete):
-                 return delegete.toDate(path: path, value: value)
-             }
-         case .useTimestamp:
-             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-             case .useDefaultValues:
-                return Date(timeIntervalSince1970: TimeInterval(value))
-             case .useCustomValues(delegete: let delegete):
-                 return delegete.toDate(path: path, value: value)
-             }
-         case .useUTC:
-             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-             case .useDefaultValues:
-                 debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                 return Date()
-             case .useCustomValues(delegete: let delegete):
-                 return delegete.toDate(path: path, value: value)
-             }
-         case .useISO8601:
-             switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-             case .useDefaultValues:
-                 debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                 return Date()
-             case .useCustomValues(delegete: let delegete):
-                 return delegete.toDate(path: path, value: value)
-             }
-         }
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch  {
+                debugPrint("Error: \(error) can not transform to Date, return Date() as default")
+                return Date()
+            }
+        case .secondsSince1970(json: let form):
+            switch form {
+            case .second:
+                return Date(timeIntervalSince1970: TimeInterval(Double(value)))
+            case .millisecond:
+                return Date(timeIntervalSince1970: TimeInterval(Double(value) / 1000.0))
+            }
+        case .utc, .deferredToDate:
+            let date = Date(timeIntervalSince1970: TimeInterval(value))
+            let dateformatter = DateFormatter.utc()
+            return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
+        case .iso8601:
+            let date = Date(timeIntervalSince1970: TimeInterval(value))
+            let dateformatter = DateFormatter.iso8601()
+            return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
+        }
     }
 
     func toDate(path: JSONPath, value: JSONDouble) -> Date {
@@ -805,38 +764,29 @@ extension DecodingValueMappable {
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
         }
-        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
-        case .useCostomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch  {
+                debugPrint("Error: \(error) can not transform to Date, return Date() as default")
                 return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
             }
-        case .useTimestamp:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                return Date(timeIntervalSince1970: value)
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
+        case .secondsSince1970(json: let form):
+            switch form {
+            case .second:
+                return Date(timeIntervalSince1970: TimeInterval(Double(value)))
+            case .millisecond:
+                return Date(timeIntervalSince1970: TimeInterval(Double(value) / 1000.0))
             }
-        case .useUTC:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useISO8601:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
+        case .utc, .deferredToDate:
+            let date = Date(timeIntervalSince1970: TimeInterval(value))
+            let dateformatter = DateFormatter.utc()
+            return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
+        case .iso8601:
+            let date = Date(timeIntervalSince1970: TimeInterval(value))
+            let dateformatter = DateFormatter.iso8601()
+            return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
         }
     }
 
@@ -845,132 +795,89 @@ extension DecodingValueMappable {
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
         }
-        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
-        case .useCostomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch  {
+                debugPrint("Error: \(error) can not transform to Date, return Date() as default")
+                return Date()
+            }
+        case .secondsSince1970(let form):
+            guard let double = TimeInterval(value) else {
+                debugPrint("Error: \(value) can not transform to TimeInterval, return Date() as default")
+                return Date()
+            }
+            switch form {
+            case .second:
+                return Date(timeIntervalSince1970: TimeInterval(double))
+            case .millisecond:
+                return Date(timeIntervalSince1970: TimeInterval(double / 1000.0))
+            }
+        case .utc, .deferredToDate:
+            let formatter = DateFormatter.utc()
+            guard let date: Date = formatter.date(from: value) else {
                 debugPrint("Error: \(value) can not transform to Date, return Date() as default")
                 return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
             }
-        case .useTimestamp:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                guard let v = TimeInterval(value) else {
-                    debugPrint("Error: \(value) can not transform to TimeInterval, return Date() as default")
-                    return Date()
-                }
-                return Date(timeIntervalSince1970: v)
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
+            return date
+        case .iso8601:
+            let formatter = DateFormatter.iso8601()
+            guard let date: Date = formatter.date(from: value) else {
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
             }
-        case .useUTC:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                let formatter = DateFormatter.utc()
-                guard let date: Date = formatter.date(from: value) else {
-                    debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                    return Date()
-                }
-                return date
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useISO8601:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                let formatter = DateFormatter.iso8601()
-                guard let date: Date = formatter.date(from: value) else {
-                    debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                    return Date()
-                }
-                return date
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
+            return date
         }
     }
 
     func toDate(path: JSONPath, value: JSONObject) -> Date {
         guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
-             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-             return Date()
-         }
-        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
-        case .useCostomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch  {
+                debugPrint("Error: \(error) can not transform to Date, return Date() as default")
                 return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
             }
-        case .useTimestamp:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useUTC:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useISO8601:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
+        case .secondsSince1970:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .utc, .deferredToDate:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .iso8601:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
         }
     }
 
     func toDate(path: JSONPath, value: JSONArray) -> Date {
         guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
-             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-             return Date()
-         }
-        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
-        case .useCostomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch  {
+                debugPrint("Error: \(error) can not transform to Date, return Date() as default")
                 return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
             }
-        case .useTimestamp:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useUTC:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
-        case .useISO8601:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-                return Date()
-            case .useCustomValues(delegete: let delegete):
-                return delegete.toDate(path: path, value: value)
-            }
+        case .secondsSince1970:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .utc, .deferredToDate:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .iso8601:
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
         }
     }
 }

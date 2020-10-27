@@ -1387,15 +1387,17 @@ final class SwiftModelDecodeTests: XCTestCase {
     }
 
     func testDate() {
+//        1603782840000
         let data: Data = """
         {
-            "date": "1603539281"
+            "date": "1603782840000"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
             struct Root: Codable {
                 let date : Date
             }
+            decoder.strategy.dateValueMapping = .secondsSince1970(json: .millisecond)
             let model: Root = try decoder.decode(type: Root.self, from: data)
             print(model)
         } catch {
@@ -1751,7 +1753,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let a: Date = Date()
         }
         do {
-            self.encoder.strategy.dateValueMapping = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
+            self.encoder.strategy.dateValueMapping = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.formNumber)
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
         } catch  {

@@ -38,15 +38,25 @@ extension PowerJSONDecoder {
         case useCustomValues
     }
 
+    /// JSON数据源中的时间戳位数
+    public enum Timestamp {
+        /// 10位
+        case second
+        /// 13位
+        case millisecond
+    }
+
     public enum DateDecodingStrategy {
-        /// 时间戳(数值或者字符串)转Date不会处理时区
-        case useTimestamp
+        /// 时间戳秒数(数值或者字符串)转Date不会处理时区 json设置为数据源JSON给出的是秒还是毫秒, 但是最终都会转化为秒进行处理, 适用于时间精度为秒级别的
+        case secondsSince1970(json: Timestamp = .second)
+//        秒与毫秒转化较为容易 没必要提供这个接口
+//        case millisecondsSince1970
         /// utc时间格式字符串转转Date
-        case useUTC
+        case deferredToDate, utc
         /// iso8601时间格式字符串转转Date
-        case useISO8601
+        case iso8601
         /// 根据 valueMapping设定的值
-        case useCostomValues
+        case custom((Decoder) throws -> Date)
     }
 }
 

@@ -15,9 +15,9 @@ extension PowerJSONEncoder {
     /// 时间戳表达形式
     public enum TimestampExpressionForm {
         /// 以字符串形式表现
-        case string
+        case formString
         /// 以数值形式表现
-        case number
+        case formNumber
     }
 
     public enum DateEncodingStrategy {
@@ -26,7 +26,6 @@ extension PowerJSONEncoder {
         case millisecondsSince1970(TimestampExpressionForm)
         case iso8601
         case formatted(DateFormatter)
-        // WRAN:
         case custom((Date, Encoder) throws -> Encodable)
     }
 
@@ -43,12 +42,6 @@ extension PowerJSONEncoder {
             }
         }
     }
-
-//    public enum KeyEncodingStrategy {
-//        case convertToSnakeCase
-//        case useDefaultKeys
-//        case custom(([CodingKey]) -> CodingKey)
-//    }
     
     /// 类型不一致策略
     public enum ValueEncodingStrategy {
@@ -279,17 +272,6 @@ extension PowerJSONEncoder {
             }).joined(separator: "_")
             return result
         }
-
-//        func keyConvertion(key: String) -> String {
-//            switch options.keyEncoding {
-//            case .convertToSnakeCase:
-//                return keyConvertion(key: key)
-//            case .useDefaultKeys:
-//                return key
-//            case .custom(_):
-//                fatalError("Unimplemented yet")
-//            }
-//        }
 
         func writeJSONObject(object: [JSONTuples]) throws {
             try writer.write("{")

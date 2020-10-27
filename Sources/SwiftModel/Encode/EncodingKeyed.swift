@@ -514,13 +514,13 @@ extension EncodingKeyed {
             mapping = DateFormatter.iso8601().string(from: value)
         case .millisecondsSince1970(let form):
             switch form {
-            case .number: mapping = value.timeIntervalSince1970 * 1000
-            case .string: mapping = "\(value.timeIntervalSince1970 * 1000)"
+            case .formNumber: mapping = value.timeIntervalSince1970 * 1000
+            case .formString: mapping = "\(value.timeIntervalSince1970 * 1000)"
             }
         case .secondsSince1970(let form):
             switch form {
-            case .number: mapping = value.timeIntervalSince1970
-            case .string: mapping = "\(value.timeIntervalSince1970)"
+            case .formNumber: mapping = value.timeIntervalSince1970
+            case .formString: mapping = "\(value.timeIntervalSince1970)"
             }
         case .formatted(let formatter): mapping = formatter.string(from: value)
         case .custom(let closure): mapping = try closure(value, self.encoder)
