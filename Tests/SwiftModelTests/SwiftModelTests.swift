@@ -1390,14 +1390,14 @@ final class SwiftModelDecodeTests: XCTestCase {
 //        1603782840000
         let data: Data = """
         {
-            "date": "1603782840000"
+            "date": "1603782840123"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
         do {
             struct Root: Codable {
                 let date : Date
             }
-            decoder.strategy.dateValueMapping = .secondsSince1970(json: .millisecond)
+            decoder.strategy.dateValueMapping = .millisecondsSince1970(json: .millisecond)
             let model: Root = try decoder.decode(type: Root.self, from: data)
             print(model)
         } catch {
@@ -1736,15 +1736,30 @@ final class SwiftModelEncodeTests: XCTestCase {
     }
 
     func testData() {
-        struct A: Encodable {
-            let a: Data = Data()
+        do {
+            struct A: Encodable {
+                let a: Data = Data()
+            }
+            do {
+                let json = try encoder.encode(value: A(), to: JSON.self)
+                /// Data本质上就是二进制的数组
+                XCTAssertEqual(json["a"], "")
+            } catch  {
+                XCTFail("解析失败")
+            }
         }
         do {
-            let json = try encoder.encode(value: A(), to: JSON.self)
-            /// Data本质上就是二进制的数组
-            XCTAssertEqual(json["a"].array$?.count, 0)
-        } catch  {
-            XCTFail("解析失败")
+            struct A: Encodable {
+                let a: Data = Data(hexString: "0x234223423")
+            }
+            do {
+                encoder.strategy.dataValueMapping = .base64
+                let json = try encoder.encode(value: A(), to: JSON.self)
+                /// Data本质上就是二进制的数组
+                XCTAssertNotEqual(json["a"].array$?.count, 0)
+            } catch  {
+                XCTFail("解析失败")
+            }
         }
     }
 
@@ -1753,7 +1768,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let a: Date = Date()
         }
         do {
-            self.encoder.strategy.dateValueMapping = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.formNumber)
+            self.encoder.strategy.dateValueMapping = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
         } catch  {

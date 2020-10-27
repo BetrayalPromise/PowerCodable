@@ -31,12 +31,12 @@ extension Dictionary where Key == String, Value == JSON {
 }
 
 /// 用以表示空值
-public struct Null {
-    func toData() -> Data {
-        let size = MemoryLayout.size(ofValue: self)
-        var value: Null = self
-        return Data(bytes: &value, count: size)
-    }
+public struct Null: Codable {
+//    func toData() -> Data {
+//        let size = MemoryLayout.size(ofValue: self)
+//        var value: Null = self
+//        return Data(bytes: &value, count: size)
+//    }
 }
 
 // MARK: - 解码key转化协议
@@ -369,38 +369,25 @@ extension DecodingValueMappable {
              return Data()
          }
         switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .base64:
+            return value.toData()?.base64EncodedData() ?? Data().base64EncodedData()
         case .useDefaultValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .hexadecimalValues:
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch {
+                debugPrint("Error: \(error) can not transform to Data, return Data() as default")
                 return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
             }
-        case .useHexadecimalValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useCustomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useMemoryValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
+        case .deferredToData:
+            let size = MemoryLayout.size(ofValue: value)
+            var value = value
+            return Data(bytes: &value, count: size)
         }
     }
 
@@ -410,38 +397,25 @@ extension DecodingValueMappable {
              return Data()
          }
         switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .base64:
+            return value.toData()?.base64EncodedData() ?? Data().base64EncodedData()
         case .useDefaultValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .hexadecimalValues:
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch {
+                debugPrint("Error: \(error) can not transform to Data, return Data() as default")
                 return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
             }
-        case .useHexadecimalValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useCustomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useMemoryValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
+        case .deferredToData:
+            let size = MemoryLayout.size(ofValue: value)
+            var value = value
+            return Data(bytes: &value, count: size)
         }
     }
 
@@ -451,37 +425,24 @@ extension DecodingValueMappable {
              return Data()
          }
         switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .base64:
+            return value.toData()?.base64EncodedData() ?? Data().base64EncodedData()
+        case .deferredToData:
+            let size = MemoryLayout.size(ofValue: value)
+            var value = value
+            return Data(bytes: &value, count: size)
         case .useDefaultValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .hexadecimalValues:
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch {
+                debugPrint("Error: \(error) can not transform to Data, return Data() as default")
                 return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useHexadecimalValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useCustomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useMemoryValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
             }
         }
     }
@@ -492,38 +453,25 @@ extension DecodingValueMappable {
              return Data()
          }
         switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .base64:
+            return value.toData()?.base64EncodedData() ?? Data().base64EncodedData()
         case .useDefaultValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .hexadecimalValues:
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch {
+                debugPrint("Error: \(error) can not transform to Data, return Data() as default")
                 return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
             }
-        case .useHexadecimalValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useCustomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useMemoryValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
+        case .deferredToData:
+            let size = MemoryLayout.size(ofValue: value)
+            var value = value
+            return Data(bytes: &value, count: size)
         }
     }
     
@@ -533,18 +481,20 @@ extension DecodingValueMappable {
              return Data()
          }
         switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .base64:
+            return value.toData()?.base64EncodedData() ?? Data().base64EncodedData()
         case .useDefaultValues:
             return value.dataWrapper ?? Data()
-        case .useHexadecimalValues:
+        case .hexadecimalValues:
             return Data(hexString: value)
-        case .useCustomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-               return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch {
+                debugPrint("Error: \(error) can not transform to Data, return Data() as default")
+                return Data()
             }
-        case .useMemoryValues:
+        case .deferredToData:
             let size = MemoryLayout.size(ofValue: value)
             var value = value
             return Data(bytes: &value, count: size)
@@ -557,38 +507,26 @@ extension DecodingValueMappable {
              return Data()
          }
         switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .base64:
+            debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            return Data().base64EncodedData()
         case .useDefaultValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            return Data()
+        case .hexadecimalValues:
+            debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            return Data()
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch {
+                debugPrint("Error: \(error) can not transform to Data, return Data() as default")
                 return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
             }
-        case .useHexadecimalValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useCustomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useMemoryValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
+        case .deferredToData:
+            let size = MemoryLayout.size(ofValue: value)
+            var value = value
+            return Data(bytes: &value, count: size)
         }
     }
 
@@ -598,38 +536,26 @@ extension DecodingValueMappable {
              return Data()
          }
         switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .base64:
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data().base64EncodedData()
         case .useDefaultValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .hexadecimalValues:
+            debugPrint("Error: \(value) can not transform to Data, return Data() as default")
+            return Data()
+        case .custom(let closure):
+            do {
+                return try closure(decoder)
+            } catch {
+                debugPrint("Error: \(error) can not transform to Data, return Data() as default")
                 return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
             }
-        case .useHexadecimalValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useCustomValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
-        case .useMemoryValues:
-            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
-            case .useDefaultValues:
-                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-                return Data()
-            case .useCustomValues(delegete: let delegate):
-                return delegate.toData(path: path, value: value)
-            }
+        case .deferredToData:
+            let size = MemoryLayout.size(ofValue: value)
+            var value = value
+            return Data(bytes: &value, count: size)
         }
     }
 }
@@ -694,6 +620,9 @@ extension DecodingValueMappable {
         case .secondsSince1970(json: _):
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
+        case .millisecondsSince1970(json: _):
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
         case .utc, .deferredToDate:
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
@@ -719,6 +648,9 @@ extension DecodingValueMappable {
         case .secondsSince1970:
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
+        case .millisecondsSince1970(json: _):
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
         case .utc, .deferredToDate:
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
@@ -742,6 +674,13 @@ extension DecodingValueMappable {
                 return Date()
             }
         case .secondsSince1970(json: let form):
+            switch form {
+            case .second:
+                return Date(timeIntervalSince1970: TimeInterval(Double(value)))
+            case .millisecond:
+                return Date(timeIntervalSince1970: TimeInterval(Double(value) / 1000.0))
+            }
+        case .millisecondsSince1970(json: let form):
             switch form {
             case .second:
                 return Date(timeIntervalSince1970: TimeInterval(Double(value)))
@@ -774,10 +713,13 @@ extension DecodingValueMappable {
             }
         case .secondsSince1970(json: let form):
             switch form {
-            case .second:
-                return Date(timeIntervalSince1970: TimeInterval(Double(value)))
-            case .millisecond:
-                return Date(timeIntervalSince1970: TimeInterval(Double(value) / 1000.0))
+            case .second: return Date(timeIntervalSince1970: TimeInterval(Double(value)))
+            case .millisecond: return Date(timeIntervalSince1970: TimeInterval(Double(value) / 1000.0))
+            }
+        case .millisecondsSince1970(json: let form):
+            switch form {
+            case .second: return Date(timeIntervalSince1970: TimeInterval(Double(value)))
+            case .millisecond: return Date(timeIntervalSince1970: TimeInterval(Double(value) / 1000.0))
             }
         case .utc, .deferredToDate:
             let date = Date(timeIntervalSince1970: TimeInterval(value))
@@ -814,6 +756,15 @@ extension DecodingValueMappable {
             case .millisecond:
                 return Date(timeIntervalSince1970: TimeInterval(double / 1000.0))
             }
+        case .millisecondsSince1970(json: let form):
+            guard let double = TimeInterval(value) else {
+                debugPrint("Error: \(value) can not transform to TimeInterval, return Date() as default")
+                return Date()
+            }
+            switch form {
+            case .second: return Date(timeIntervalSince1970: TimeInterval(double))
+            case .millisecond: return Date(timeIntervalSince1970: TimeInterval(double / 1000.0))
+            }
         case .utc, .deferredToDate:
             let formatter = DateFormatter.utc()
             guard let date: Date = formatter.date(from: value) else {
@@ -844,7 +795,10 @@ extension DecodingValueMappable {
                 debugPrint("Error: \(error) can not transform to Date, return Date() as default")
                 return Date()
             }
-        case .secondsSince1970:
+        case .secondsSince1970(json: _):
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .millisecondsSince1970(json: _):
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
         case .utc, .deferredToDate:
@@ -869,7 +823,10 @@ extension DecodingValueMappable {
                 debugPrint("Error: \(error) can not transform to Date, return Date() as default")
                 return Date()
             }
-        case .secondsSince1970:
+        case .secondsSince1970(json: _):
+            debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+            return Date()
+        case .millisecondsSince1970(json: _):
             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
             return Date()
         case .utc, .deferredToDate:

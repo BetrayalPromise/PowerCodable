@@ -15,9 +15,9 @@ extension PowerJSONEncoder {
     /// 时间戳表达形式
     public enum TimestampExpressionForm {
         /// 以字符串形式表现
-        case formString
+        case string
         /// 以数值形式表现
-        case formNumber
+        case number
     }
 
     public enum DateEncodingStrategy {
@@ -30,17 +30,11 @@ extension PowerJSONEncoder {
     }
 
     public enum DataEncodingStrategy {
-        case base64
-        case custom((Data, Encoder) throws -> Void)
         case deferredToData
-
-        fileprivate func encode(data: Data) -> String {
-            switch self {
-            case .base64: return data.base64EncodedString()
-            case .custom(_): return ""
-            case .deferredToData: return ""
-            }
-        }
+        /// 十六进制的数组
+        case hexadecimalArray
+        case base64
+        case custom((Data, Encoder) throws -> Encodable)
     }
     
     /// 类型不一致策略
@@ -171,6 +165,8 @@ extension PowerJSONEncoder {
                 try op(data, encoder)
             case .deferredToData:
                 writer.writeData(data)
+            case .hexadecimalArray:
+                break
             }
         }
 

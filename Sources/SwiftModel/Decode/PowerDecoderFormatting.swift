@@ -31,11 +31,13 @@ extension PowerJSONDecoder {
         /// 默认处理字符串直接转Data, 其他类型则为Data()
         case useDefaultValues
         /// 十六进制的字符串,针对字符串处理
-        case useHexadecimalValues
+        case hexadecimalValues
         /// 读取内存中的值, 所有类型都可以
-        case useMemoryValues
-        /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体)
-        case useCustomValues
+        case deferredToData
+        /// base64编码过的数据
+        case base64
+        /// 自定义
+        case custom((Decoder) throws -> Data)
     }
 
     /// JSON数据源中的时间戳位数
@@ -49,8 +51,7 @@ extension PowerJSONDecoder {
     public enum DateDecodingStrategy {
         /// 时间戳秒数(数值或者字符串)转Date不会处理时区 json设置为数据源JSON给出的是秒还是毫秒, 但是最终都会转化为秒进行处理, 适用于时间精度为秒级别的
         case secondsSince1970(json: Timestamp = .second)
-//        秒与毫秒转化较为容易 没必要提供这个接口
-//        case millisecondsSince1970
+        case millisecondsSince1970(json: Timestamp = .millisecond)
         /// utc时间格式字符串转转Date
         case deferredToDate, utc
         /// iso8601时间格式字符串转转Date
