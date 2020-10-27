@@ -201,7 +201,7 @@ extension DecodingKeyed {
     }
 
     func superDecoder() throws -> Decoder {
-        return try buildSuperDecoder(forKey: PowerJSONKey.super)
+        return try buildSuperDecoder(forKey: Path.super)
     }
 
     func superDecoder(forKey key: K) throws -> Decoder {
@@ -214,7 +214,7 @@ extension DecodingKeyed {
         codingPath.append(key)
         defer { codingPath.removeLast() }
 
-        let value = (key is PowerJSONKey) == true ? JSON.object(self.json) : self.json[key.stringValue, default: .null]
+        let value = (key is Path) == true ? JSON.object(self.json) : self.json[key.stringValue, default: .null]
         return PowerInnerJSONDecoder(json: value, at: decoder.codingPath)
     }
 }

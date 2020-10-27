@@ -25,7 +25,7 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
     }
 
     private var currentKey: CodingKey {
-        return PowerJSONKey(index: currentIndex)
+        return Path.index(by: self.currentIndex)
     }
 
     @inline(__always)

@@ -12,7 +12,27 @@ enum Container: String, CustomStringConvertible {
     }
 }
 
-public struct Path {
+public struct Path: CodingKey {
+    public var stringValue: String {
+        return self.indexPath
+    }
+
+    public var intValue: Int? {
+        return Int(self.indexPath)
+    }
+
+    public init?(stringValue: String) {
+        self.information = Container.object.rawValue + stringValue
+        self.container = .object
+        self.indexPath = stringValue
+    }
+
+    public init?(intValue: Int) {
+        self.information = Container.object.rawValue + "\(intValue)"
+        self.container = .array
+        self.indexPath = "\(intValue)"
+    }
+
     let information: String
     let container: Container
     let indexPath: String
@@ -24,6 +44,14 @@ public struct Path {
     static func index(by: Int) -> Path {
         return Path(information: Container.array.rawValue + "\(by)", container: .array, indexPath: "\(by)")
     }
+
+    init(information: String, container: Container, indexPath: String) {
+        self.information = information
+        self.container = container
+        self.indexPath = indexPath
+    }
+
+    static let `super` = Path(stringValue: "super")!
 }
 
 public extension Array where Element == Path {
@@ -59,18 +87,5 @@ public extension Array where Element == Path {
         return self.reduce("") { (result, item) -> String in
             return result + (item.information)
         }
-    }
-}
-
-extension Optional {
-    var isSome: Bool {
-        switch self {
-        case .none: return false
-        case .some(_): return true
-        }
-    }
-
-    var isNone: Bool {
-        return !self.isSome
     }
 }

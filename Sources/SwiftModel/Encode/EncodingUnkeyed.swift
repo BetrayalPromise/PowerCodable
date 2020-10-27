@@ -12,7 +12,7 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
     var currentIndex: Int = 0
 
     var nestedCodingPath: [CodingKey] {
-        return self.codingPath + [PowerJSONKey(intValue: self.count)!]
+        return self.codingPath + [Path(intValue: self.count)!]
     }
     private unowned let encoder: PowerInnerJSONEncoder
     var unkeyed: [JSON] = []
