@@ -213,4 +213,4 @@ do {
 }
 ```
 #### 还有写特性可见具体的Test, 
-#### 感谢 [JSON](https://github.com/vdka/JSON.git) 解析功能是照搬的 并不是用Codable内部的功能(因为Codable提供的关于解析过程的比较少),壳子模仿Codable的API,使用方便,欢迎大家提PR!!!共同学习，由于底层不是Codable解析目前只支持Bool, Int, Int8, Int16, Int32, Int64, UInt, UInt8, UInt16, UInt32, UInt64, Float, Double, String, URL其他类型会逐步加入支持
+#### 感谢 [JSON](https://github.com/vdka/JSON.git) 解析功能是照搬的 并不是用Codable内部的功能(因为Codable提供的关于解析过程的比较少),壳子模仿Codable的API,使用方便,欢迎大家提PR!!!共同学习，由于底层不是Codable解析目前支持Bool, Int, Int8, Int16, Int32, Int64, UInt, UInt8, UInt16, UInt32, UInt64, Float, Double, String, URL, Date, Data
