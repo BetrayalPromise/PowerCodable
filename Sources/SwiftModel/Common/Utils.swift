@@ -211,6 +211,12 @@ extension DateFormatter {
     }
 }
 
+extension String {
+    static let common: String = "yyyy-MM-dd HH:mm:ss"
+    static let utc: String = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+    static let iso8601: String = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+}
+
 extension Date {
     /*
      %a 星期几的简写

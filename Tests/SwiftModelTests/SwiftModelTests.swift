@@ -1745,4 +1745,17 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
+
+    func testDate() {
+        struct A: Encodable {
+            let a: Date = Date()
+        }
+        do {
+            self.encoder.strategy.dateValueMapping = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
+            let json = try encoder.encode(value: A(), to: String.self)
+            print(json)
+        } catch  {
+            XCTFail("解析失败")
+        }
+    }
 }

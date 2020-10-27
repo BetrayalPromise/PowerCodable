@@ -310,22 +310,41 @@ extension EncodingKeyed {
 
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
         if value is URL {
-            guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
+            let value = try self.url(value: value)
             if self.mapping.keys.contains(key.stringValue) {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
+                let encoder = PowerInnerJSONEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
-                try url.absoluteString.encode(to: encoder)
+                try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
             } else {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
+                let encoder = PowerInnerJSONEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
-                try url.absoluteString.encode(to: encoder)
+                try value.encode(to: encoder)
+                self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
+            }
+        } else if value is Date {
+            let value: Encodable = try self.date(value: value)
+            if self.mapping.keys.contains(key.stringValue) {
+                self.paths.push(value: Path.index(by: key.stringValue))
+                defer { self.paths.pop() }
+                debugPrint(self.paths.jsonPath)
+                let encoder = PowerInnerJSONEncoder(value: value)
+                encoder.wrapper = self.encoder.wrapper
+                try value.encode(to: encoder)
+                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
+            } else {
+                self.paths.push(value: Path.index(by: key.stringValue))
+                defer { self.paths.pop() }
+                debugPrint(self.paths.jsonPath)
+                let encoder = PowerInnerJSONEncoder(value: value)
+                encoder.wrapper = self.encoder.wrapper
+                try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
             }
         } else {
@@ -472,6 +491,39 @@ extension EncodingKeyed {
 
     mutating func superEncoder(forKey key: Key) -> Encoder {
         fatalError("Unimplemented yet")
+    }
+}
+
+extension EncodingKeyed {
+    func url(value: Encodable) throws -> Encodable {
+        guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
+        return url.absoluteString
+    }
+}
+
+extension EncodingKeyed {
+    func date(value: Encodable) throws -> Encodable {
+        guard let value: Date = value as? Date else { throw CodingError.invalidTypeTransform() }
+        var mapping: Encodable = ""
+        switch self.encoder.wrapper?.strategy.dateValueMapping ?? .utc {
+        case .deferredToDate, .utc:
+            mapping = DateFormatter.utc().string(from: value)
+        case .iso8601:
+            mapping = DateFormatter.iso8601().string(from: value)
+        case .millisecondsSince1970(let form):
+            switch form {
+            case .number: mapping = value.timeIntervalSince1970 * 1000
+            case .string: mapping = "\(value.timeIntervalSince1970 * 1000)"
+            }
+        case .secondsSince1970(let form):
+            switch form {
+            case .number: mapping = value.timeIntervalSince1970
+            case .string: mapping = "\(value.timeIntervalSince1970)"
+            }
+        case .formatted(let formatter): mapping = formatter.string(from: value)
+        case .custom(let closure): mapping = try closure(value, self.encoder)
+        }
+        return mapping
     }
 }
 

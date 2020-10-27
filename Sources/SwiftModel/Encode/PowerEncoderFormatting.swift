@@ -12,13 +12,22 @@ extension PowerJSONEncoder {
         static let sortedKeys = OutputFormatting(rawValue: 1 << 1)
     }
 
+    /// 时间戳表达形式
+    public enum TimestampExpressionForm {
+        /// 以字符串形式表现
+        case string
+        /// 以数值形式表现
+        case number
+    }
+
     public enum DateEncodingStrategy {
-        case deferredToDate
-        case secondsSince1970
-        case millisecondsSince1970
+        case deferredToDate, utc
+        case secondsSince1970(TimestampExpressionForm)
+        case millisecondsSince1970(TimestampExpressionForm)
         case iso8601
         case formatted(DateFormatter)
-        case custom((Date, Encoder) throws -> Void)
+        // WRAN:
+        case custom((Date, Encoder) throws -> Encodable)
     }
 
     public enum DataEncodingStrategy {
@@ -173,7 +182,7 @@ extension PowerJSONEncoder {
 
         func writeDate(_ date: Date) throws {
             switch options.dateEncoding {
-            case .deferredToDate:
+            case .deferredToDate, .utc:
                 try date.encode(to: self.encoder)
             case .secondsSince1970:
                 let number = date.timeIntervalSince1970
@@ -187,8 +196,8 @@ extension PowerJSONEncoder {
             case .formatted(let formatter):
                 let value = formatter.string(from: date)
                 try writer.write(value)
-            case .custom(let op):
-                try op(date, encoder)
+            case .custom(let closure):
+                try closure(date, self.encoder)
             }
         }
 

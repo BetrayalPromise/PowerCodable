@@ -68,10 +68,19 @@ extension EncodingUnkeyed {
             self.paths.push(value: Path.index(by: self.currentIndex))
             defer { self.paths.pop() }
             debugPrint(self.paths.jsonPath)
-            guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
-            let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
+            let value = try self.url(value: value)
+            let encoder = PowerInnerJSONEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
-            try url.absoluteString.encode(to: encoder)
+            try value.encode(to: encoder)
+            self.storage.append(encoder.container.jsonValue)
+        } else if value is Date {
+            self.paths.push(value: Path.index(by: self.currentIndex))
+            defer { self.paths.pop() }
+            debugPrint(self.paths.jsonPath)
+            let value = try self.date(value: value)
+            let encoder = PowerInnerJSONEncoder(value: value)
+            encoder.wrapper = self.encoder.wrapper
+            try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         } else {
             self.paths.push(value: Path.index(by: self.currentIndex))
@@ -86,6 +95,39 @@ extension EncodingUnkeyed {
 
     func superEncoder() -> Encoder {
         fatalError("Unimplemented")
+    }
+}
+
+extension EncodingUnkeyed {
+    func url(value: Encodable) throws -> Encodable {
+        guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
+        return url.absoluteString
+    }
+}
+
+extension EncodingUnkeyed {
+    func date(value: Encodable) throws -> Encodable {
+        guard let value: Date = value as? Date else { throw CodingError.invalidTypeTransform() }
+        var mapping: Encodable = ""
+        switch self.encoder.wrapper?.strategy.dateValueMapping ?? .utc {
+        case .deferredToDate, .utc:
+            mapping = DateFormatter.utc().string(from: value)
+        case .iso8601:
+            mapping = DateFormatter.iso8601().string(from: value)
+        case .millisecondsSince1970(let form):
+            switch form {
+            case .number: mapping = value.timeIntervalSince1970 * 1000
+            case .string: mapping = "\(value.timeIntervalSince1970 * 1000)"
+            }
+        case .secondsSince1970(let form):
+            switch form {
+            case .number: mapping = value.timeIntervalSince1970
+            case .string: mapping = "\(value.timeIntervalSince1970)"
+            }
+        case .formatted(let formatter): mapping = formatter.string(from: value)
+        case .custom(let closure): mapping = try closure(value, self.encoder)
+        }
+        return mapping
     }
 }
 
