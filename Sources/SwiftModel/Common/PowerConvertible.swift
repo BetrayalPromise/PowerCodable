@@ -364,23 +364,167 @@ extension DecodingValueMappable {
 // MARK: - Data
 extension DecodingValueMappable {
     func toData(path: JSONPath, value: JSONNull) -> Data {
-        debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-        return Data()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+             return Data()
+         }
+        switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useHexadecimalValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useCustomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useMemoryValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        }
     }
 
     func toData(path: JSONPath, value: JSONBool) -> Data {
-        debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-        return Data()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+             return Data()
+         }
+        switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useHexadecimalValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useCustomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useMemoryValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        }
     }
 
     func toData(path: JSONPath, value: JSONInteger) -> Data {
-        debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-        return Data()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+             return Data()
+         }
+        switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useHexadecimalValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useCustomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useMemoryValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        }
     }
 
     func toData(path: JSONPath, value: JSONDouble) -> Data {
-        debugPrint("Error: \(value) can not transform to Date, return Data() as default")
-        return Data()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+             return Data()
+         }
+        switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useHexadecimalValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useCustomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useMemoryValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        }
     }
     
     func toData(path: JSONPath, value: JSONString) -> Data {
@@ -408,13 +552,85 @@ extension DecodingValueMappable {
     }
     
     func toData(path: JSONPath, value: JSONObject) -> Data {
-        debugPrint("Error: must implement MappingDecodingValueConvertible Protocal method \(#function), return Data() as default")
-        return Data()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+             return Data()
+         }
+        switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useHexadecimalValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useCustomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useMemoryValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        }
     }
 
     func toData(path: JSONPath, value: JSONArray) -> Data {
-        debugPrint("Error: must implement MappingDecodingValueConvertible Protocal method \(#function), return Data() as default")
-        return Data()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+             return Data()
+         }
+        switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+        case .useDefaultValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useHexadecimalValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useCustomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        case .useMemoryValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Data() as default")
+                return Data()
+            case .useCustomValues(delegete: let delegate):
+                return delegate.toData(path: path, value: value)
+            }
+        }
     }
 }
 
@@ -463,13 +679,85 @@ extension DecodingValueMappable {
 // MARK: - Date
 extension DecodingValueMappable {
     func toDate(path: JSONPath, value: JSONNull) -> Date {
-        debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-        return Date()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+             return Date()
+         }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+        case .useCostomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useTimestamp:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useUTC:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useISO8601:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        }
     }
 
     func toDate(path: JSONPath, value: JSONBool) -> Date {
-        debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-        return Date()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+             return Date()
+         }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+        case .useCostomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useTimestamp:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useUTC:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useISO8601:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        }
     }
 
     func toDate(path: JSONPath, value: JSONInteger) -> Date {
@@ -605,13 +893,85 @@ extension DecodingValueMappable {
     }
 
     func toDate(path: JSONPath, value: JSONObject) -> Date {
-        debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-        return Date()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+             return Date()
+         }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+        case .useCostomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useTimestamp:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useUTC:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useISO8601:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        }
     }
 
     func toDate(path: JSONPath, value: JSONArray) -> Date {
-        debugPrint("Error: \(value) can not transform to Date, return Date() as default")
-        return Date()
+        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
+             debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+             return Date()
+         }
+        switch decoder.wrapper?.strategy.dateValueMapping ?? .useTimestamp {
+        case .useCostomValues:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useTimestamp:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useUTC:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        case .useISO8601:
+            switch decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            case .useDefaultValues:
+                debugPrint("Error: \(value) can not transform to Date, return Date() as default")
+                return Date()
+            case .useCustomValues(delegete: let delegete):
+                return delegete.toDate(path: path, value: value)
+            }
+        }
     }
 }
 
