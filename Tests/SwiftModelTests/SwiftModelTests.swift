@@ -1057,10 +1057,10 @@ final class SwiftModelDecodeTests: XCTestCase {
                 {"a": [{"gender": 0}, {"gender": 1}, {"gender": 2}]}
             """.data(using: String.Encoding.utf8) ?? Data()
             do {
-                let model: A? = try decoder.decode(type: A.self, from: data)
-                XCTAssert((model?.a[0]?.gender ?? Gender.unknow) == Gender.male)
-                XCTAssert((model?.a[1]?.gender ?? Gender.unknow) == Gender.female)
-                XCTAssert((model?.a[2]?.gender ?? Gender.unknow) == Gender.unknow)
+                let model: A = try decoder.decode(type: A.self, from: data)
+                XCTAssert((model.a[0]?.gender ?? Gender.unknow) == Gender.male)
+                XCTAssert((model.a[1]?.gender ?? Gender.unknow) == Gender.female)
+                XCTAssert((model.a[2]?.gender ?? Gender.unknow) == Gender.unknow)
             } catch {
                 XCTAssertNil(error, error.localizedDescription)
             }
@@ -1068,11 +1068,11 @@ final class SwiftModelDecodeTests: XCTestCase {
 
         do {
             struct Adapter: DecodingValueMappable {
-                func toInt(path: JSONPath, value: JSONInteger) -> Int {
-                    if path == "[:]gender" && value == 4 {
+                func toInt(path: JSONPath, value: JSON) -> Int {
+                    if path == "[:]gender" && value.isInt$ && value.int$ == 4 {
                         return 0
                     }
-                    return Int(value)
+                    return value.int$ ?? 0
                 }
             }
 
@@ -1104,11 +1104,11 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         do {
             struct Adapter: DecodingValueMappable {
-                func toInt(path: JSONPath, value: JSONDouble) -> Int {
-                    if path == "[:]gender" && value == 3.5 {
+                func toInt(path: JSONPath, value: JSON) -> Int {
+                    if path == "[:]gender" {
                         return 0
                     }
-                    return Int(value)
+                    return value.int$ ?? 0
                 }
             }
 
@@ -1136,11 +1136,11 @@ final class SwiftModelDecodeTests: XCTestCase {
 
         do {
             struct Adapter: DecodingValueMappable {
-                func toInt(path: JSONPath, value: JSONInteger) -> Int {
-                    if path == "[:]gender" && value > 2 {
+                func toInt(path: JSONPath, value: JSON) -> Int {
+                    if path == "[:]gender" {
                         return 0
                     }
-                    return Int(value)
+                    return value.int$ ?? 0
                 }
             }
             struct Human: Codable {
@@ -1397,7 +1397,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             struct Root: Codable {
                 let date : Date
             }
-            decoder.strategy.dateValueMapping = .millisecondsSince1970(json: .millisecond)
+            self.decoder.strategy.dateValueMapping = .custom({ (decoder, paths, value) -> Date in
+                return Date()
+            })
             let model: Root = try decoder.decode(type: Root.self, from: data)
             print(model)
         } catch {

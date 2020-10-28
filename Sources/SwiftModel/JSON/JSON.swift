@@ -6,9 +6,9 @@ public enum JSON: JSONCodingSupport {
     case unknow // 给定一个unknow的初始值区别与null, 任何使用unknow的处理都会抛出异常
     case null
     case bool(Bool)
-    case string(String)
     case integer(Int64)
     case double(Double)
+    case string(String)
     indirect case object([String: JSON])
     indirect case array([JSON])
 

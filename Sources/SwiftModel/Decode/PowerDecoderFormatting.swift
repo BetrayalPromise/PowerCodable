@@ -57,7 +57,7 @@ extension PowerJSONDecoder {
         /// iso8601时间格式字符串转转Date
         case iso8601
         /// 根据 valueMapping设定的值
-        case custom((Decoder) throws -> Date)
+        case custom((Decoder, [Path], DateConvertible) throws -> Date)
     }
 }
 
