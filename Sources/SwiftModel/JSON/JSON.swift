@@ -30,12 +30,78 @@ public enum JSON: JSONCodingSupport {
     }
 }
 
+extension JSON: Decodable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if container.decodeNil() {
+            self = JSON.null
+        } else {
+            self = try ((try? container.decode(String.self)).map(JSON.string)).or((try? container.decode(Int64.self)).map(JSON.integer)).or((try? container.decode(Double.self)).map(JSON.double)).or((try? container.decode(Bool.self)).map(JSON.bool)).or((try? container.decode([String: JSON].self)).map(JSON.object)).or((try? container.decode([JSON].self)).map(JSON.array)).resolve(DecodingError.typeMismatch(JSON.self, DecodingError.Context(codingPath: container.codingPath, debugDescription: "Not a JSON")))
+        }
+    }
+}
+
+//extension JSON: Encodable {
+//    public func encode(to encoder: Encoder) throws {
+//        switch self {
+//        case .unknow:
+//            let container = encoder.singleValueContainer()
+//            try handle(value: self, container: container)
+//        case .null:
+//            let container = encoder.singleValueContainer()
+//            try handle(value: self, container: container)
+//        case .bool(_):
+//            let container = encoder.singleValueContainer()
+//            try handle(value: self, container: container)
+//        case .integer(_):
+//            let container = encoder.singleValueContainer()
+//            try handle(value: self, container: container)
+//        case .double(_):
+//            let container = encoder.singleValueContainer()
+//            try handle(value: self, container: container)
+//        case .string(_):
+//            let container = encoder.singleValueContainer()
+//            try handle(value: self, container: container)
+//        case .object(let object):
+//            let container = encoder.container(keyedBy: CodingKey.self)
+//
+//        case .array(let array):
+//            let container = encoder.unkeyedContainer()
+//
+//        }
+//    }
+//
+//    func handle(value: JSON, container: SingleValueEncodingContainer) throws {
+//        var container = container
+//        switch value {
+//        case .unknow, .null:
+//            try container.encodeNil()
+//        case .bool(let bool):
+//            try container.encode(bool)
+//        case .integer(let integer):
+//            try container.encode(integer)
+//        case .double(let double):
+//            try container.encode(double)
+//        case .string(let string):
+//            try container.encode(string)
+//        case .object(let object):
+//            for (_, v) in object {
+//                try self.handle(value: v, container: container)
+//            }
+//        case .array(let array):
+//            for item in array {
+//                try self.handle(value: item, container: container)
+//            }
+//        }
+//    }
+//}
+
 extension JSON {
-    func path() -> (String, Error?) {
+    func path() -> String? {
         do {
-            return (try JSON.Serializer.serialize(self), nil)
+            return try JSON.Serializer.serialize(self)
         } catch {
-            return ("", Error.badValue(self))
+            return nil
         }
     }
 }

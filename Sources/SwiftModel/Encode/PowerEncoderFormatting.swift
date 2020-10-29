@@ -161,8 +161,9 @@ extension PowerJSONEncoder {
             switch options.dataEncoding {
             case .base64:
                 writer.writeData(data.base64EncodedData())
-            case .custom(let op):
-                try op(data, encoder)
+            case .custom(let closure):
+                let value = try closure(data, encoder)
+                writer.writeData(value.toData() ?? Data())
             case .deferredToData:
                 writer.writeData(data)
             case .hexadecimalArray:
@@ -187,7 +188,8 @@ extension PowerJSONEncoder {
                 let value = formatter.string(from: date)
                 try writer.write(value)
             case .custom(let closure):
-                try closure(date, self.encoder)
+                let value = try closure(date, self.encoder)
+                writer.writeData(value.toData() ?? Data())
             }
         }
 

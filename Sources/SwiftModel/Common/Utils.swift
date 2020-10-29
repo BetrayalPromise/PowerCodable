@@ -467,14 +467,17 @@ extension Data {
 }
 
 extension Optional {
-    var isSome: Bool {
+    func or(_ other: Optional) -> Optional {
         switch self {
-        case .none: return false
-        case .some(_): return true
+        case .none: return other
+        case .some: return self
         }
     }
 
-    var isNone: Bool {
-        return !self.isSome
+    func resolve(_ error: @autoclosure () -> Error) throws -> Wrapped {
+        switch self {
+        case .none: throw error()
+        case .some(let wrapped): return wrapped
+        }
     }
 }

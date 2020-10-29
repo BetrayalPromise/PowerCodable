@@ -6,11 +6,12 @@ final class SwiftModelDecodeTests: XCTestCase {
 
     func testNil() {
         let data: Data = """
-            {"a": null}
+            {"a": null, "b":[]}
         """.data(using: String.Encoding.utf8) ?? Data()
 
         struct A: Decodable {
             let a: Bool
+            let b: Bool
         }
 
         struct B: Decodable {
@@ -18,7 +19,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         struct Adapter: DecodingValueMappable {
-            func toBool(path: JSONPath, value: JSONNull) -> Bool {
+            func toBool(path: JSONPath, value: JSON) -> Bool {
                 return false
             }
         }
@@ -1188,8 +1189,8 @@ final class SwiftModelDecodeTests: XCTestCase {
         """.data(using: String.Encoding.utf8) ?? Data()
         let json = data.toJSON()
         let age = json["age"]
-        print(age?.path().0 ?? "")
-        print(json?.path().0 ?? "")
+        print(age?.path() ?? "")
+        print(json?.path() ?? "")
     }
 
     func testNested() {
@@ -1469,6 +1470,28 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
+
+    func testJSON() {
+        let jsondoc = #"""
+        {
+          "imAString": "aString",
+          "imAnInt": 1,
+          "imADouble": 0.5,
+          "imABool": true,
+          "imAnArray": [1,2,"3",false],
+          "imAnArrayOfArrays": [[[[[[[true]]]]]]],
+          "imAnObject": {"imAnotherString": "anotherString"},
+          "imAnObjectInAnObject": {"anObj": {"anInt": 1}},
+          "imAnArrayOfObjects": [{"anObj": {"anInt": 1}}, {"aBool": true}]
+        }
+        """#
+        do {
+            let root: JSONValue = try JSONDecoder().decode(JSON.self, from: jsondoc.data(using: .utf8)!)
+            print(root)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
 }
 
 final class SwiftModelEncodeTests: XCTestCase {
@@ -1667,8 +1690,8 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
         do {
             let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
-            print(json.path().0)
-            print(json["as"]?.path().0 ?? "")
+            print(json.path() ?? "")
+            print(json["as"]?.path() ?? "")
         } catch  {
             XCTFail("解析失败")
         }
@@ -1777,4 +1800,16 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
+
+//    func testJSON() {
+//        let json0 = JSON.init(object: ["A" : "B"])
+//        do {
+//            let data = try JSONEncoder().encode(json0)
+//            print(data)
+//            let json1 = try JSONDecoder().decode(JSON.self, from: data)
+//            print(json1)
+//        } catch {
+//            XCTFail("解析失败")
+//        }
+//    }
 }
