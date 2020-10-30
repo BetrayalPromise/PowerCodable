@@ -41,60 +41,11 @@ extension JSON: Decodable {
     }
 }
 
-//extension JSON: Encodable {
-//    public func encode(to encoder: Encoder) throws {
-//        switch self {
-//        case .unknow:
-//            let container = encoder.singleValueContainer()
-//            try handle(value: self, container: container)
-//        case .null:
-//            let container = encoder.singleValueContainer()
-//            try handle(value: self, container: container)
-//        case .bool(_):
-//            let container = encoder.singleValueContainer()
-//            try handle(value: self, container: container)
-//        case .integer(_):
-//            let container = encoder.singleValueContainer()
-//            try handle(value: self, container: container)
-//        case .double(_):
-//            let container = encoder.singleValueContainer()
-//            try handle(value: self, container: container)
-//        case .string(_):
-//            let container = encoder.singleValueContainer()
-//            try handle(value: self, container: container)
-//        case .object(let object):
-//            let container = encoder.container(keyedBy: CodingKey.self)
-//
-//        case .array(let array):
-//            let container = encoder.unkeyedContainer()
-//
-//        }
-//    }
-//
-//    func handle(value: JSON, container: SingleValueEncodingContainer) throws {
-//        var container = container
-//        switch value {
-//        case .unknow, .null:
-//            try container.encodeNil()
-//        case .bool(let bool):
-//            try container.encode(bool)
-//        case .integer(let integer):
-//            try container.encode(integer)
-//        case .double(let double):
-//            try container.encode(double)
-//        case .string(let string):
-//            try container.encode(string)
-//        case .object(let object):
-//            for (_, v) in object {
-//                try self.handle(value: v, container: container)
-//            }
-//        case .array(let array):
-//            for item in array {
-//                try self.handle(value: item, container: container)
-//            }
-//        }
-//    }
-//}
+extension JSON: Encodable {
+    public func encode(to encoder: Encoder) throws {
+
+    }
+}
 
 extension JSON {
     func path() -> String? {

@@ -35,6 +35,9 @@ public final class PowerJSONDecoder {
         }
         do {
             let json: JSON = try JSON.Parser.parse(data)
+            if type == JSON.self {
+                return json as! T
+            }
             let decoder = PowerInnerJSONDecoder(json: json)
             decoder.wrapper = self
             return try decoder.unboxDecodable(object: json)

@@ -1486,7 +1486,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         """#
         do {
-            let root: JSONValue = try JSONDecoder().decode(JSON.self, from: jsondoc.data(using: .utf8)!)
+            let root: JSONValue = try PowerJSONDecoder().decode(type: JSON.self, from: jsondoc.data(using: .utf8)!)
             print(root)
         } catch {
             XCTFail("解析失败")
@@ -1801,15 +1801,15 @@ final class SwiftModelEncodeTests: XCTestCase {
         }
     }
 
-//    func testJSON() {
-//        let json0 = JSON.init(object: ["A" : "B"])
-//        do {
-//            let data = try JSONEncoder().encode(json0)
-//            print(data)
-//            let json1 = try JSONDecoder().decode(JSON.self, from: data)
-//            print(json1)
-//        } catch {
-//            XCTFail("解析失败")
-//        }
-//    }
+    func testJSON() {
+        let json0 = JSON(object: ["A" : "B"])
+        do {
+            let data = try PowerJSONEncoder().encode(value: json0, to: String.self)
+            print(data)
+            let json1 = try PowerJSONDecoder().decode(type: JSON.self, from: data)
+            print(json1)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
 }
