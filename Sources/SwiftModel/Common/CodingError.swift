@@ -76,28 +76,3 @@ public struct CodingError: Swift.Error {
         }
     }
 }
-
-precedencegroup Precedence {
-    associativity: left //左结合
-    higherThan: MultiplicationPrecedence//优先级：比加法高
-//    lowerThan: MultiplicationPrecedence//优先级：比乘法低
-}
-
-infix operator &~: Precedence
-infix operator +~: Precedence
-infix operator -~: Precedence
-
-/// 交集
-func &~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
-    return left.intersection(right)
-}
-
-/// 并集
-func +~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
-    return left.union(right)
-}
-
-/// 补集
-func -~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
-    return left.subtracting(right)
-}
