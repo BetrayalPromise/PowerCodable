@@ -14,6 +14,8 @@ public struct DecodingStrategy {
     public var dateValueMapping: PowerJSONDecoder.DateDecodingStrategy = .secondsSince1970(json: .second)
     /// 针对浮点型值(nan, +infinity, -infinity)处理
     public var nonConformingFloatValueMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
+    /// 仅仅针对nil值转为T?的处理,false则不能接受自定义的nil处理,true则接受自定义的nil处理
+    public var enableMappingEmptyValue: Bool = false
 }
 
 public final class PowerJSONDecoder {
@@ -288,7 +290,7 @@ extension PowerInnerJSONDecoder {
         case .useDefaultValues:
             return object == .null
         case .useCustomValues(delegete: _):
-            if (self.wrapper?.enableMappingEmptyValue ?? false) && object == .null {
+            if (self.wrapper?.strategy.enableMappingEmptyValue ?? false) && object == .null {
                 return false
             } else {
                 return object == .null
