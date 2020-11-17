@@ -1019,25 +1019,52 @@ final class SwiftModelDecodeTests: XCTestCase {
     }
 
     func testWrapperIgnore() {
-        let data: Data = #"""
-            {
-                "name": "abc",
-                "info": "info",
-                "data": "datat"
-            }
-        """#.data(using: String.Encoding.utf8) ?? Data()
+        do {
+            let data: Data = #"""
+                {
+                    "name": "abc",
+                    "info": "info",
+                    "data": "datat"
+                }
+            """#.data(using: String.Encoding.utf8) ?? Data()
 
-        struct Information: Codable {
-            @Ignore.NonoptionalCoding
-            var name: String = "10JQKA"
-            @Ignore.OptionalCoding
-            var info: String? = nil
-            var data: String? = nil
+            struct Information: Codable {
+                @IgnoreDecoding.Value()
+                var name: String = "10JQKA"
+                @IgnoreDecoding.Value()
+                var info: String? = nil
+                var data: String? = nil
+            }
+            do {
+                let model = try decoder.decode(type: Information.self, from: data)
+                XCTAssertEqual(model.name, "10JQKA")
+                XCTAssertEqual(model.info, nil)
+                print(model.data ?? "")
+            } catch {
+                XCTFail()
+            }
         }
-        let model = try? decoder.decode(type: Information.self, from: data)
-        XCTAssertEqual(model?.name, "10JQKA")
-        XCTAssertEqual(model?.info, nil)
-        print(model?.data ?? "")
+        do {
+            let data: Data = #"""
+                {
+                    "name0": "0",
+                    "name1": "1",
+                    "name2": 2
+                }
+            """#.data(using: String.Encoding.utf8) ?? Data()
+
+            struct Information: Codable {
+                var name0: String
+                var name1: String
+                var name2: Int
+            }
+            do {
+                let model = try decoder.decode(type: Information.self, from: data)
+                print(model)
+            } catch {
+                XCTFail()
+            }
+        }
     }
 
     func testMapping() {
@@ -1626,7 +1653,7 @@ final class SwiftModelEncodeTests: XCTestCase {
     func testURL() {
         do {
             struct Root: Codable, EncodingKeyMappable {
-                let baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
+                var baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
                 static func modelEncodingKeys() -> [String: String] {
                     return ["baidu": "google"]
                 }
@@ -1808,6 +1835,20 @@ final class SwiftModelEncodeTests: XCTestCase {
             print(data)
             let json1 = try PowerJSONDecoder().decode(type: JSON.self, from: data)
             print(json1)
+        } catch {
+            XCTFail("解析失败")
+        }
+    }
+
+    func testWrapperIgnore() {
+        struct Information: Codable {
+            var name: String = "10JQKA"
+            var info: String? = nil
+            var data: String? = nil
+        }
+        do {
+            let model = try self.encoder.encode(value: Information(), to: JSON.self)
+            print(model)
         } catch {
             XCTFail("解析失败")
         }

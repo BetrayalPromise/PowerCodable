@@ -1,116 +1,157 @@
 import Foundation
 
-#if swift(>=5.1)
-public struct Ignore: Codable {
+@available(swift 5.1)
+public struct IgnoreDecoding: Codable {
     private static var optionalValue: Any? = nil
     private static var nonoptionalValue: Any = Null()
 
+    /// 不使用JSON数据的值, 而使用自定义实体的默认初始化值
     @propertyWrapper
     public struct OptionalCoding<WrappedType: Codable>: Codable {
         public var wrappedValue: WrappedType?
 
         public init(wrappedValue: WrappedType?) {
             self.wrappedValue = wrappedValue
-            Ignore.optionalValue = wrappedValue
+            IgnoreDecoding.optionalValue = wrappedValue
         }
 
         public init(from decoder: Decoder) throws {
-            guard let value = Ignore.optionalValue as? WrappedType else { return }
+            guard let value = IgnoreDecoding.optionalValue as? WrappedType else { return }
             self.wrappedValue = value
         }
 
-        public func encode(to encoder: Encoder) throws {}
+        public func encode(to encoder: Encoder) throws {
+            try self.wrappedValue.encode(to: encoder)
+        }
     }
 
+    /// 不使用JSON数据的值, 而使用自定义实体的默认初始化值
     @propertyWrapper
     public struct NonoptionalCoding<WrappedType: Codable>: Codable {
         public var wrappedValue: WrappedType
 
         public init(wrappedValue: WrappedType) {
             self.wrappedValue = wrappedValue
-            Ignore.nonoptionalValue = wrappedValue
+            IgnoreDecoding.nonoptionalValue = wrappedValue
         }
 
         public init(from decoder: Decoder) throws {
-            guard let value = Ignore.nonoptionalValue as? WrappedType else {
+            guard let value = IgnoreDecoding.nonoptionalValue as? WrappedType else {
                 self.wrappedValue = try WrappedType.init(from: decoder)
                 return
             }
             self.wrappedValue = value
         }
 
-        public func encode(to encoder: Encoder) throws {}
+        public func encode(to encoder: Encoder) throws {
+            try self.wrappedValue.encode(to: encoder)
+        }
     }
 }
 
-//public struct Base64: Codable {
-//    @propertyWrapper
-//    public struct EncodingToData<WrappedType: Codable>: Codable {
-//        public var wrappedValue: WrappedType?
-//
-//        public init(from decoder: Decoder) throws {
-//            guard let decoder = decoder as? PowerInnerJSONDecoder, let value: String = decoder.currentObject as? String else { return }
-//            self.wrappedValue = Data(base64Encoded: value) as? WrappedType
-//        }
-//
-//        public func encode(to encoder: Encoder) throws {}
+//extension KeyedDecodingContainer {
+//    public func decode<T>(_ type: IgnoreDecoding.OptionalCoding<T>.Type, forKey key: Key) throws -> IgnoreDecoding.OptionalCoding<T> where T: DefaultValue {
+//        try decodeIfPresent(type, forKey: key) ?? IgnoreDecoding.OptionalCoding<T>(wrappedValue: T())
 //    }
 //
-//    @propertyWrapper
-//    public struct EncodingToString<WrappedType: Codable>: Codable {
-//        public var wrappedValue: WrappedType?
-//
-//        public init(from decoder: Decoder) throws {
-//            guard let decoder = decoder as? PowerInnerJSONDecoder, let value: String = decoder.currentObject as? String else { return }
-//            self.wrappedValue = String(data: Data(base64Encoded: value) ?? Data(), encoding: String.Encoding.utf8) as? WrappedType
-//        }
-//
-//        public func encode(to encoder: Encoder) throws {}
+//    public func decode<T>(_ type: IgnoreDecoding.OptionalCoding<T?>.Type, forKey key: Key) throws -> IgnoreDecoding.OptionalCoding<T?> where T: DefaultValue {
+//        try decodeIfPresent(type, forKey: key) ?? IgnoreDecoding.OptionalCoding<T?>(wrappedValue: T())
 //    }
 //
-//
-//    @propertyWrapper
-//    public struct DecodingToData<WrappedType: Codable>: Codable  {
-//        public var wrappedValue: WrappedType?
-//
-//        public init(from decoder: Decoder) throws {
-//            guard let decoder = decoder as? PowerInnerJSONDecoder else { return }
-//            switch decoder.currentObject {
-//            case .object(_):
-//
-//            case .array(_):
-//
-//            case .null:
-//
-//            case .bool(_):
-//
-//            case .string(_):
-//
-//            case .integer(_):
-//
-//            case .double(_):
-//                
-//            }
-//            self.wrappedValue = value.data(using: String.Encoding.utf8)?.base64EncodedData() as? WrappedType
-//        }
-//
-//        public func encode(to encoder: Encoder) throws {}
+//    public func decode<T>(_ type: IgnoreDecoding.Value<T>.Type, forKey key: Key) throws -> IgnoreDecoding.Value<T> where T: DefaultValue {
+//        try decodeIfPresent(type, forKey: key) ?? IgnoreDecoding.Value<T>(wrappedValue: T())
 //    }
 //
-//    @propertyWrapper
-//    public struct DecodingToString<WrappedType: Codable>: Codable {
-//        public var wrappedValue: WrappedType?
-//
-//        public init(from decoder: Decoder) throws {
-//            guard let decoder = decoder as? PowerInnerJSONDecoder, let value: String = decoder.currentObject as? String else { return }
-//            let data: Data = value.data(using: String.Encoding.utf8)?.base64EncodedData() ?? Data()
-//            self.wrappedValue = String(data: data, encoding: String.Encoding.utf8) as? WrappedType
-//        }
-//
-//        public func encode(to encoder: Encoder) throws {}
+//    public func decode<T>(_ type: IgnoreDecoding.Value<T?>.Type, forKey key: Key) throws -> IgnoreDecoding.Value<T?> where T: DefaultValue {
+//        try decodeIfPresent(type, forKey: key) ?? IgnoreDecoding.Value<T?>(wrappedValue: T())
 //    }
 //}
-#endif
+
+//private var wrapper: Any?  = nil
+//@available(swift 5.1)
+//@propertyWrapper
+//public struct Decoding<Wrapped: Codable & DefaultValue>: Codable {
+//    var keys: [String] = []
+//    var value: Wrapped = Wrapped()
+//
+//    public var wrappedValue: Wrapped {
+//        return self.value
+//    }
+//
+//    public init(keys: [String], `else`: Wrapped) {
+//        self.keys = keys
+//        self.value = `else`
+//        wrapper = self
+//    }
+//
+//    public init(from decoder: Decoder) throws {
+//        guard let decoder = decoder as? PowerInnerJSONDecoder else {
+//            return
+//        }
+//        guard let value = wrapper as? Decoding<Wrapped> else {
+//            debugPrint("转化失败")
+//            return
+//        }
+//        print(decoder.json)
+//        self = value
+//        for item in value.keys {
+//            print(item)
+//        }
+//        wrapper = nil
+//    }
+//}
+
+public protocol DefaultValue {
+    init()
+}
+extension Bool: DefaultValue {}
+extension Int: DefaultValue {}
+extension Int8: DefaultValue {}
+extension Int16: DefaultValue {}
+extension Int32: DefaultValue {}
+extension Int64: DefaultValue {}
+extension UInt: DefaultValue {}
+extension UInt8: DefaultValue {}
+extension UInt16: DefaultValue {}
+extension UInt32: DefaultValue {}
+extension UInt64: DefaultValue {}
+extension Float: DefaultValue {}
+extension Double: DefaultValue {}
+extension String: DefaultValue {}
 
 
-
+//public protocol DefaultValue {
+//    associatedtype Value: Decodable
+//    static var `default`: Value { get }
+//}
+//
+//@available(swift 5.1)
+//@propertyWrapper
+//public struct Default<T: DefaultValue> {
+//    public var wrappedValue: T.Value
+//
+//    public init(value: T.Value) {
+//        self.wrappedValue = value
+//    }
+//}
+//
+//extension Default: Decodable {
+//    public init(from decoder: Decoder) throws {
+//        let container = try decoder.singleValueContainer()
+//        self.wrappedValue = (try? container.decode(T.Value.self)) ?? T.default
+//    }
+//}
+//
+//extension KeyedDecodingContainer {
+//    public func decode<T>(_ type: Default<T>.Type, forKey key: Key) throws -> Default<T> where T: DefaultValue {
+//        try decodeIfPresent(type, forKey: key) ?? Default(value: T.default)
+//    }
+//}
+//
+//extension String: DefaultValue {
+//    public static var `default`: String {
+//        return ""
+//    }
+//
+//    public typealias Value = Self
+//}
