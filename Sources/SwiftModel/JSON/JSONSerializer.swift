@@ -177,29 +177,29 @@ extension JSON.Serializer {
         for char in s.unicodeScalars {
 
             switch char.value {
-            case numericCast(quote):
+            case numericCast(LegalCharacters.quote):
                 stream.write("\\\"")
 
-            case numericCast(backslash):
+            case numericCast(LegalCharacters.backslash):
                 stream.write("\\\\")
 
             case JSON.Serializer.controlCharacters:
 
                 // If possible escape in the I ima
                 switch char.value {
-                case numericCast(backspace):
+                case numericCast(LegalCharacters.backspace):
                     stream.write("\\b")
 
-                case numericCast(formfeed):
+                case numericCast(LegalCharacters.formfeed):
                     stream.write("\\f")
 
-                case numericCast(newline):
+                case numericCast(LegalCharacters.newline):
                     stream.write("\\n")
 
-                case numericCast(cr):
+                case numericCast(LegalCharacters.cr):
                     stream.write("\\r")
 
-                case numericCast(tab):
+                case numericCast(LegalCharacters.tab):
                     stream.write("\\t")
 
                 default:

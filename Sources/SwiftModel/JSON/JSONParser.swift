@@ -141,12 +141,12 @@ extension JSON.Parser {
     mutating func skipWhitespace() throws {
         /// Returns whether a comment was skipped
         func skipComments() throws -> Bool {
-            if hasPrefix(lineComment) {
-                while let char = peek(), char != newline {
+            if hasPrefix(LegalCharacters.lineComment) {
+                while let char = peek(), char != LegalCharacters.newline {
                     pop()
                 }
                 return true
-            } else if hasPrefix(blockCommentStart) {
+            } else if hasPrefix(LegalCharacters.blockCommentStart) {
                 // don't be mislead by `/*/`.
                 pop() // '/'
                 pop() // '*'
@@ -156,9 +156,9 @@ extension JSON.Parser {
                     guard peek() != nil else {
                         throw Error.Reason.unmatchedComment
                     }
-                    if hasPrefix(blockCommentEnd) {
+                    if hasPrefix(LegalCharacters.blockCommentEnd) {
                         depth -= 1
-                    } else if hasPrefix(blockCommentStart) {
+                    } else if hasPrefix(LegalCharacters.blockCommentStart) {
                         depth += 1
                     }
 
@@ -190,31 +190,31 @@ extension JSON.Parser {
 
         defer { _ = try? skipWhitespace() }
         switch peek() {
-        case objectOpen?:
+        case LegalCharacters.objectOpen?:
             let object = try parseObject()
             return object
-        case arrayOpen?:
+        case LegalCharacters.arrayOpen?:
             let array = try parseArray()
             return array
-        case quote?:
+        case LegalCharacters.quote?:
             let string = try parseString()
             return .string(string)
-        case minus?, numbers?:
+        case LegalCharacters.minus?, LegalCharacters.numbers?:
             let number = try parseNumber()
             return number
-        case f?:
+        case LegalCharacters.f?:
             pop()
-            try assertFollowedBy(alse)
+            try assertFollowedBy(LegalCharacters.alse)
             return .bool(false)
-        case t?:
+        case LegalCharacters.t?:
             pop()
-            try assertFollowedBy(rue)
+            try assertFollowedBy(LegalCharacters.rue)
             return .bool(true)
-        case n?:
+        case LegalCharacters.n?:
             pop()
-            try assertFollowedBy(ull)
+            try assertFollowedBy(LegalCharacters.ull)
             return .null
-        case slash? where allowComments:
+        case LegalCharacters.slash? where allowComments:
             try skipWhitespace()
             return try parseValue()
         default:
@@ -229,10 +229,10 @@ extension JSON.Parser {
     }
 
     mutating func parseObject() throws -> JSON {
-        assert(peek() == objectOpen)
+        assert(peek() == LegalCharacters.objectOpen)
         pop()
         try skipWhitespace()
-        guard peek() != objectClose else {
+        guard peek() != LegalCharacters.objectClose else {
             pop()
             return .object([:])
         }
@@ -242,18 +242,18 @@ extension JSON.Parser {
 
         repeat {
             switch peek() {
-            case comma?:
+            case LegalCharacters.comma?:
                 guard !wasComma else { throw Error.Reason.trailingComma }
                 wasComma = true
                 pop()
                 try skipWhitespace()
-            case quote?:
+            case LegalCharacters.quote?:
                 if tempDict.count > 0 && !wasComma {
                     throw Error.Reason.expectedComma
                 }
                 let key = try parseString()
                 try skipWhitespace()
-                guard pop() == colon else { throw Error.Reason.expectedColon }
+                guard pop() == LegalCharacters.colon else { throw Error.Reason.expectedColon }
                 try skipWhitespace()
                 let value = try parseValue()
                 wasComma = false
@@ -263,7 +263,7 @@ extension JSON.Parser {
                 default:
                     tempDict[key] = value
                 }
-            case objectClose?:
+            case LegalCharacters.objectClose?:
                 guard !wasComma else { throw Error.Reason.trailingComma }
                 pop()
                 return .object(tempDict)
@@ -274,12 +274,12 @@ extension JSON.Parser {
     }
 
     mutating func parseArray() throws -> JSON {
-        assert(peek() == arrayOpen)
+        assert(peek() == LegalCharacters.arrayOpen)
         pop()
         try skipWhitespace()
 
         // Saves the allocation of the tempArray
-        guard peek() != arrayClose else {
+        guard peek() != LegalCharacters.arrayClose else {
             pop()
             return .array([])
         }
@@ -289,12 +289,12 @@ extension JSON.Parser {
         var wasComma = false
         repeat {
             switch peek() {
-            case comma?:
+            case LegalCharacters.comma?:
                 guard !wasComma else { throw Error.Reason.invalidSyntax }
                 guard tempArray.count > 0 else { throw Error.Reason.invalidSyntax }
                 wasComma = true
                 try skipComma()
-            case arrayClose?:
+            case LegalCharacters.arrayClose?:
                 guard !wasComma else { throw Error.Reason.trailingComma }
                 _ = pop()
                 return .array(tempArray)
@@ -309,7 +309,7 @@ extension JSON.Parser {
                 wasComma = false
                 switch value {
                 case .null where omitNulls:
-                    if peek() == comma {
+                    if peek() == LegalCharacters.comma {
                         try skipComma()
                         wasComma = true
                     }
@@ -321,23 +321,23 @@ extension JSON.Parser {
     }
 
     mutating func parseNumber() throws -> JSON {
-        assert(numbers ~= peek()! || minus == peek()!)
+        assert(LegalCharacters.numbers ~= peek()! || LegalCharacters.minus == peek()!)
         var seenExponent = false
         var seenDecimal = false
         let negative: Bool = {
-            guard minus == peek() else { return false }
+            guard LegalCharacters.minus == peek() else { return false }
             pop()
             return true
         }()
-        guard let next = peek(), numbers ~= next else { throw Error.Reason.invalidNumber }
+        guard let next = peek(), LegalCharacters.numbers ~= next else { throw Error.Reason.invalidNumber }
         // Checks for leading zero's on numbers that are not '0' or '0.x'
-        if next == zero {
+        if next == LegalCharacters.zero {
             guard let following = peek(aheadBy: 1) else {
                 pop()
                 return .integer(0)
             }
             switch following {
-            case decimal, e, E: break
+            case LegalCharacters.decimal, LegalCharacters.e, LegalCharacters.E: break
             case _ where following.isTerminator: break
             default: throw Error.Reason.invalidNumber
             }
@@ -351,38 +351,38 @@ extension JSON.Parser {
         var didOverflow: Bool
         repeat {
             switch peek() {
-            case numbers? where !seenDecimal && !seenExponent:
+            case LegalCharacters.numbers? where !seenDecimal && !seenExponent:
                 (significand, didOverflow) = significand.multipliedReportingOverflow(by: 10)
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
 
-                (significand, didOverflow) = significand.addingReportingOverflow(UInt64(pop() - zero))
+                (significand, didOverflow) = significand.addingReportingOverflow(UInt64(pop() - LegalCharacters.zero))
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-            case numbers? where seenDecimal && !seenExponent:
+            case LegalCharacters.numbers? where seenDecimal && !seenExponent:
                 divisor *= 10
                 (mantisa, didOverflow) = mantisa.multipliedReportingOverflow(by: 10)
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-                (mantisa, didOverflow) = mantisa.addingReportingOverflow(UInt64(pop() - zero))
+                (mantisa, didOverflow) = mantisa.addingReportingOverflow(UInt64(pop() - LegalCharacters.zero))
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-            case numbers? where seenExponent:
+            case LegalCharacters.numbers? where seenExponent:
                 (exponent, didOverflow) = exponent.multipliedReportingOverflow(by: 10)
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-                (exponent, didOverflow) = exponent.addingReportingOverflow(UInt64(pop() - zero))
+                (exponent, didOverflow) = exponent.addingReportingOverflow(UInt64(pop() - LegalCharacters.zero))
                 guard !didOverflow else { throw Error.Reason.numberOverflow }
-            case decimal? where !seenExponent && !seenDecimal:
+            case LegalCharacters.decimal? where !seenExponent && !seenDecimal:
                 pop()
                 seenDecimal = true
-                guard let next = peek(), numbers ~= next else { throw Error.Reason.invalidNumber }
-            case E? where !seenExponent,
-                 e? where !seenExponent:
+                guard let next = peek(), LegalCharacters.numbers ~= next else { throw Error.Reason.invalidNumber }
+            case LegalCharacters.E? where !seenExponent,
+                 LegalCharacters.e? where !seenExponent:
                 pop()
                 seenExponent = true
-                if peek() == minus {
+                if peek() == LegalCharacters.minus {
                     negativeExponent = true
                     pop()
-                } else if peek() == plus {
+                } else if peek() == LegalCharacters.plus {
                     pop()
                 }
-                guard let next = peek(), numbers ~= next else { throw Error.Reason.invalidNumber }
+                guard let next = peek(), LegalCharacters.numbers ~= next else { throw Error.Reason.invalidNumber }
             case let value? where value.isTerminator:
                 fallthrough
             case nil:
@@ -402,11 +402,11 @@ extension JSON.Parser {
             return .double(Double(number) * pow(10, negativeExponent ? -Double(exponent) : Double(exponent)))
         } else {
             switch significand {
-            case validUnsigned64BitInteger where !negative:
+            case LegalCharacters.validUnsigned64BitInteger where !negative:
                 return .integer(Int64(significand))
             case UInt64(Int64.max) + 1 where negative:
                 return .integer(Int64.min)
-            case validUnsigned64BitInteger where negative:
+            case LegalCharacters.validUnsigned64BitInteger where negative:
                 return .integer(-Int64(significand))
             default:
                 throw Error.Reason.numberOverflow
@@ -418,46 +418,46 @@ extension JSON.Parser {
     // TODO (vdka): option to _repair_ Unicode
     // NOTE(vdka): Not sure I ever will get to refactoring this, I just don't find Swift's String _comfortable_ to work with at a byte level.
     mutating func parseString() throws -> String {
-        assert(peek() == quote)
+        assert(peek() == LegalCharacters.quote)
         pop()
         var escaped = false
         stringBuffer.removeAll(keepingCapacity: true)
         repeat {
             guard let codeUnit = peek() else { throw Error.Reason.invalidEscape }
             pop()
-            if codeUnit == backslash && !escaped {
+            if codeUnit == LegalCharacters.backslash && !escaped {
                 escaped = true
-            } else if codeUnit == quote && !escaped {
+            } else if codeUnit == LegalCharacters.quote && !escaped {
                 stringBuffer.append(0)
                 return stringBuffer.withUnsafeBufferPointer { bufferPointer in
                     return String(cString: unsafeBitCast(bufferPointer.baseAddress, to: UnsafePointer<CChar>.self))
                 }
             } else if escaped {
                 switch codeUnit {
-                case r:
-                    stringBuffer.append(cr)
-                case t:
-                    stringBuffer.append(tab)
-                case n:
-                    stringBuffer.append(newline)
-                case b:
-                    stringBuffer.append(backspace)
-                case f:
-                    stringBuffer.append(formfeed)
-                case quote:
-                    stringBuffer.append(quote)
-                case slash:
-                    stringBuffer.append(slash)
-                case backslash:
-                    stringBuffer.append(backslash)
-                case u:
+                case LegalCharacters.r:
+                    stringBuffer.append(LegalCharacters.cr)
+                case LegalCharacters.t:
+                    stringBuffer.append(LegalCharacters.tab)
+                case LegalCharacters.n:
+                    stringBuffer.append(LegalCharacters.newline)
+                case LegalCharacters.b:
+                    stringBuffer.append(LegalCharacters.backspace)
+                case LegalCharacters.f:
+                    stringBuffer.append(LegalCharacters.formfeed)
+                case LegalCharacters.quote:
+                    stringBuffer.append(LegalCharacters.quote)
+                case LegalCharacters.slash:
+                    stringBuffer.append(LegalCharacters.slash)
+                case LegalCharacters.backslash:
+                    stringBuffer.append(LegalCharacters.backslash)
+                case LegalCharacters.u:
                     let scalar = try parseUnicodeScalar()
                     UTF8.encode(scalar, into: { stringBuffer.append($0) })
                 default:
                     throw Error.Reason.invalidEscape
                 }
                 escaped = false
-            } else if invalidUnicodeBytes.contains(codeUnit) || codeUnit == 0xC0 || codeUnit == 0xC1 {
+            } else if LegalCharacters.invalidUnicodeBytes.contains(codeUnit) || codeUnit == 0xC0 || codeUnit == 0xC1 {
                 throw Error.Reason.invalidUnicode
             } else {
                 stringBuffer.append(codeUnit)
@@ -473,11 +473,11 @@ extension JSON.Parser {
             let c = pop()
             codeUnit <<= 4
             switch c {
-            case numbers:
+            case LegalCharacters.numbers:
                 codeUnit += UInt16(c - 48)
-            case alphaNumericLower:
+            case LegalCharacters.alphaNumericLower:
                 codeUnit += UInt16(c - 87)
-            case alphaNumericUpper:
+            case LegalCharacters.alphaNumericUpper:
                 codeUnit += UInt16(c - 55)
             default:
                 throw Error.Reason.invalidEscape
@@ -494,7 +494,7 @@ extension JSON.Parser {
         let codeUnit = try parseUnicodeEscape()
         buffer.append(codeUnit)
         if UTF16.isLeadSurrogate(codeUnit) {
-            guard pop() == backslash && pop() == u else { throw Error.Reason.invalidUnicode }
+            guard pop() == LegalCharacters.backslash && pop() == LegalCharacters.u else { throw Error.Reason.invalidUnicode }
             let trailingSurrogate = try parseUnicodeEscape()
             guard UTF16.isTrailSurrogate(trailingSurrogate) else { throw Error.Reason.invalidUnicode }
             buffer.append(trailingSurrogate)
@@ -511,7 +511,7 @@ extension JSON.Parser {
 
     /// - Precondition: pointer will be on a comma character.
     mutating func skipComma() throws {
-        assert(peek() == comma)
+        assert(peek() == LegalCharacters.comma)
         pop()
         try skipWhitespace()
     }
@@ -553,14 +553,14 @@ extension UnsafeBufferPointer {
 
 extension UTF8.CodeUnit {
     var isWhitespace: Bool {
-        if self == space || self == tab || self == cr || self == newline || self == formfeed {
+        if self == LegalCharacters.space || self == LegalCharacters.tab || self == LegalCharacters.cr || self == LegalCharacters.newline || self == LegalCharacters.formfeed {
             return true
         }
         return false
     }
 
     var isTerminator: Bool {
-        if self.isWhitespace || self == comma || self == objectClose || self == arrayClose {
+        if self.isWhitespace || self == LegalCharacters.comma || self == LegalCharacters.objectClose || self == LegalCharacters.arrayClose {
             return true
         }
         return false

@@ -1029,9 +1029,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             """#.data(using: String.Encoding.utf8) ?? Data()
 
             struct Information: Codable {
-                @IgnoreDecoding.Value()
+                @Decoding.IgnoreNonoptional()
                 var name: String = "10JQKA"
-                @IgnoreDecoding.Value()
+                @Decoding.IgnoreOptional()
                 var info: String? = nil
                 var data: String? = nil
             }
@@ -1047,19 +1047,26 @@ final class SwiftModelDecodeTests: XCTestCase {
         do {
             let data: Data = #"""
                 {
-                    "name0": "0",
-                    "name1": "1",
-                    "name2": 2
+                    "name0": 0,
+                    "name1": 1,
+                    "name2": 2,
+                    "name3": 3
                 }
             """#.data(using: String.Encoding.utf8) ?? Data()
 
-            struct Information: Codable {
+            struct Information: Decodable {
+                @Default(value: "name0")
                 var name0: String
+                @Default(value: "name1")
                 var name1: String
-                var name2: Int
+                @Default(value: nil)
+                var name2: Bool?
+                @Default(value: true)
+                var name3: Bool
             }
+            let decoder = JSONDecoder()
             do {
-                let model = try decoder.decode(type: Information.self, from: data)
+                let model = try decoder.decode(Information.self, from: data)
                 print(model)
             } catch {
                 XCTFail()
