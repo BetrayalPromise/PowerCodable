@@ -493,16 +493,28 @@ infix operator +~: Precedence
 infix operator -~: Precedence
 
 /// 交集
+/// - Parameters:
+///   - left: 左集合
+///   - right: 右集合
+/// - Returns: 左和右的交集
 public func &~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
     return left.intersection(right)
 }
 
 /// 并集
+/// - Parameters:
+///   - left: 左集合
+///   - right: 右集合
+/// - Returns: 左和右的并集
 public func +~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
     return left.union(right)
 }
 
 /// 补集
+/// - Parameters:
+///   - left: 左集合
+///   - right: 右集合
+/// - Returns: 左对右的补集
 public func -~ <T>(left: Set<T>, right: Set<T>) -> Set<T> where T: Hashable {
     return left.subtracting(right)
 }

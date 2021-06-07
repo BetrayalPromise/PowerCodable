@@ -24,7 +24,7 @@ public enum JSON: JSONCodingSupport {
             let string: String = try JSON.Serializer.serialize(self)
             return string.data(using: String.Encoding.utf8)
         } catch  {
-            print(error.localizedDescription)
+            debugPrint(error.localizedDescription)
             return nil
         }
     }
