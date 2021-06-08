@@ -25,7 +25,7 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
     }
 
     deinit {
-        //print(self.jsonValue)
+        //debugPrint(self.jsonValue)
     }
 }
 
@@ -100,14 +100,14 @@ extension EncodingUnkeyed {
 
 extension EncodingUnkeyed {
     func url(value: Encodable) throws -> Encodable {
-        guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
+        guard let url = value as? URL else { throw Coding.Exception.invalidTypeTransform() }
         return url.absoluteString
     }
 }
 
 extension EncodingUnkeyed {
     func date(value: Encodable) throws -> Encodable {
-        guard let value: Date = value as? Date else { throw CodingError.invalidTypeTransform() }
+        guard let value: Date = value as? Date else { throw Coding.Exception.invalidTypeTransform() }
         var mapping: Encodable = ""
         switch self.encoder.wrapper?.strategy.dateValueMapping ?? .utc {
         case .deferredToDate, .utc:

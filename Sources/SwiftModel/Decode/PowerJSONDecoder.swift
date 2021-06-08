@@ -31,7 +31,7 @@ public final class PowerJSONDecoder {
     /// - Returns: 转换完成的模型
     func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: JSONCodingSupport {
         guard let data: Data = from.dataWrapper else {
-            throw CodingError.notFoundData()
+            throw Coding.Exception.notFoundData()
         }
         do {
             let json: JSON = try JSON.Parser.parse(data)
@@ -84,7 +84,7 @@ extension PowerInnerJSONDecoder {
 extension PowerInnerJSONDecoder {
     func container<Key>(keyedBy type: Key.Type, wrapping object: JSON) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
         guard case let .object(unwrappedObject) = object else {
-            throw CodingError.Decoding.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
+            throw Coding.Exception.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
         }
         let container = DecodingKeyed<Key>(decoder: self, json: unwrappedObject)
         return KeyedDecodingContainer(container)
@@ -92,7 +92,7 @@ extension PowerInnerJSONDecoder {
 
     func unkeyedContainer(wrapping object: JSON) throws -> UnkeyedDecodingContainer {
         guard case let .array(array) = object else {
-            throw CodingError.Decoding.typeMismatch(type: [JSON].self, codingPath: self.codingPath, reality: object)
+            throw Coding.Exception.typeMismatch(type: [JSON].self, codingPath: self.codingPath, reality: object)
         }
         return DecodingUnkeyed(decoder: self, json: array)
     }
@@ -121,15 +121,15 @@ extension PowerInnerJSONDecoder {
     func unbox<T>(object: JSON) throws -> T where T: BinaryFloatingPoint, T: LosslessStringConvertible {
         switch object {
         case let .integer(number):
-            guard let integer = T(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath , reality: number) }
+            guard let integer = T(exactly: number) else { throw Coding.Exception.numberMisfit(type: T.self, codingPath: self.codingPath , reality: number) }
             return integer
         case let .double(number):
             switch T.self {
             case is Double.Type:
-                guard let double = Double(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
+                guard let double = Double(exactly: number) else { throw Coding.Exception.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
                 return double as! T
             case is Float.Type:
-                guard let float = Float(exactly: number) else { throw CodingError.Decoding.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
+                guard let float = Float(exactly: number) else { throw Coding.Exception.numberMisfit(type: T.self, codingPath: self.codingPath, reality: number) }
                 return float as! T
             default:
                 fatalError()
@@ -140,7 +140,7 @@ extension PowerInnerJSONDecoder {
             switch self.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToZero() {
             case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
-                    throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                    throw Coding.Exception.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
                 }
                 if positiveInfinity.contains(string) {
                     return 0
@@ -150,12 +150,12 @@ extension PowerInnerJSONDecoder {
                     return 0
                 }
                 guard let number = T(string) else {
-                    throw CodingError.invalidTypeTransform()
+                    throw Coding.Exception.invalidTypeTransform()
                 }
                 return number
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
-                    throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                    throw Coding.Exception.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
                 }
                 if positiveInfinity.contains(string) {
                     return T.infinity
@@ -165,12 +165,12 @@ extension PowerInnerJSONDecoder {
                     return T.nan
                 }
                 guard let number = T(string) else {
-                    throw CodingError.invalidTypeTransform()
+                    throw Coding.Exception.invalidTypeTransform()
                 }
                 return number
             }
         default:
-            throw CodingError.Decoding.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+            throw Coding.Exception.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
         }
     }
 
@@ -195,19 +195,19 @@ extension PowerInnerJSONDecoder {
         switch object {
         case let .integer(number):
             guard let integer = T(exactly: number) else {
-                throw  CodingError.Decoding.numberMisfit(type: T.self, reality: number)
+                throw  Coding.Exception.numberMisfit(type: T.self, reality: number)
             }
             return integer
         case let .double(number):
             guard let double = T(exactly: number) else {
-                throw CodingError.Decoding.numberMisfit(type: T.self, reality: number)
+                throw Coding.Exception.numberMisfit(type: T.self, reality: number)
             }
             return double
         case let .string(string):
             guard let number = T(string) else { fallthrough }
             return number
         default:
-            throw CodingError.Decoding.typeMismatch(type: T.self, reality: object)
+            throw Coding.Exception.typeMismatch(type: T.self, reality: object)
         }
     }
 

@@ -31,7 +31,7 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
     @inline(__always)
     private mutating func getCurrentObject() throws -> JSON {
         guard !isAtEnd else {
-            throw CodingError.Decoding.valueNotFound(type: JSON.self, codingPath: decoder.codingPath + [currentKey])
+            throw Coding.Exception.valueNotFound(type: JSON.self, codingPath: decoder.codingPath + [currentKey])
         }
         defer { currentIndex += 1 }
         return json[currentIndex]

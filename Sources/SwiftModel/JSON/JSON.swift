@@ -14,7 +14,7 @@ public enum JSON: JSONCodingSupport {
 
     /// @dynamicMemberLookup
     subscript(dynamicMember member: String) -> JSON {
-        return (try? self.get(member)) ?? .null
+        return (try? self.get(member)) ?? .unknow
     }
 
     typealias Wrapper = JSON

@@ -55,7 +55,7 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
             switch self.encoder.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToString() {
-            case .throw: throw CodingError.Encoding.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
+            case .throw: throw Coding.Exception.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
                     self.storage = JSON(stringLiteral: nan); return
@@ -85,7 +85,7 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
             switch self.encoder.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToString() {
-            case .throw: throw CodingError.Encoding.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
+            case .throw: throw Coding.Exception.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
                     self.storage = JSON(stringLiteral: nan); return
@@ -214,7 +214,7 @@ extension EncodingSingleValue {
     func encode<T>(_ value: T) throws where T : Encodable {
         debugPrint(self.storage)
         if value is URL {
-            guard let url = value as? URL else { throw CodingError.invalidTypeTransform() }
+            guard let url = value as? URL else { throw Coding.Exception.invalidTypeTransform() }
             let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
             encoder.wrapper = self.encoder.wrapper
             try url.absoluteString.encode(to: encoder)

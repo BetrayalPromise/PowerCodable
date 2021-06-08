@@ -3,7 +3,7 @@ import Foundation
 extension String {
     subscript(i: Int) -> Character {
         if i >= self.count || i < 0 {
-            print("Error: out of index \(i)")
+            debugPrint("Error: out of index \(i)")
             return Character("")
         }
         return self[index(startIndex, offsetBy: i)]
@@ -69,7 +69,7 @@ public enum StringCaseFormat {
 public extension String {
     func toCamelCase(format: StringCaseFormat.CamelCase = .default) -> String {
         if !self.verifyField() {
-            print("Error: invalid field, value = \(self)")
+            debugPrint("Error: invalid field, value = \(self)")
             return ""
         }
         let tokens = tokenize()
@@ -90,7 +90,7 @@ public extension String {
 
     func toSnakeCase(format: StringCaseFormat.SnakeCase = .lower, use separator: String = "_") -> String {
         if !self.verifyField() {
-            print("Error: invalid field, value = \(self)")
+            debugPrint("Error: invalid field, value = \(self)")
             return ""
         }
         let tokens = tokenize()
@@ -106,7 +106,7 @@ public extension String {
 
     func toPascalCase(format: StringCaseFormat.PascalCase = .lower, use separator: String = "-") -> String {
         if !self.verifyField() {
-            print("Error: invalid field, value = \(self)")
+            debugPrint("Error: invalid field, value = \(self)")
             return ""
         }
         let tokens = tokenize()
@@ -122,7 +122,7 @@ public extension String {
 
     func toUpperCase() -> String {
         if !self.verifyField() {
-            print("Error: invalid field, value = \(self)")
+            debugPrint("Error: invalid field, value = \(self)")
             return ""
         }
         return self.uppercased()
@@ -130,7 +130,7 @@ public extension String {
 
     func toLowerCase() -> String {
         if !self.verifyField() {
-            print("Error: invalid field, value = \(self)")
+            debugPrint("Error: invalid field, value = \(self)")
             return ""
         }
         return self.lowercased()

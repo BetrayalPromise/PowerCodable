@@ -106,7 +106,7 @@ public protocol DecodingValueMappable {
 extension DecodingValueMappable {
     func toBool(path: JSONPath, value: JSON) throws -> Bool {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxBool(json: value).bool
         case .bool(let bool): return bool
         case .string(let string): return Bool(string) ?? BoxBool(json: value).bool
@@ -122,7 +122,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toInt(path: JSONPath, value: JSON) throws -> Int {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt(json: value).int
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return Int(string) ?? BoxInt(json: value).int
@@ -138,7 +138,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toInt8(path: JSONPath, value: JSON) throws -> Int8 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt8(json: value).int8
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return Int8(string) ?? BoxInt8(json: value).int8
@@ -154,7 +154,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toInt16(path: JSONPath, value: JSON) throws -> Int16 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt16(json: value).int16
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return Int16(string) ?? BoxInt16(json: value).int16
@@ -170,7 +170,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toInt32(path: JSONPath, value: JSON) throws -> Int32 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt32(json: value).int32
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return Int32(string) ?? BoxInt32(json: value).int32
@@ -186,7 +186,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toInt64(path: JSONPath, value: JSON) throws -> Int64 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt64(json: value).int64
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return Int64(string) ?? BoxInt64(json: value).int64
@@ -202,7 +202,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toUInt(path: JSONPath, value: JSON) throws -> UInt {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt(json: value).uint
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return UInt(string) ?? BoxUInt(json: value).uint
@@ -218,7 +218,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toUInt8(path: JSONPath, value: JSON) throws -> UInt8 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt8(json: value).uint8
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return UInt8(string) ?? BoxUInt8(json: value).uint8
@@ -234,7 +234,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toUInt16(path: JSONPath, value: JSON) throws -> UInt16 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt16(json: value).uint16
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return UInt16(string) ?? BoxUInt16(json: value).uint16
@@ -250,7 +250,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toUInt32(path: JSONPath, value: JSON) throws -> UInt32 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt32(json: value).uint32
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return UInt32(string) ?? BoxUInt32(json: value).uint32
@@ -266,7 +266,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toUInt64(path: JSONPath, value: JSON) throws -> UInt64 {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt64(json: value).uint64
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return UInt64(string) ?? BoxUInt64(json: value).uint64
@@ -282,7 +282,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toFloat(path: JSONPath, value: JSON) throws -> Float {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxFloat(json: value).float
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return Float(string) ?? BoxFloat(json: value).float
@@ -298,7 +298,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toDouble(path: JSONPath, value: JSON) throws -> Double {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxDouble(json: value).double
         case .bool(let bool): return bool == true ? 1 : 0
         case .string(let string): return Double(string) ?? BoxDouble(json: value).double
@@ -314,7 +314,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toString(path: JSONPath, value: JSON) throws -> String {
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return "null"
         case .bool(let bool): return bool == true ? "true" : "false"
         case .string(let string): return string
@@ -333,7 +333,7 @@ extension DecodingValueMappable {
             return BoxData(json: value).data
         }
         switch value {
-        case .unknow: throw CodingError.unknowJSON()
+        case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxData(json: value).data
         case .bool(_): return BoxData(json: value).data
         case .integer(let integer):
@@ -403,7 +403,7 @@ extension DecodingValueMappable {
 extension DecodingValueMappable {
     func toURL(path: JSONPath, value: JSON) throws -> URL {
         switch value {
-        case .unknow: throw CodingError.invalidTypeTransform()
+        case .unknow: throw Coding.Exception.invalidTypeTransform()
         case .null: return BoxURL(json: value).url
         case .bool(_): return BoxURL(json: value).url
         case .integer(_): return BoxURL(json: value).url
@@ -427,7 +427,7 @@ extension DecodingValueMappable {
             return BoxDate(json: value).date
          }
         switch value {
-        case .unknow: throw CodingError.invalidTypeTransform()
+        case .unknow: throw Coding.Exception.invalidTypeTransform()
         case .null: return BoxDate(json: value).date
         case .bool(_): return BoxDate(json: value).date
         case .integer(let integer):
