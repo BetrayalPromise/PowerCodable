@@ -20,7 +20,7 @@ public class PowerJSONEncoder {
     /// - Throws: 解析异常
     /// - Returns: 输出值
     func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: JSONCodingSupport {
-        let encoder = PowerInnerJSONEncoder(value: value)
+        let encoder = InnerEncoder(value: value)
         encoder.wrapper = self
         var json: JSON = .unknow
         if value is JSON {
@@ -60,7 +60,7 @@ extension JSON: JSONValue {
     }
 }
 
-class PowerInnerJSONEncoder: Encoder {
+class InnerEncoder: Encoder {
     var codingPath: [CodingKey] = []
 
     var userInfo: [CodingUserInfoKey : Any] = [:]
@@ -99,9 +99,9 @@ class PowerInnerJSONEncoder: Encoder {
     }
 }
 
-extension PowerInnerJSONEncoder: EncodingValueMappable {}
+extension InnerEncoder: EncodingValueMappable {}
 
-extension PowerInnerJSONEncoder: JSONValue {
+extension InnerEncoder: JSONValue {
     var jsonValue: JSON {
         return self.container.jsonValue
     }

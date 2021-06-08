@@ -148,9 +148,7 @@ public extension Encodable {
     ///
     /// - Returns: 转化完毕后的String
     func toString() -> String? {
-        guard let data: Data = self.toData() else {
-            return nil
-        }
+        guard let data: Data = self.toData() else { return nil }
         return String(data: data, encoding: String.Encoding.utf8)
     }
     
@@ -187,9 +185,7 @@ public extension Decodable {
     /// - Parameter dictionary: 对象
     /// - Returns: 转化完毕后的Model
     static func toModel(from dictionary: [AnyHashable: Any]?) -> Self? {
-        guard let `dictionary`: [AnyHashable: Any] = dictionary, let jsonData = try? JSONSerialization.data(withJSONObject: dictionary) else {
-            return nil
-        }
+        guard let `dictionary`: [AnyHashable: Any] = dictionary, let jsonData = try? JSONSerialization.data(withJSONObject: dictionary) else { return nil }
         do {
             return try JSONDecoder().decode(Self.self, from: jsonData)
         } catch {
@@ -203,9 +199,7 @@ public extension Decodable {
     /// - Parameter string: 字符串
     /// - Returns: 转化完毕后的Model
     static func toModel(from string: String?) -> Self? {
-        guard let `string`: String = string, let jsonData = string.data(using: .utf8) else {
-            return nil
-        }
+        guard let `string`: String = string, let jsonData = string.data(using: .utf8) else { return nil }
         do {
             return try JSONDecoder().decode(Self.self, from: jsonData)
         } catch {
@@ -228,9 +222,7 @@ extension Data {
 
 extension String {
     func toJSON() -> JSON? {
-        guard let data = self.data(using: Encoding.utf8) else {
-            return nil
-        }
+        guard let data = self.data(using: Encoding.utf8) else { return nil }
         return data.toJSON()
     }
 }

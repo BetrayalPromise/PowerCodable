@@ -6,10 +6,10 @@ struct DecodingSingleValue: SingleValueDecodingContainer {
         set { decoder.codingPath = newValue }
     }
 
-    private unowned let decoder: PowerInnerJSONDecoder
+    private unowned let decoder: InnerDecoder
     private let json: JSON
 
-    init(decoder: PowerInnerJSONDecoder, json: JSON) {
+    init(decoder: InnerDecoder, json: JSON) {
         self.json = json
         self.decoder = decoder
     }

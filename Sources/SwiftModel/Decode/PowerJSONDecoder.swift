@@ -30,15 +30,13 @@ public final class PowerJSONDecoder {
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: JSONCodingSupport {
-        guard let data: Data = from.dataWrapper else {
-            throw Coding.Exception.notFoundData()
-        }
+        guard let data: Data = from.dataWrapper else { throw Coding.Exception.notFoundData() }
         do {
             let json: JSON = try JSON.Parser.parse(data)
             if type == JSON.self {
                 return json as! T
             }
-            let decoder = PowerInnerJSONDecoder(json: json)
+            let decoder = InnerDecoder(json: json)
             decoder.wrapper = self
             return try decoder.unboxDecodable(object: json)
         } catch {
@@ -47,7 +45,7 @@ public final class PowerJSONDecoder {
     }
 }
 
-final class PowerInnerJSONDecoder: Decoder {
+final class InnerDecoder: Decoder {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var json: JSON
@@ -67,7 +65,7 @@ final class PowerInnerJSONDecoder: Decoder {
     }
 }
 
-extension PowerInnerJSONDecoder {
+extension InnerDecoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         return try container(keyedBy: type, wrapping: currentJSON)
     }
@@ -81,7 +79,7 @@ extension PowerInnerJSONDecoder {
     }
 }
 
-extension PowerInnerJSONDecoder {
+extension InnerDecoder {
     func container<Key>(keyedBy type: Key.Type, wrapping object: JSON) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
         guard case let .object(unwrappedObject) = object else {
             throw Coding.Exception.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
@@ -98,10 +96,10 @@ extension PowerInnerJSONDecoder {
     }
 }
 
-extension PowerInnerJSONDecoder: DecodingValueMappable {}
+extension InnerDecoder: DecodingValueMappable {}
 
 // MARK: - Keyed和Unkeyed解码
-extension PowerInnerJSONDecoder {
+extension InnerDecoder {
     /// 浮点型解码处理
     /// - Parameters:
     ///   - object: json对象
@@ -149,9 +147,7 @@ extension PowerInnerJSONDecoder {
                 } else if nan.contains(string) {
                     return 0
                 }
-                guard let number = T(string) else {
-                    throw Coding.Exception.invalidTypeTransform()
-                }
+                guard let number = T(string) else { throw Coding.Exception.invalidTypeTransform() }
                 return number
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
@@ -164,9 +160,7 @@ extension PowerInnerJSONDecoder {
                 } else if nan.contains(string) {
                     return T.nan
                 }
-                guard let number = T(string) else {
-                    throw Coding.Exception.invalidTypeTransform()
-                }
+                guard let number = T(string) else { throw Coding.Exception.invalidTypeTransform() }
                 return number
             }
         default:
@@ -194,9 +188,7 @@ extension PowerInnerJSONDecoder {
     func unbox<T>(object: JSON) throws -> T where T: FixedWidthInteger {
         switch object {
         case let .integer(number):
-            guard let integer = T(exactly: number) else {
-                throw  Coding.Exception.numberMisfit(type: T.self, reality: number)
-            }
+            guard let integer = T(exactly: number) else { throw  Coding.Exception.numberMisfit(type: T.self, reality: number) }
             return integer
         case let .double(number):
             guard let double = T(exactly: number) else {
@@ -298,7 +290,7 @@ extension PowerInnerJSONDecoder {
 }
 
 // MARK: - SingleValue解码
-extension PowerInnerJSONDecoder {
+extension InnerDecoder {
     func unbox(object: JSON) throws -> Bool {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:

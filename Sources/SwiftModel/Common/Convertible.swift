@@ -329,9 +329,7 @@ extension DecodingValueMappable {
 // MARK: - Data
 extension DecodingValueMappable {
     func toData(path: JSONPath, value: JSON) throws -> Data {
-        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
-            return BoxData(json: value).data
-        }
+        guard let decoder: InnerDecoder = self as? InnerDecoder else { return BoxData(json: value).data }
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxData(json: value).data
@@ -423,9 +421,7 @@ extension DecodingValueMappable {
 // MARK: - Date
 extension DecodingValueMappable {
     func toDate(path: JSONPath, value: JSON) throws -> Date {
-        guard let decoder: PowerInnerJSONDecoder = self as? PowerInnerJSONDecoder else {
-            return BoxDate(json: value).date
-         }
+        guard let decoder: InnerDecoder = self as? InnerDecoder else { return BoxDate(json: value).date }
         switch value {
         case .unknow: throw Coding.Exception.invalidTypeTransform()
         case .null: return BoxDate(json: value).date
@@ -497,9 +493,7 @@ extension DecodingValueMappable {
                     return BoxDate(json: value).date
                 }
             case .secondsSince1970(let form):
-                guard let double = TimeInterval(string) else {
-                   return BoxDate(json: value).date
-                }
+                guard let double = TimeInterval(string) else { return BoxDate(json: value).date }
                 switch form {
                 case .second:
                     return Date(timeIntervalSince1970: TimeInterval(double))
@@ -507,24 +501,18 @@ extension DecodingValueMappable {
                     return Date(timeIntervalSince1970: TimeInterval(double / 1000.0))
                 }
             case .millisecondsSince1970(json: let form):
-                guard let double = TimeInterval(string) else {
-                    return BoxDate(json: value).date
-                }
+                guard let double = TimeInterval(string) else { return BoxDate(json: value).date }
                 switch form {
                 case .second: return Date(timeIntervalSince1970: TimeInterval(double))
                 case .millisecond: return Date(timeIntervalSince1970: TimeInterval(double / 1000.0))
                 }
             case .utc, .deferredToDate:
                 let formatter = DateFormatter.utc()
-                guard let date: Date = formatter.date(from: string) else {
-                    return BoxDate(json: value).date
-                }
+                guard let date: Date = formatter.date(from: string) else { return BoxDate(json: value).date }
                 return date
             case .iso8601:
                 let formatter = DateFormatter.iso8601()
-                guard let date: Date = formatter.date(from: string) else {
-                    return BoxDate(json: value).date
-                }
+                guard let date: Date = formatter.date(from: string) else { return BoxDate(json: value).date }
                 return date
             }
         case .object(_): return BoxDate(json: value).date

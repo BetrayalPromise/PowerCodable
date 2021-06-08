@@ -14,10 +14,10 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
     var nestedCodingPath: [CodingKey] {
         return self.codingPath + [Path(intValue: self.count)!]
     }
-    private unowned let encoder: PowerInnerJSONEncoder
+    private unowned let encoder: InnerEncoder
     var unkeyed: [JSON] = []
 
-    init(encoder: PowerInnerJSONEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+    init(encoder: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
@@ -69,7 +69,7 @@ extension EncodingUnkeyed {
             defer { self.paths.pop() }
             debugPrint(self.paths.jsonPath)
             let value = try self.url(value: value)
-            let encoder = PowerInnerJSONEncoder(value: value)
+            let encoder = InnerEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
@@ -78,7 +78,7 @@ extension EncodingUnkeyed {
             defer { self.paths.pop() }
             debugPrint(self.paths.jsonPath)
             let value = try self.date(value: value)
-            let encoder = PowerInnerJSONEncoder(value: value)
+            let encoder = InnerEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
@@ -86,7 +86,7 @@ extension EncodingUnkeyed {
             self.paths.push(value: Path.index(by: self.currentIndex))
             defer { self.paths.pop() }
             debugPrint(self.paths.jsonPath)
-            let encoder = PowerInnerJSONEncoder(value: value)
+            let encoder = InnerEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)

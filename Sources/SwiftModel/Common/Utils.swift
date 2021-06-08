@@ -75,9 +75,7 @@ public extension String {
         let tokens = tokenize()
         switch format {
         case .default:
-            guard let first = tokens.first else {
-                return tokens.joined()
-            }
+            guard let first = tokens.first else { return tokens.joined() }
             return first.lowercased() + tokens.dropFirst().map { $0.capitalized }.joined()
         case .capitalized:
             return tokens.map { $0.capitalized }.joined()
@@ -261,9 +259,7 @@ extension Date {
         var result = [Int8](repeating: 0, count: resultSize)
         var currentTime = time(nil)
         var time = localtime(&currentTime).pointee
-        guard strftime(&result, resultSize, format, &time) != 0 else {
-            return nil
-        }
+        guard strftime(&result, resultSize, format, &time) != 0 else { return nil }
         return String(cString: result, encoding: .utf8)
     }
 }
@@ -402,10 +398,7 @@ extension Array where Element == UInt8 {
                 skip -= 1
                 continue
             }
-            guard char.value >= 48 && char.value <= 102 else {
-                removeAll()
-                return
-            }
+            guard char.value >= 48 && char.value <= 102 else { removeAll(); return }
             let v: UInt8
             let c: UInt8 = UInt8(char.value)
             switch c {

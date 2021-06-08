@@ -5,7 +5,7 @@ fileprivate class Storage<Key: CodingKey> {
     private(set) var elements: [KeyValue] = []
     private var hash: [String: KeyValue] = [:]
 
-    func append(key: String, value: JSONValue, encoder: PowerInnerJSONEncoder) {
+    func append(key: String, value: JSONValue, encoder: InnerEncoder) {
         var mappingKey: String = ""
         switch encoder.strategy.keyMapping {
         case .useDefaultKeys:
@@ -34,10 +34,10 @@ struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
     private(set) var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
     private var storage = Storage<Key>()
-    private unowned let encoder: PowerInnerJSONEncoder
+    private unowned let encoder: InnerEncoder
     var mapping:  [String: String] = [:]
 
-    init(encoder: PowerInnerJSONEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+    init(encoder: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
@@ -317,7 +317,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
@@ -325,7 +325,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
@@ -336,7 +336,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
@@ -344,7 +344,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
@@ -355,7 +355,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
@@ -363,7 +363,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
@@ -373,7 +373,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: encoder.container.jsonValue, encoder: self.encoder)
@@ -381,7 +381,7 @@ extension EncodingKeyed {
                 self.paths.push(value: Path.index(by: key.stringValue))
                 defer { self.paths.pop() }
                 debugPrint(self.paths.jsonPath)
-                let encoder = PowerInnerJSONEncoder(value: value)
+                let encoder = InnerEncoder(value: value)
                 encoder.wrapper = self.encoder.wrapper
                 try value.encode(to: encoder)
                 self.storage.append(key: key.stringValue, value: encoder.container.jsonValue, encoder: self.encoder)
@@ -390,107 +390,77 @@ extension EncodingKeyed {
     }
 
     mutating func encodeIfPresent(_ value: Bool?, forKey key: Key) throws {
-        guard let value: Bool = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Bool = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: Int?, forKey key: Key) throws {
-        guard let value: Int = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Int = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: Int8?, forKey key: Key) throws {
-        guard let value: Int8 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Int8 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: Int16?, forKey key: Key) throws {
-        guard let value: Int16 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Int16 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: Int32?, forKey key: Key) throws {
-        guard let value: Int32 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Int32 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: Int64?, forKey key: Key) throws {
-        guard let value: Int64 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Int64 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: UInt?, forKey key: Key) throws {
-        guard let value: UInt = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: UInt = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: UInt8?, forKey key: Key) throws {
-        guard let value: UInt8 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: UInt8 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: UInt16?, forKey key: Key) throws {
-        guard let value: UInt16 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: UInt16 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: UInt32?, forKey key: Key) throws {
-        guard let value: UInt32 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: UInt32 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: UInt64?, forKey key: Key) throws {
-        guard let value: UInt64 = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: UInt64 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: Float?, forKey key: Key) throws {
-        guard let value: Float = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Float = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: Double?, forKey key: Key) throws {
-        guard let value: Double = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: Double = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent(_ value: String?, forKey key: Key) throws {
-        guard let value: String = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: String = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 
     mutating func encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T : Encodable {
-        guard let value: T = value else {
-            try self.encodeNil(forKey: key); return
-        }
+        guard let value: T = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
 

@@ -2,7 +2,7 @@ import Foundation
 
 class DecodingKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     typealias Key = K
-    private unowned let decoder: PowerInnerJSONDecoder
+    private unowned let decoder: InnerDecoder
     private let json: [String: JSON]
     
     var codingPath: [CodingKey] {
@@ -10,7 +10,7 @@ class DecodingKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
         set { decoder.codingPath = newValue }
     }
     
-    init(decoder: PowerInnerJSONDecoder,  json: [String: JSON]) {
+    init(decoder: InnerDecoder,  json: [String: JSON]) {
         self.decoder  = decoder
         self.json = json
     }
@@ -217,6 +217,6 @@ extension DecodingKeyed {
         defer { codingPath.removeLast() }
 
         let value = (key is Path) == true ? JSON.object(self.json) : self.json[key.stringValue, default: .null]
-        return PowerInnerJSONDecoder(json: value, at: decoder.codingPath)
+        return InnerDecoder(json: value, at: decoder.codingPath)
     }
 }

@@ -16,10 +16,10 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
     
     var currentIndex: Int = 0
 
-    private unowned let decoder: PowerInnerJSONDecoder
+    private unowned let decoder: InnerDecoder
     private let json: [JSON]
 
-    init(decoder: PowerInnerJSONDecoder, json: [JSON]) {
+    init(decoder: InnerDecoder, json: [JSON]) {
         self.json = json
         self.decoder = decoder
     }
@@ -30,9 +30,7 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
 
     @inline(__always)
     private mutating func getCurrentObject() throws -> JSON {
-        guard !isAtEnd else {
-            throw Coding.Exception.valueNotFound(type: JSON.self, codingPath: decoder.codingPath + [currentKey])
-        }
+        guard !isAtEnd else { throw Coding.Exception.valueNotFound(type: JSON.self, codingPath: decoder.codingPath + [currentKey]) }
         defer { currentIndex += 1 }
         return json[currentIndex]
     }
@@ -173,6 +171,6 @@ extension DecodingUnkeyed {
 
 extension DecodingUnkeyed {
     mutating func superDecoder() throws -> Decoder {
-        return PowerInnerJSONDecoder(json: JSON.array(json), at: decoder.codingPath)
+        return InnerDecoder(json: JSON.array(json), at: decoder.codingPath)
     }
 }

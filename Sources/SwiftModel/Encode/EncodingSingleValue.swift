@@ -4,9 +4,9 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
     fileprivate var storage: JSON = .unknow
-    private unowned let encoder: PowerInnerJSONEncoder
+    private unowned let encoder: InnerEncoder
 
-    init(encoder: PowerInnerJSONEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+    init(encoder: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
@@ -215,12 +215,12 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         if value is URL {
             guard let url = value as? URL else { throw Coding.Exception.invalidTypeTransform() }
-            let encoder = PowerInnerJSONEncoder(value: url.absoluteString)
+            let encoder = InnerEncoder(value: url.absoluteString)
             encoder.wrapper = self.encoder.wrapper
             try url.absoluteString.encode(to: encoder)
             self.storage = encoder.jsonValue
         } else {
-            let encoder = PowerInnerJSONEncoder(value: value)
+            let encoder = InnerEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)
             self.storage = encoder.jsonValue
