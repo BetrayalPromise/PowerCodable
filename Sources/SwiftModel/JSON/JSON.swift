@@ -1,8 +1,18 @@
 import Foundation
 
+enum CurrentType {
+    case null
+    case bool
+    case integer
+    case double
+    case string
+    case array
+    case dictionary
+}
+
 /// MARK: JSON抽象 由于Swift中的JSON解析器给出的是Any类型 无法明确需要强转后再处理, 本工具使用JSON结构体明确可以看出JSON结构
 @dynamicMemberLookup
-public enum JSON: JSONCodingSupport {
+public enum JSON {
     case unknow // 给定一个unknow的初始值区别与null, 任何使用unknow的处理都会抛出异常
     case null
     case bool(Bool)
@@ -12,21 +22,22 @@ public enum JSON: JSONCodingSupport {
     indirect case object([String: JSON])
     indirect case array([JSON])
 
+    var kind: CurrentType {
+        switch self {
+        case .unknow: return .null
+        case .null: return .null
+        case .bool(_): return .bool
+        case .integer(_): return .integer
+        case .double(_): return .double
+        case .string(_): return .string
+        case .array(_): return .array
+        case .object(_): return .dictionary
+        }
+    }
+    
     /// @dynamicMemberLookup
     subscript(dynamicMember member: String) -> JSON {
         return (try? self.get(member)) ?? .unknow
-    }
-
-    typealias Wrapper = JSON
-
-    var dataWrapper: Data? {
-        do {
-            let string: String = try JSON.Serializer.serialize(self)
-            return string.data(using: String.Encoding.utf8)
-        } catch  {
-            debugPrint(error.localizedDescription)
-            return nil
-        }
     }
 }
 

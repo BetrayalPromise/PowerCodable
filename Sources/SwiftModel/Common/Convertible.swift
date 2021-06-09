@@ -575,29 +575,29 @@ extension EncodingValueMappable {
     }
 }
 
-protocol JSONCodingSupport {
+protocol CodingSupport {
     /// JSON的二进制数据
     var dataWrapper: Data? { get }
     /// 关联类型
     associatedtype Wrapper
 }
 
-extension Data: JSONCodingSupport {
+extension Data: CodingSupport {
     typealias Wrapper = Data
     var dataWrapper: Data? {
         return self
     }
 }
 
-extension String: JSONCodingSupport {
+extension String: CodingSupport {
     public typealias Wrapper = String
     public var dataWrapper: Data? {
         return self.data(using: Encoding.utf8)
     }
 }
 
-/// 对内存中的json结构对象进行描述 用它包裹真实的son
-public struct JSONStructure: JSONCodingSupport {
+/// 对内存中的json结构对象进行描述 用它包裹真实的son( [:],[])这俩种
+public struct JSONWrapper: CodingSupport {
     public typealias Wrapper = Any
 
     public var dataWrapper: Data? {
@@ -609,22 +609,26 @@ public struct JSONStructure: JSONCodingSupport {
     }
     /// JSON实体
     let json: Any
-    let topLevelType: RootNodeType
 
-    init(json: Any) {
-        self.json = json
-        if ((json as? Array<Any>) != nil) {
-            self.topLevelType = .array
-        } else if ((json as? Dictionary<AnyHashable, Any>) != nil) {
-            self.topLevelType = .dictionary
-        } else {
-            self.topLevelType = .none
-        }
+    init(wrapper: [Any]) {
+        self.json = wrapper
     }
+    
+    init(wrapper: [String: Any]) {
+        self.json = wrapper
+    }
+}
 
-    public enum RootNodeType {
-        case none
-        case array
-        case dictionary
+extension JSON: CodingSupport {
+    typealias Wrapper = JSON
+
+    var dataWrapper: Data? {
+        do {
+            let string: String = try JSON.Serializer.serialize(self)
+            return string.data(using: String.Encoding.utf8)
+        } catch  {
+            debugPrint(error.localizedDescription)
+            return nil
+        }
     }
 }

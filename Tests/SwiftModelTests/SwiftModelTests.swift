@@ -1329,7 +1329,7 @@ final class SwiftModelDecodeTests: XCTestCase {
 
         /// JSONStructure -> Decodable
         do {
-            let root = JSONStructure(json: [true, false])
+            let root = JSONWrapper(wrapper: [true, false])
             let json = try decoder.decode(type: [Bool].self, from: root)
             XCTAssertEqual(json[0], true)
             XCTAssertEqual(json[1], false)

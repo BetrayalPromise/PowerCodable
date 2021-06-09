@@ -29,7 +29,7 @@ public final class PowerJSONDecoder {
     ///   - from: 数据源, 只支持[Data String JSONStructure(json结构) JSON]
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
-    func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: JSONCodingSupport {
+    func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: CodingSupport {
         guard let data: Data = from.dataWrapper else { throw Coding.Exception.notFoundData() }
         do {
             let json: JSON = try JSON.Parser.parse(data)
@@ -138,7 +138,7 @@ extension InnerDecoder {
             switch self.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToZero() {
             case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
-                    throw Coding.Exception.typeMismatch(type: T.self, codingPath: self.codingPath, reality: object)
+                    throw Coding.Exception.nonUniqueness(sets: positiveInfinity, positiveInfinity, negativeInfinity)
                 }
                 if positiveInfinity.contains(string) {
                     return 0
