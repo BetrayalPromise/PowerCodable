@@ -81,7 +81,7 @@ extension PowerJSONEncoder {
         }
 
         func write(_ string: String) throws {
-            guard let data = string.data(using: .utf8) else { throw Coding.Exception.invalidUTF8String(value: string) }
+            guard let data = string.data(using: .utf8) else { throw Coding.Exception.invalidUTF8Character(value: string) }
             buffer.append(data)
         }
 
@@ -215,7 +215,7 @@ extension PowerJSONEncoder {
             case .object(let object):
                 try writeJSONObject(object: object.toJSONTuples())
             case .unknow:
-                throw Coding.Exception.unknowJSON()
+                throw Coding.Exception.invalidUnknow()
             }
         }
 

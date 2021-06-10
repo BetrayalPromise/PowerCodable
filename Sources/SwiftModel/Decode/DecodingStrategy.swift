@@ -71,12 +71,12 @@ public extension URL {
                 throw error
             }
         default:
-            throw Coding.Exception.unsupportType()
+            throw Coding.Exception.invalidTransform()
         }
     }
 
     static func buildURL(string: String) throws -> Self {
-        guard let url = URL(string: string) else { throw Coding.Exception.invalidTypeTransform() }
+        guard let url = URL(string: string) else { throw Coding.Exception.invalidTransform() }
         return url
     }
 }

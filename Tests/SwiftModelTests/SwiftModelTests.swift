@@ -1280,6 +1280,25 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
+        
+        do {
+            class Person: Codable {
+                var name: String = ""
+                var parent: Person?
+                required init() {}
+            }
+             
+            let json: [String: Any] = [
+                "name": "Jack",
+                "parent": ["name": "Jim"]
+            ]
+            do {
+                let model: Person = try self.decoder.decode(type: Person.self, from: json)
+                print(model)
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
+        }
     }
 
     func testURL() {

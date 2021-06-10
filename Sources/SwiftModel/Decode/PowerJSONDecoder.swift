@@ -30,7 +30,7 @@ public final class PowerJSONDecoder {
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: CodingSupport {
-        guard let data: Data = from.dataWrapper else { throw Coding.Exception.notFoundData() }
+        guard let data: Data = from.dataWrapper else { throw Coding.Exception.invalidData() }
         do {
             let json: JSON = try JSON.Parser.parse(data)
             if type == JSON.self {
@@ -138,7 +138,7 @@ extension InnerDecoder {
             switch self.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToZero() {
             case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
-                    throw Coding.Exception.nonUniqueness(sets: positiveInfinity, positiveInfinity, negativeInfinity)
+                    throw Coding.Exception.invalidRule(sets: positiveInfinity, positiveInfinity, negativeInfinity)
                 }
                 if positiveInfinity.contains(string) {
                     return 0
@@ -147,7 +147,7 @@ extension InnerDecoder {
                 } else if nan.contains(string) {
                     return 0
                 }
-                guard let number = T(string) else { throw Coding.Exception.invalidTypeTransform() }
+                guard let number = T(string) else { throw Coding.Exception.invalidTransform() }
                 return number
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
@@ -160,7 +160,7 @@ extension InnerDecoder {
                 } else if nan.contains(string) {
                     return T.nan
                 }
-                guard let number = T(string) else { throw Coding.Exception.invalidTypeTransform() }
+                guard let number = T(string) else { throw Coding.Exception.invalidTransform() }
                 return number
             }
         default:

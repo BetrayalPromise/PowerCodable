@@ -41,7 +41,7 @@ public class PowerJSONEncoder {
         } else if to.Wrapper == JSON.self {
             return json as! U.Wrapper
         } else {
-            throw Coding.Exception.unsupportType()
+            throw Coding.Exception.invalidTransform()
         }
     }
 }

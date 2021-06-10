@@ -214,7 +214,7 @@ extension EncodingSingleValue {
     func encode<T>(_ value: T) throws where T : Encodable {
         debugPrint(self.storage)
         if value is URL {
-            guard let url = value as? URL else { throw Coding.Exception.invalidTypeTransform() }
+            guard let url = value as? URL else { throw Coding.Exception.invalidTransform() }
             let encoder = InnerEncoder(value: url.absoluteString)
             encoder.wrapper = self.encoder.wrapper
             try url.absoluteString.encode(to: encoder)
