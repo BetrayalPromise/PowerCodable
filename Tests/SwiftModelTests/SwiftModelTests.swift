@@ -1396,7 +1396,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json[0], false)
             XCTAssertEqual(json[1], true)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
         
         /// String -> Decodable
@@ -1409,7 +1409,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json[0], false)
             XCTAssertEqual(json[1], true)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
         
         /// JSON -> Decodable
@@ -1420,7 +1420,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json[0], false)
             XCTAssertEqual(json[1], true)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
         
         /// JSON -> Decodable
@@ -1431,10 +1431,10 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json[0], false)
             XCTAssertEqual(json[1], true)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
         
-        /// JSONStructure -> Decodable
+        /// JSONWrapper -> Decodable
         do {
             let root = JSONWrapper(wrapper: [true, false])
             let json = try decoder.decode(type: [Bool].self, from: root)
@@ -1442,7 +1442,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json[1], false)
             print(json)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1505,7 +1505,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertTrue(json.m.isInfinite)
             XCTAssertTrue(json.n.isInfinite)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1524,7 +1524,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             print(json)
             XCTAssertEqual(json.hello, "[:]")
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1545,7 +1545,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let model: Root = try decoder.decode(type: Root.self, from: data)
             print(model)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
         
         let now = Date()
@@ -1581,7 +1581,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             let json = try decoder.decode(type: Root.self, from: data)
             print(json)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1608,7 +1608,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json.data2.count, 0)
             XCTAssertEqual(json.data3.count, 0)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1630,8 +1630,29 @@ final class SwiftModelDecodeTests: XCTestCase {
             let root: JSON = try PowerJSONDecoder().decode(type: JSON.self, from: jsondoc.data(using: .utf8)!)
             print(root)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
+    }
+    
+    func testStartPath() {
+        let data: Data = """
+        {
+            "data": [0, 1, 3]
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        
+        do {
+            let decoder = PowerJSONDecoder()
+            decoder.strategy.startPaths = ["data".path]
+            let root: [Int] = try decoder.decode(type: [Int].self, from: data)
+            XCTAssertEqual(root[0], 0)
+            XCTAssertEqual(root[1], 1)
+            XCTAssertEqual(root[2], 3)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+
     }
 }
 
@@ -1674,7 +1695,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertEqual(json["double"], 100.0)
             XCTAssertEqual(json["hello"], "ABCD")
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1697,7 +1718,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertNotEqual(json["a"]["b"]["c"], "string")
             XCTAssertNotEqual(json["b"]["b"]["c"], "string")
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1707,7 +1728,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertEqual(json[0], true)
             XCTAssertEqual(json[1], false)
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1718,7 +1739,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertEqual(json[0][1], true)
             XCTAssertEqual(json[1][0], false)
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1734,7 +1755,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertEqual(json["as"][0][0]["bool"], false)
             XCTAssertEqual(json["as"][0][1]["bool"], false)
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1760,7 +1781,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertEqual(json["bs"][0]["int"], 0)
             XCTAssertEqual(json["cs"][0]["string"], "string")
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1834,7 +1855,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             print(json.path() ?? "")
             print(json["as"]?.path() ?? "")
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1852,7 +1873,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertNil(json["boolBool"])
             XCTAssertNotNil(json["bool_bool"])
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1883,7 +1904,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTAssertNil(json["boolBool"])
             XCTAssertNotNil(json["a"])
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1897,7 +1918,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1911,7 +1932,7 @@ final class SwiftModelEncodeTests: XCTestCase {
                 /// Data本质上就是二进制的数组
                 XCTAssertEqual(json["a"], "")
             } catch  {
-                XCTFail("解析失败")
+                XCTFail(error.localizedDescription)
             }
         }
         do {
@@ -1924,7 +1945,7 @@ final class SwiftModelEncodeTests: XCTestCase {
                 /// Data本质上就是二进制的数组
                 XCTAssertNotEqual(json["a"].array$?.count, 0)
             } catch  {
-                XCTFail("解析失败")
+                XCTFail(error.localizedDescription)
             }
         }
     }
@@ -1938,7 +1959,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
         } catch  {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1950,7 +1971,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let json1 = try PowerJSONDecoder().decode(type: JSON.self, from: data)
             print(json1)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1964,7 +1985,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             let model = try self.encoder.encode(value: Information(), to: JSON.self)
             print(model)
         } catch {
-            XCTFail("解析失败")
+            XCTFail(error.localizedDescription)
         }
     }
 }

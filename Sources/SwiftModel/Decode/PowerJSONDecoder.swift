@@ -16,17 +16,20 @@ public struct DecodingStrategy {
     public var nonConformingFloatValueMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
     /// 仅仅针对nil值转为T?的处理,false则不能接受自定义的nil处理,true则接受自定义的nil处理
     public var enableMappingEmptyValue: Bool = false
+    
+    /// 针对树形结构中存在的任意的一个节点开始解码(包含此节点,节点必须也是容器结构,通俗讲就是随便选去一个数组或字典进行解码)
+    public var startPaths: [Path]? = nil
 }
 
 public final class PowerJSONDecoder {
     public var strategy = DecodingStrategy()
     /// 编码路径
-    public var paths: [Path] = []
+    var paths: [Path] = []
 
     /// 正向模型转化
     /// - Parameters:
     ///   - type: 顶层模型类型
-    ///   - from: 数据源, 只支持[Data String JSONStructure(json结构) JSON]
+    ///   - from: 数据源, 只支持[Data String JSONWrapper(json结构) JSON]
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: CodingSupport {
@@ -38,7 +41,14 @@ public final class PowerJSONDecoder {
             }
             let decoder = InnerDecoder(json: json)
             decoder.wrapper = self
-            return try decoder.unboxDecodable(object: json)
+            let use: JSON = self.strategy.startPaths?.reduce(json) { (result, path) -> JSON in
+                switch result {
+                case .array(_): return json[path.intValue ?? 0] ?? JSON.unknow
+                case .object(_): return json[path.stringValue] ?? JSON.unknow
+                default: fatalError()
+                }
+            } ?? json
+            return try decoder.unboxDecodable(object: use)
         } catch {
             throw error
         }

@@ -91,3 +91,11 @@ public extension Array where Element == Path {
         }
     }
 }
+
+extension String {
+    var path: Path { return Path.index(by: self) }
+}
+
+extension Int {
+    var path: Path { return Path.index(by: self) }
+}
