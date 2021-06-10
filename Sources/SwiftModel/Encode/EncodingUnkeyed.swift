@@ -67,7 +67,7 @@ extension EncodingUnkeyed {
         if value is URL {
             self.paths.push(value: Path.index(by: self.currentIndex))
             defer { self.paths.pop() }
-            debugPrint(self.paths.jsonPath)
+            debugPrint(self.paths.current)
             let value = try self.url(value: value)
             let encoder = InnerEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
@@ -76,7 +76,7 @@ extension EncodingUnkeyed {
         } else if value is Date {
             self.paths.push(value: Path.index(by: self.currentIndex))
             defer { self.paths.pop() }
-            debugPrint(self.paths.jsonPath)
+            debugPrint(self.paths.current)
             let value = try self.date(value: value)
             let encoder = InnerEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
@@ -85,7 +85,7 @@ extension EncodingUnkeyed {
         } else {
             self.paths.push(value: Path.index(by: self.currentIndex))
             defer { self.paths.pop() }
-            debugPrint(self.paths.jsonPath)
+            debugPrint(self.paths.current)
             let encoder = InnerEncoder(value: value)
             encoder.wrapper = self.encoder.wrapper
             try value.encode(to: encoder)

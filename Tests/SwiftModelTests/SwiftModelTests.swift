@@ -19,7 +19,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
 
         struct Adapter: DecodingValueMappable {
-            func toBool(path: JSONPath, value: JSON) -> Bool {
+            func toBool(paths: [Path], value: JSON) -> Bool {
                 return false
             }
         }
@@ -1103,8 +1103,8 @@ final class SwiftModelDecodeTests: XCTestCase {
 
         do {
             struct Adapter: DecodingValueMappable {
-                func toInt(path: JSONPath, value: JSON) -> Int {
-                    if path == "[:]gender" && value.isInt$ && value.int$ == 4 {
+                func toInt(paths: [Path], value: JSON) -> Int {
+                    if paths.current == "[:]gender" && value.isInt$ && value.int$ == 4 {
                         return 0
                     }
                     return value.int$ ?? 0
@@ -1139,8 +1139,8 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         do {
             struct Adapter: DecodingValueMappable {
-                func toInt(path: JSONPath, value: JSON) -> Int {
-                    if path == "[:]gender" {
+                func toInt(paths: [Path], value: JSON) -> Int {
+                    if paths.current == "[:]gender" {
                         return 0
                     }
                     return value.int$ ?? 0
@@ -1171,8 +1171,8 @@ final class SwiftModelDecodeTests: XCTestCase {
 
         do {
             struct Adapter: DecodingValueMappable {
-                func toInt(path: JSONPath, value: JSON) -> Int {
-                    if path == "[:]gender" {
+                func toInt(paths: [Path], value: JSON) -> Int {
+                    if paths.current == "[:]gender" {
                         return 0
                     }
                     return value.int$ ?? 0
@@ -1520,7 +1520,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
         """#
         do {
-            let root: JSONValue = try PowerJSONDecoder().decode(type: JSON.self, from: jsondoc.data(using: .utf8)!)
+            let root: JSON = try PowerJSONDecoder().decode(type: JSON.self, from: jsondoc.data(using: .utf8)!)
             print(root)
         } catch {
             XCTFail("解析失败")
@@ -1757,8 +1757,8 @@ final class SwiftModelEncodeTests: XCTestCase {
                 return ["boolBool": "a"]
             }
 
-            static func modelEncodingValues(path: JSONPath, value: JSON) -> JSON {
-                if path == "[:]a" {
+            static func modelEncodingValues(paths: [Path], value: JSON) -> JSON {
+                if paths.current == "[:]a" {
                     return JSON.init(nilLiteral: ())
                 }
                 return value

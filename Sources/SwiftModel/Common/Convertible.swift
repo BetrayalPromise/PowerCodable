@@ -7,7 +7,6 @@ public typealias JSONDouble = Double
 public typealias JSONString = String // 包含String, URL处理
 public typealias JSONArray = [JSON]
 public typealias JSONObject = [String: JSON]
-public typealias JSONPath = String
 public typealias JSONTuples = (String, JSON)
 
 extension Array where Element == JSONTuples {
@@ -51,60 +50,60 @@ extension DecodingKeyMappable {
 // MARK: - 解码value转化协议
 public protocol DecodingValueMappable {
     // MARK: - Bool
-    func toBool(path: JSONPath, value: JSON) throws -> Bool
+    func toBool(paths: [Path], value: JSON) throws -> Bool
 
     // MARK: - Int
-    func toInt(path: JSONPath, value: JSON) throws -> Int
+    func toInt(paths: [Path], value: JSON) throws -> Int
 
     // MARK: - Int8
-    func toInt8(path: JSONPath, value: JSON) throws -> Int8
+    func toInt8(paths: [Path], value: JSON) throws -> Int8
 
     // MARK: - Int16
-    func toInt16(path: JSONPath, value: JSON) throws -> Int16
+    func toInt16(paths: [Path], value: JSON) throws -> Int16
 
     // MARK: - Int32
-    func toInt32(path: JSONPath, value: JSON) throws -> Int32
+    func toInt32(paths: [Path], value: JSON) throws -> Int32
 
     // MARK: - Int64
-    func toInt64(path: JSONPath, value: JSON) throws -> Int64
+    func toInt64(paths: [Path], value: JSON) throws -> Int64
 
     // MARK: - UInt
-    func toUInt(path: JSONPath, value: JSON) throws -> UInt
+    func toUInt(paths: [Path], value: JSON) throws -> UInt
 
     // MARK: - UInt8
-    func toUInt8(path: JSONPath, value: JSON) throws -> UInt8
+    func toUInt8(paths: [Path], value: JSON) throws -> UInt8
 
     // MARK: - UInt16
-    func toUInt16(path: JSONPath, value: JSON) throws -> UInt16
+    func toUInt16(paths: [Path], value: JSON) throws -> UInt16
 
     // MARK: - UInt32
-    func toUInt32(path: JSONPath, value: JSON) throws -> UInt32
+    func toUInt32(paths: [Path], value: JSON) throws -> UInt32
 
     // MARK: - UInt64
-    func toUInt64(path: JSONPath, value: JSON) throws -> UInt64
+    func toUInt64(paths: [Path], value: JSON) throws -> UInt64
 
     // MARK: - Float
-    func toFloat(path: JSONPath, value: JSON) throws -> Float
+    func toFloat(paths: [Path], value: JSON) throws -> Float
 
     // MARK: - Double
-    func toDouble(path: JSONPath, value: JSON) throws -> Double
+    func toDouble(paths: [Path], value: JSON) throws -> Double
 
     // MARK: - String
-    func toString(path: JSONPath, value: JSON) throws -> String
+    func toString(paths: [Path], value: JSON) throws -> String
 
     // MARK: - Data
-    func toData(path: JSONPath, value: JSON) throws -> Data
+    func toData(paths: [Path], value: JSON) throws -> Data
 
     // MARK: - Date
-    func toDate(path: JSONPath, value: JSON) throws -> Date
+    func toDate(paths: [Path], value: JSON) throws -> Date
 
     // MARK: - URL
-    func toURL(path: JSONPath, value: JSON) throws -> URL
+    func toURL(paths: [Path], value: JSON) throws -> URL
 }
 
 // MARK: - BOOL
 extension DecodingValueMappable {
-    func toBool(path: JSONPath, value: JSON) throws -> Bool {
+    func toBool(paths: [Path], value: JSON) throws -> Bool {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxBool(json: value).bool
@@ -120,7 +119,7 @@ extension DecodingValueMappable {
 
 // MARK: - INT
 extension DecodingValueMappable {
-    func toInt(path: JSONPath, value: JSON) throws -> Int {
+    func toInt(paths: [Path], value: JSON) throws -> Int {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt(json: value).int
@@ -136,7 +135,7 @@ extension DecodingValueMappable {
 
 // MARK: - INT8
 extension DecodingValueMappable {
-    func toInt8(path: JSONPath, value: JSON) throws -> Int8 {
+    func toInt8(paths: [Path], value: JSON) throws -> Int8 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt8(json: value).int8
@@ -152,7 +151,7 @@ extension DecodingValueMappable {
 
 // MARK: - INT16
 extension DecodingValueMappable {
-    func toInt16(path: JSONPath, value: JSON) throws -> Int16 {
+    func toInt16(paths: [Path], value: JSON) throws -> Int16 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt16(json: value).int16
@@ -168,7 +167,7 @@ extension DecodingValueMappable {
 
 // MARK: - INT32
 extension DecodingValueMappable {
-    func toInt32(path: JSONPath, value: JSON) throws -> Int32 {
+    func toInt32(paths: [Path], value: JSON) throws -> Int32 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt32(json: value).int32
@@ -184,7 +183,7 @@ extension DecodingValueMappable {
 
 // MARK: - INT64
 extension DecodingValueMappable {
-    func toInt64(path: JSONPath, value: JSON) throws -> Int64 {
+    func toInt64(paths: [Path], value: JSON) throws -> Int64 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxInt64(json: value).int64
@@ -200,7 +199,7 @@ extension DecodingValueMappable {
 
 // MARK: - UINT
 extension DecodingValueMappable {
-    func toUInt(path: JSONPath, value: JSON) throws -> UInt {
+    func toUInt(paths: [Path], value: JSON) throws -> UInt {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt(json: value).uint
@@ -216,7 +215,7 @@ extension DecodingValueMappable {
 
 // MARK: - UInt8
 extension DecodingValueMappable {
-    func toUInt8(path: JSONPath, value: JSON) throws -> UInt8 {
+    func toUInt8(paths: [Path], value: JSON) throws -> UInt8 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt8(json: value).uint8
@@ -232,7 +231,7 @@ extension DecodingValueMappable {
 
 // MARK: - UInt16
 extension DecodingValueMappable {
-    func toUInt16(path: JSONPath, value: JSON) throws -> UInt16 {
+    func toUInt16(paths: [Path], value: JSON) throws -> UInt16 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt16(json: value).uint16
@@ -248,7 +247,7 @@ extension DecodingValueMappable {
 
 // MARK: - UInt32
 extension DecodingValueMappable {
-    func toUInt32(path: JSONPath, value: JSON) throws -> UInt32 {
+    func toUInt32(paths: [Path], value: JSON) throws -> UInt32 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt32(json: value).uint32
@@ -264,7 +263,7 @@ extension DecodingValueMappable {
 
 // MARK: - UInt64
 extension DecodingValueMappable {
-    func toUInt64(path: JSONPath, value: JSON) throws -> UInt64 {
+    func toUInt64(paths: [Path], value: JSON) throws -> UInt64 {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxUInt64(json: value).uint64
@@ -280,7 +279,7 @@ extension DecodingValueMappable {
 
 // MARK: - Float
 extension DecodingValueMappable {
-    func toFloat(path: JSONPath, value: JSON) throws -> Float {
+    func toFloat(paths: [Path], value: JSON) throws -> Float {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxFloat(json: value).float
@@ -296,7 +295,7 @@ extension DecodingValueMappable {
 
 // MARK: - Double
 extension DecodingValueMappable {
-    func toDouble(path: JSONPath, value: JSON) throws -> Double {
+    func toDouble(paths: [Path], value: JSON) throws -> Double {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return BoxDouble(json: value).double
@@ -312,7 +311,7 @@ extension DecodingValueMappable {
 
 // MARK: - String
 extension DecodingValueMappable {
-    func toString(path: JSONPath, value: JSON) throws -> String {
+    func toString(paths: [Path], value: JSON) throws -> String {
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
         case .null: return "null"
@@ -328,7 +327,7 @@ extension DecodingValueMappable {
 
 // MARK: - Data
 extension DecodingValueMappable {
-    func toData(path: JSONPath, value: JSON) throws -> Data {
+    func toData(paths: [Path], value: JSON) throws -> Data {
         guard let decoder: InnerDecoder = self as? InnerDecoder else { return BoxData(json: value).data }
         switch value {
         case .unknow: throw Coding.Exception.unknowJSON()
@@ -399,7 +398,7 @@ extension DecodingValueMappable {
 
 // MARK: - URL
 extension DecodingValueMappable {
-    func toURL(path: JSONPath, value: JSON) throws -> URL {
+    func toURL(paths: [Path], value: JSON) throws -> URL {
         switch value {
         case .unknow: throw Coding.Exception.invalidTypeTransform()
         case .null: return BoxURL(json: value).url
@@ -420,7 +419,7 @@ extension DecodingValueMappable {
 
 // MARK: - Date
 extension DecodingValueMappable {
-    func toDate(path: JSONPath, value: JSON) throws -> Date {
+    func toDate(paths: [Path], value: JSON) throws -> Date {
         guard let decoder: InnerDecoder = self as? InnerDecoder else { return BoxDate(json: value).date }
         switch value {
         case .unknow: throw Coding.Exception.invalidTypeTransform()
@@ -536,41 +535,41 @@ extension EncodingKeyMappable {
 
 // MARK: - 编码value转化协议
 public protocol EncodingValueMappable {
-    func toJSON(path: JSONPath, value: JSONNull) -> JSON
-    func toJSON(path: JSONPath, value: JSONBool) -> JSON
-    func toJSON(path: JSONPath, value: JSONInteger) -> JSON
-    func toJSON(path: JSONPath, value: JSONDouble) -> JSON
-    func toJSON(path: JSONPath, value: JSONString) -> JSON
-    func toJSON(path: JSONPath, value: JSONObject) -> JSON
-    func toJSON(path: JSONPath, value: JSONArray) -> JSON
+    func toJSON(paths: [Path], value: JSONNull) -> JSON
+    func toJSON(paths: [Path], value: JSONBool) -> JSON
+    func toJSON(paths: [Path], value: JSONInteger) -> JSON
+    func toJSON(paths: [Path], value: JSONDouble) -> JSON
+    func toJSON(paths: [Path], value: JSONString) -> JSON
+    func toJSON(paths: [Path], value: JSONObject) -> JSON
+    func toJSON(paths: [Path], value: JSONArray) -> JSON
 }
 
 extension EncodingValueMappable {
-    func toJSON(path: JSONPath, value: JSONNull) -> JSON {
+    func toJSON(paths: [Path], value: JSONNull) -> JSON {
         return JSON(nilLiteral: ())
     }
 
-    func toJSON(path: JSONPath, value: JSONBool) -> JSON {
+    func toJSON(paths: [Path], value: JSONBool) -> JSON {
         return JSON(booleanLiteral: value)
     }
 
-    func toJSON(path: JSONPath, value: JSONInteger) -> JSON {
+    func toJSON(paths: [Path], value: JSONInteger) -> JSON {
         return JSON(integerLiteral: IntegerLiteralType(value))
     }
 
-    func toJSON(path: JSONPath, value: JSONDouble) -> JSON {
+    func toJSON(paths: [Path], value: JSONDouble) -> JSON {
         return JSON(floatLiteral: value)
     }
 
-    func toJSON(path: JSONPath, value: JSONString) -> JSON {
+    func toJSON(paths: [Path], value: JSONString) -> JSON {
         return JSON(stringLiteral: value)
     }
 
-    func toJSON(path: JSONPath, value: JSONObject) -> JSON {
+    func toJSON(paths: [Path], value: JSONObject) -> JSON {
         return JSON(object: value)
     }
 
-    func toJSON(path: JSONPath, value: JSONArray) -> JSON {
+    func toJSON(paths: [Path], value: JSONArray) -> JSON {
         return JSON(array: value)
     }
 }

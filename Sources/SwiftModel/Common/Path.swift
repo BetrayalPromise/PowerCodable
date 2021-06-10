@@ -28,7 +28,7 @@ public struct Path: CodingKey {
     }
 
     public init?(intValue: Int) {
-        self.information = Container.object.rawValue + "\(intValue)"
+        self.information = Container.array.rawValue + "\(intValue)"
         self.container = .array
         self.indexPath = "\(intValue)"
     }
@@ -85,7 +85,7 @@ public extension Array where Element == Path {
         if self.count > 0 { self.removeLast() }
     }
 
-    var jsonPath: String {
+    var current: String {
         return self.reduce("") { (result, item) -> String in
             return result + (item.information)
         }

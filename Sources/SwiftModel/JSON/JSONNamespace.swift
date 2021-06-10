@@ -77,6 +77,19 @@ extension TypeWrapperProtocol where WrappedType == JSON {
         default: return nil
         }
     }
+    
+    public var kind: NodeType {
+        switch self.wrappedValue {
+        case .unknow: return .null
+        case .null: return .null
+        case .bool(_): return .bool
+        case .integer(_): return .integer
+        case .double(_): return .double
+        case .string(_): return .string
+        case .object(_): return .object
+        case .array(_): return .array
+        }
+    }
 }
 
 extension TypeWrapperProtocol where WrappedType == JSON {

@@ -294,126 +294,126 @@ extension InnerDecoder {
     func unbox(object: JSON) throws -> Bool {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toBool(path: self.paths.jsonPath, value: object)
+            return try self.toBool(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toBool(path: self.paths.jsonPath, value: object)
+            return try delegate.toBool(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> Int {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toInt(path: self.paths.jsonPath, value: object)
+            return try self.toInt(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toInt(path: self.paths.jsonPath, value: object)
+            return try delegate.toInt(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> Int8 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toInt8(path: self.paths.jsonPath, value: object)
+            return try self.toInt8(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toInt8(path: self.paths.jsonPath, value: object)
+            return try delegate.toInt8(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> Int16 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toInt16(path: self.paths.jsonPath, value: object)
+            return try self.toInt16(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toInt16(path: self.paths.jsonPath, value: object)
+            return try delegate.toInt16(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> Int32 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toInt32(path: self.paths.jsonPath, value: object)
+            return try self.toInt32(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toInt32(path: self.paths.jsonPath, value: object)
+            return try delegate.toInt32(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> Int64 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toInt64(path: self.paths.jsonPath, value: object)
+            return try self.toInt64(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toInt64(path: self.paths.jsonPath, value: object)
+            return try delegate.toInt64(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> UInt {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toUInt(path: self.paths.jsonPath, value: object)
+            return try self.toUInt(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toUInt(path: self.paths.jsonPath, value: object)
+            return try delegate.toUInt(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> UInt8 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toUInt8(path: self.paths.jsonPath, value: object)
+            return try self.toUInt8(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toUInt8(path: self.paths.jsonPath, value: object)
+            return try delegate.toUInt8(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> UInt16 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toUInt16(path: self.paths.jsonPath, value: object)
+            return try self.toUInt16(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toUInt16(path: self.paths.jsonPath, value: object)
+            return try delegate.toUInt16(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> UInt32 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toUInt32(path: self.paths.jsonPath, value: object)
+            return try self.toUInt32(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toUInt32(path: self.paths.jsonPath, value: object)
+            return try delegate.toUInt32(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> UInt64 {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toUInt64(path: self.paths.jsonPath, value: object)
+            return try self.toUInt64(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toUInt64(path: self.paths.jsonPath, value: object)
+            return try delegate.toUInt64(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> Float {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toFloat(path: self.paths.jsonPath, value: object)
+            return try self.toFloat(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toFloat(path: self.paths.jsonPath, value: object)
+            return try delegate.toFloat(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> Double {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toDouble(path: self.paths.jsonPath, value: object)
+            return try self.toDouble(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toDouble(path: self.paths.jsonPath, value: object)
+            return try delegate.toDouble(paths: self.paths, value: object)
         }
     }
 
     func unbox(object: JSON) throws -> String {
         switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            return try self.toString(path: self.paths.jsonPath, value: object)
+            return try self.toString(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
-            return try delegate.toString(path: self.paths.jsonPath, value: object)
+            return try delegate.toString(paths: self.paths, value: object)
         }
     }
 }

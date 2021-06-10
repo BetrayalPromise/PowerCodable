@@ -1,13 +1,14 @@
 import Foundation
 
-enum CurrentType {
+public enum NodeType {
+    case unknow
     case null
     case bool
     case integer
     case double
     case string
     case array
-    case dictionary
+    case object
 }
 
 /// MARK: JSON抽象 由于Swift中的JSON解析器给出的是Any类型 无法明确需要强转后再处理, 本工具使用JSON结构体明确可以看出JSON结构
@@ -22,7 +23,7 @@ public enum JSON {
     indirect case object([String: JSON])
     indirect case array([JSON])
 
-    var kind: CurrentType {
+    var kind: NodeType {
         switch self {
         case .unknow: return .null
         case .null: return .null
@@ -31,7 +32,7 @@ public enum JSON {
         case .double(_): return .double
         case .string(_): return .string
         case .array(_): return .array
-        case .object(_): return .dictionary
+        case .object(_): return .object
         }
     }
     
@@ -79,7 +80,9 @@ extension JSON: Equatable {
         case (.string(let l), .string(let r)): return l == r
         case (.double(let l), .double(let r)): return l == r
         case (.integer(let l), .integer(let r)): return l == r
-        case (.unknow, .unknow): return true
+        case (.unknow, .unknow):
+            debugPrint("Warnning JOSN.unknow use has no result!")
+            return true
         case (.unknow, .object(_)): return false
         case (.unknow, .array(_)): return false
         case (.unknow, .null): return false

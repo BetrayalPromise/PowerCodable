@@ -25,9 +25,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Null())
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Null())
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Null())
+            self.storage = delegete.toJSON(paths: self.paths, value: Null())
         }
     }
 
@@ -35,9 +35,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = delegete.toJSON(paths: self.paths, value: value)
         }
     }
 
@@ -45,9 +45,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = delegete.toJSON(paths: self.paths, value: value)
         }
     }
 
@@ -75,9 +75,9 @@ extension EncodingSingleValue {
         }
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = delegete.toJSON(paths: self.paths, value: value)
         }
     }
 
@@ -105,9 +105,9 @@ extension EncodingSingleValue {
         }
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Double(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Double(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Double(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Double(value))
         }
     }
 
@@ -115,9 +115,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -125,9 +125,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -135,9 +135,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -145,9 +145,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -155,9 +155,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: value)
+            self.storage = delegete.toJSON(paths: self.paths, value: value)
         }
     }
 
@@ -165,9 +165,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -175,9 +175,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -185,9 +185,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -195,9 +195,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
@@ -205,9 +205,9 @@ extension EncodingSingleValue {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = self.encoder.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = delegete.toJSON(path: self.paths.jsonPath, value: Int64(value))
+            self.storage = delegete.toJSON(paths: self.paths, value: Int64(value))
         }
     }
 
