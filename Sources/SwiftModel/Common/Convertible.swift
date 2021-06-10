@@ -631,3 +631,27 @@ extension JSON: CodingSupport {
         }
     }
 }
+
+extension Dictionary: CodingSupport where Key == String, Value == Any {
+    typealias Wrapper = Dictionary
+    var dataWrapper: Data? {
+        do {
+            return try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+        } catch {
+            debugPrint(error.localizedDescription)
+            return nil
+        }
+    }
+}
+
+extension Array: CodingSupport where Element == Any {
+    var dataWrapper: Data? {
+        do {
+            return try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+        } catch {
+            debugPrint(error.localizedDescription)
+            return nil
+        }
+    }
+    typealias Wrapper = Array
+}

@@ -971,6 +971,14 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
+        
+        let json: [Any] = [1, 3 ,5]
+        do {
+            let model: [Int8] = try decoder.decode(type: [Int8].self, from: json)
+            print(model)
+        } catch {
+            XCTAssertNil(error)
+        }
     }
 
     func testDictionary() {
@@ -1017,6 +1025,24 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
     }
+    
+//    func testNest() {
+//        class Person: Codable {
+//            var name: String = ""
+//            var parent: Person?
+//        }
+//
+//        let json: [String: Any] = [
+//            "name": "Jack",
+//            "parent": ["name": "Jim"]
+//        ]
+//        do {
+//            let model: Person? = try decoder.decode(type: Person.self, from: json)
+//            print(model)
+//        } catch {
+//            XCTAssertNil(error)
+//        }
+//    }
 
     func testWrapperIgnore() {
         do {
