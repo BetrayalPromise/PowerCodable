@@ -3,32 +3,32 @@ import XCTest
 
 final class SwiftModelDecodeTests: XCTestCase {
     let decoder = PowerJSONDecoder()
-
+    
     func testNil() {
         let data: Data = """
             {"a": null, "b":[]}
         """.data(using: String.Encoding.utf8) ?? Data()
-
+        
         struct A: Decodable {
             let a: Bool
             let b: Bool
         }
-
+        
         struct B: Decodable {
             let a: Bool?
         }
-
+        
         struct Adapter: DecodingValueMappable {
             func toBool(paths: [Path], value: JSON) -> Bool {
                 return false
             }
         }
-
+        
         do {
             self.decoder.strategy.enableMappingEmptyValue = true
             let modelA: A = try decoder.decode(type: A.self, from: data)
             XCTAssertEqual(modelA.a, false)
-
+            
             self.decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
             defer {
                 self.decoder.strategy.valueMapping = .useDefaultValues
@@ -39,7 +39,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("测试失败")
         }
     }
-
+    
     func testBool() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}, "", "dfadfad"]
@@ -72,7 +72,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalBool() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -104,7 +104,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testInt() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -136,7 +136,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalInt() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -168,7 +168,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testInt8() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -200,7 +200,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalInt8() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -232,7 +232,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testInt16() {
         let data: Data = #"""
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -264,7 +264,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalInt16() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -296,7 +296,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testInt32() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -328,7 +328,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalInt32() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -360,7 +360,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testInt64() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -392,7 +392,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalInt64() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -424,7 +424,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testUInt() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -456,7 +456,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
-
+    
     func testOptionalUInt() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -488,7 +488,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testUInt8() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -520,7 +520,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalUInt8() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -552,7 +552,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testUInt16() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -584,7 +584,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalUInt16() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -616,7 +616,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testUInt32() {
         do {
             let data: Data = """
@@ -650,7 +650,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
     }
-
+    
     func testOptionalUInt32() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -682,7 +682,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testUInt64() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -714,7 +714,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalUInt64() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -746,7 +746,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testFloat() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -778,7 +778,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testOptionalFloat() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -810,7 +810,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testDouble() {
         do {
             let data: Data = """
@@ -844,7 +844,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
     }
-
+    
     func testOptionalDouble() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -876,7 +876,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testString() {
         do {
             let data: Data = """
@@ -909,9 +909,9 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTFail("error")
             }
         }
-
+        
     }
-
+    
     func testOptionalString() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
@@ -943,7 +943,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("error")
         }
     }
-
+    
     func testArray() {
         do {
             let data: Data = """
@@ -980,7 +980,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertNil(error)
         }
     }
-
+    
     func testDictionary() {
         do {
             struct Root: Codable, DecodingKeyMappable {
@@ -1000,7 +1000,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
-
+        
         do {
             let data: Data = """
                 {"key": {"key": {"key": "key"}}}
@@ -1026,24 +1026,24 @@ final class SwiftModelDecodeTests: XCTestCase {
         }
     }
     
-//    func testNest() {
-//        class Person: Codable {
-//            var name: String = ""
-//            var parent: Person?
-//        }
-//
-//        let json: [String: Any] = [
-//            "name": "Jack",
-//            "parent": ["name": "Jim"]
-//        ]
-//        do {
-//            let model: Person? = try decoder.decode(type: Person.self, from: json)
-//            print(model)
-//        } catch {
-//            XCTAssertNil(error)
-//        }
-//    }
-
+    //    func testNest() {
+    //        class Person: Codable {
+    //            var name: String = ""
+    //            var parent: Person?
+    //        }
+    //
+    //        let json: [String: Any] = [
+    //            "name": "Jack",
+    //            "parent": ["name": "Jim"]
+    //        ]
+    //        do {
+    //            let model: Person? = try decoder.decode(type: Person.self, from: json)
+    //            print(model)
+    //        } catch {
+    //            XCTAssertNil(error)
+    //        }
+    //    }
+    
     func testWrapperIgnore() {
         do {
             let data: Data = #"""
@@ -1053,7 +1053,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "data": "datat"
                 }
             """#.data(using: String.Encoding.utf8) ?? Data()
-
+            
             struct Information: Codable {
                 @Decoding.IgnoreNonoptional()
                 var name: String = "10JQKA"
@@ -1079,7 +1079,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     "name3": 3
                 }
             """#.data(using: String.Encoding.utf8) ?? Data()
-
+            
             struct Information: Decodable {
                 @Default(value: "name0")
                 var name0: String
@@ -1099,7 +1099,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
     }
-
+    
     func testMapping() {
         do {
             struct A: Codable {
@@ -1113,7 +1113,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                 case female = 1
                 case unknow = 2
             }
-
+            
             let data: Data = """
                 {"a": [{"gender": 0}, {"gender": 1}, {"gender": 2}]}
             """.data(using: String.Encoding.utf8) ?? Data()
@@ -1126,7 +1126,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
-
+        
         do {
             struct Adapter: DecodingValueMappable {
                 func toInt(paths: [Path], value: JSON) -> Int {
@@ -1136,7 +1136,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                     return value.int$ ?? 0
                 }
             }
-
+            
             struct Human: Codable {
                 var gender: Gender?
             }
@@ -1144,14 +1144,14 @@ final class SwiftModelDecodeTests: XCTestCase {
                 case unknow = 0
                 case male = 1
                 case female = 2
-
+                
                 enum CodingKeys: CodingKey {
                     case male
                     case female
                     case unknow
                 }
             }
-
+            
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
@@ -1172,17 +1172,17 @@ final class SwiftModelDecodeTests: XCTestCase {
                     return value.int$ ?? 0
                 }
             }
-
+            
             struct Human: Codable {
                 var gender: Gender?
             }
-
+            
             enum Gender: Int, Codable {
                 case unknow = 0
                 case male = 1
                 case female = 2
             }
-
+            
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
@@ -1194,7 +1194,7 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
-
+        
         do {
             struct Adapter: DecodingValueMappable {
                 func toInt(paths: [Path], value: JSON) -> Int {
@@ -1209,19 +1209,19 @@ final class SwiftModelDecodeTests: XCTestCase {
                 var name: Int
                 var age: Int
             }
-
+            
             enum Gender: Int, Codable {
                 case unknow = 0
                 case male = 1
                 case female = 2
-
+                
                 enum CodingKeys: CodingKey {
                     case unknow
                     case male
                     case female
                 }
             }
-
+            
             let data: Data = """
                     {"gender": 3,
                     "name": 3,
@@ -1237,7 +1237,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             }
         }
     }
-
+    
     func testPath() {
         let data: Data = """
         {
@@ -1252,8 +1252,8 @@ final class SwiftModelDecodeTests: XCTestCase {
         print(age?.path() ?? "")
         print(json?.path() ?? "")
     }
-
-    func testNested() {
+    
+    func testNested0() {
         do {
             let data: Data = """
                 {"a": [{"b": [{"c": [{"d": [{"c": "over"}]}]}]}]}
@@ -1280,27 +1280,89 @@ final class SwiftModelDecodeTests: XCTestCase {
                 XCTAssertNil(error, error.localizedDescription)
             }
         }
+    }
+    
+    func testNested1() {
+        class Person: Codable {
+            var name: String = ""
+            var parent: Person?
+            required init() {}
+        }
         
+        let json: [String: Any] = [
+            "name": "0",
+            "parent": ["name": "1"]
+        ]
         do {
-            class Person: Codable {
-                var name: String = ""
-                var parent: Person?
-                required init() {}
-            }
-             
-            let json: [String: Any] = [
-                "name": "Jack",
-                "parent": ["name": "Jim"]
-            ]
-            do {
-                let model: Person = try self.decoder.decode(type: Person.self, from: json)
-                print(model)
-            } catch {
-                XCTAssertNil(error, error.localizedDescription)
-            }
+            let model: Person = try self.decoder.decode(type: Person.self, from: json)
+            XCTAssertEqual(model.name, "0")
+            XCTAssertEqual(model.parent?.name, "1")
+        } catch {
+            XCTAssertNil(error, error.localizedDescription)
         }
     }
-
+    
+    func testParadigm() {
+        struct NetResponse<Element: Codable>: Codable {
+            var data: Element? = nil
+            var msg: String = ""
+            private(set) var code: Int = 0
+        }
+        
+        struct User: Codable {
+            var id: String = ""
+            var nickName: String = ""
+        }
+        
+        struct Goods: Codable {
+            private(set) var price: CGFloat = 0.0
+            var name: String = ""
+        }
+        
+        do {
+            let json = """
+            {
+                "data": {"nickName": "KaKa", "id": 213234234},
+                "msg": "Success",
+                "code" : 200
+            }
+            """
+            let model: NetResponse<User> = try self.decoder.decode(type: NetResponse<User>.self, from: json)
+            XCTAssert(model.msg == "Success")
+            XCTAssert(model.code == 200)
+            XCTAssert(model.data?.nickName == "KaKa")
+            XCTAssert(model.data?.id == "213234234")
+        } catch {
+            XCTAssertNil(error, error.localizedDescription)
+        }
+        
+        do {
+            let json = """
+            {
+                "data": [
+                    {"price": "6199", "name": "iPhone XR"},
+                    {"price": "8199", "name": "iPhone XS"},
+                    {"price": "9099", "name": "iPhone Max"}
+                ],
+                "msg": "Success",
+                "code" : 200
+            }
+            """
+            let model: NetResponse<[Goods]> = try self.decoder.decode(type: NetResponse<[Goods]>.self, from: json)
+            XCTAssert(model.msg == "Success")
+            XCTAssert(model.code == 200)
+            XCTAssert(model.data?.count == 3)
+            XCTAssert(model.data?[0].price == 6199)
+            XCTAssert(model.data?[0].name == "iPhone XR")
+            XCTAssert(model.data?[1].price == 8199)
+            XCTAssert(model.data?[1].name == "iPhone XS")
+            XCTAssert(model.data?[2].price == 9099)
+            XCTAssert(model.data?[2].name == "iPhone Max")
+        } catch {
+            XCTAssertNil(error, error.localizedDescription)
+        }
+    }
+    
     func testURL() {
         let data: Data = """
         {
@@ -1309,7 +1371,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         """.data(using: String.Encoding.utf8) ?? Data()
         struct Root :Codable, DecodingKeyMappable {
             let baidu: URL
-
+            
             static func modelDecodingKeys() -> [String: [String]] {
                 return ["baidu": ["baidubaibaidu", "baidu"]]
             }
@@ -1322,7 +1384,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertNil(error, error.localizedDescription)
         }
     }
-
+    
     func testType() {
         /// Data -> Decodable
         do {
@@ -1336,7 +1398,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         } catch {
             XCTFail("解析失败")
         }
-
+        
         /// String -> Decodable
         do {
             let string: String = """
@@ -1349,7 +1411,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         } catch {
             XCTFail("解析失败")
         }
-
+        
         /// JSON -> Decodable
         do {
             let root = JSON(array: [.bool(false), .bool(true)])
@@ -1360,7 +1422,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         } catch {
             XCTFail("解析失败")
         }
-
+        
         /// JSON -> Decodable
         do {
             let root = JSON(array: [.bool(false), .bool(true)])
@@ -1371,7 +1433,7 @@ final class SwiftModelDecodeTests: XCTestCase {
         } catch {
             XCTFail("解析失败")
         }
-
+        
         /// JSONStructure -> Decodable
         do {
             let root = JSONWrapper(wrapper: [true, false])
@@ -1383,7 +1445,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testNumber() {
         struct Numbers: Codable {
             let a: Float
@@ -1394,11 +1456,11 @@ final class SwiftModelDecodeTests: XCTestCase {
             let f: Double
             let g: Float
             let h: Double
-
+            
             let i: Float
             let j: Float
             let k: Float
-
+            
             let l: Double
             let m: Double
             let n: Double
@@ -1421,7 +1483,7 @@ final class SwiftModelDecodeTests: XCTestCase {
           "n": "+infInitY"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-
+        
         do {
             let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
             XCTAssertEqual(json.a.isNaN, true)
@@ -1438,7 +1500,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTAssertEqual(json.l, -Double.infinity)
             XCTAssertEqual(json.m, Double.infinity)
             XCTAssertEqual(json.n, Double.infinity)
-
+            
             XCTAssertTrue(json.l.isInfinite)
             XCTAssertTrue(json.m.isInfinite)
             XCTAssertTrue(json.n.isInfinite)
@@ -1446,7 +1508,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testNull() {
         //        {"hello": null}
         let data: Data = """
@@ -1465,9 +1527,9 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testDate() {
-//        1603782840000
+        //        1603782840000
         let data: Data = """
         {
             "date": "1603782840123"
@@ -1485,24 +1547,24 @@ final class SwiftModelDecodeTests: XCTestCase {
         } catch {
             XCTFail("解析失败")
         }
-
+        
         let now = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         print(now.formatted(format:  "%y|%Y|%m|%d|%I|%H|%M|%S|%w|%z|%Z") ?? "")
-
+        
         let string = "1603539281"
         print(string.toDate())
     }
-
+    
     func testKeyMapping() {
-//        print("abcAbcAbcAbcAbc".toCamelCase())
-//        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
-//        print("abcAbcAbcAbcAbc".toSnakeCase())
-//        print("abcAbcAbcAbcAbc".toUpperCase())
-//        print("abcAbcAbcAbcAbc".toLowerCase())
-
+        //        print("abcAbcAbcAbcAbc".toCamelCase())
+        //        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
+        //        print("abcAbcAbcAbcAbc".toSnakeCase())
+        //        print("abcAbcAbcAbcAbc".toUpperCase())
+        //        print("abcAbcAbcAbcAbc".toLowerCase())
+        
         let data: Data = """
         {
             "string_data": "string"
@@ -1522,7 +1584,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testData() {
         let data: Data = """
         {
@@ -1532,7 +1594,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             "data3": [true]
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-
+        
         do {
             struct Root: Codable {
                 let data0: Data
@@ -1549,7 +1611,7 @@ final class SwiftModelDecodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testJSON() {
         let jsondoc = #"""
         {
@@ -1615,7 +1677,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testEncodeHashMap() {
         struct Root: Encodable {
             var a: A = A()
@@ -1638,7 +1700,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testArray0() {
         do {
             let json: JSON = try encoder.encode(value: [true, false], to: JSON.self)
@@ -1648,7 +1710,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testArray1() {
         do {
             let json: JSON = try encoder.encode(value: [[true, true], [false]], to: JSON.self)
@@ -1659,7 +1721,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testArray2() {
         struct Root: Encodable {
             var `as`: [[A]] = [[A(), A()]]
@@ -1675,7 +1737,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testArray() {
         struct Root: Encodable {
             var `as`: [A] = []
@@ -1701,7 +1763,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testURL() {
         do {
             struct Root: Codable, EncodingKeyMappable {
@@ -1727,8 +1789,8 @@ final class SwiftModelEncodeTests: XCTestCase {
             }
         }
     }
-
-
+    
+    
     func testNull() {
         do {
             struct Root: Codable {
@@ -1751,7 +1813,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             }
         }
     }
-
+    
     func testPath() {
         struct Root: Encodable {
             var `as`: [A] = []
@@ -1775,12 +1837,12 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testKey() {
         struct A: Encodable {
             var boolBool = false
         }
-
+        
         self.encoder.strategy.keyMapping = .useSnakeKeys(.default)
         defer {
             self.encoder.strategy.keyMapping = .useDefaultKeys
@@ -1793,15 +1855,15 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testValue() {
         struct A: Encodable, EncodingKeyMappable {
             var boolBool = false
-
+            
             static func modelEncodingKeys() -> [String : String] {
                 return ["boolBool": "a"]
             }
-
+            
             static func modelEncodingValues(paths: [Path], value: JSON) -> JSON {
                 if paths.current == "[:]a" {
                     return JSON.init(nilLiteral: ())
@@ -1809,7 +1871,7 @@ final class SwiftModelEncodeTests: XCTestCase {
                 return value
             }
         }
-
+        
         self.encoder.strategy.keyMapping = .useSnakeKeys(.default)
         defer {
             self.encoder.strategy.keyMapping = .useDefaultKeys
@@ -1824,7 +1886,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testNumber() {
         struct A: Encodable {
             let a = Float.nan
@@ -1838,7 +1900,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testData() {
         do {
             struct A: Encodable {
@@ -1866,7 +1928,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             }
         }
     }
-
+    
     func testDate() {
         struct A: Encodable {
             let a: Date = Date()
@@ -1879,7 +1941,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testJSON() {
         let json0 = JSON(object: ["A" : "B"])
         do {
@@ -1891,7 +1953,7 @@ final class SwiftModelEncodeTests: XCTestCase {
             XCTFail("解析失败")
         }
     }
-
+    
     func testWrapperIgnore() {
         struct Information: Codable {
             var name: String = "10JQKA"
