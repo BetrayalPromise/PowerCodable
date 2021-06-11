@@ -1,7 +1,7 @@
 import XCTest
 
-import SwiftModelTests
+import PowerCodableTests
 
 var tests = [XCTestCaseEntry]()
-tests += SwiftModelTests.allTests()
+tests += PowerCodableTests.allTests()
 XCTMain(tests)

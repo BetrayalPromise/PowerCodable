@@ -1,7 +1,7 @@
 import XCTest
-@testable import SwiftModel
+@testable import PowerCodable
 
-final class SwiftModelDecodeTests: XCTestCase {
+final class PowerCodableDecodeTests: XCTestCase {
     let decoder = PowerJSONDecoder()
     
     func testNil() {
@@ -1655,7 +1655,7 @@ final class SwiftModelDecodeTests: XCTestCase {
     }
 }
 
-final class SwiftModelEncodeTests: XCTestCase {
+final class PowerCodableEncodeTests: XCTestCase {
     let encoder = PowerJSONEncoder()
     func testEncode()  {
         struct A : Encodable, EncodingKeyMappable {
