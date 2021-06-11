@@ -1286,7 +1286,6 @@ final class SwiftModelDecodeTests: XCTestCase {
         class Person: Codable {
             var name: String = ""
             var parent: Person?
-            required init() {}
         }
         
         let json: [String: Any] = [
