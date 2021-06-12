@@ -1153,7 +1153,7 @@ final class DecodeTests: XCTestCase {
         
         do {
             struct Adapter: DecodeValueMappable {
-                static func toInt(paths: [Path], value: JSON) -> Int {
+                static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
                     if paths.current == "[:]gender" && value.isInt$ && value.int$ == 4 {
                         return 0
                     }
@@ -1189,7 +1189,7 @@ final class DecodeTests: XCTestCase {
         }
         do {
             struct Adapter: DecodeValueMappable {
-                static func toInt(paths: [Path], value: JSON) -> Int {
+                static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
                     if paths.current == "[:]gender" {
                         return 0
                     }
@@ -1221,7 +1221,7 @@ final class DecodeTests: XCTestCase {
         
         do {
             struct Adapter: DecodeValueMappable {
-                static func toInt(paths: [Path], value: JSON) -> Int {
+                static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
                     if paths.current == "[:]gender" {
                         return 0
                     }
@@ -1533,7 +1533,6 @@ final class DecodeTests: XCTestCase {
     }
     
     func testNull() {
-        //        {"hello": null}
         let data: Data = """
         {
         
