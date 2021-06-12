@@ -1,6 +1,6 @@
 import Foundation
 
-struct DecodingUnkeyed: UnkeyedDecodingContainer {
+struct DecodeUnkeyed: UnkeyedDecodingContainer {
     var codingPath: [CodingKey] {
         get { return decoder.codingPath }
         set { decoder.codingPath = newValue }
@@ -36,14 +36,14 @@ struct DecodingUnkeyed: UnkeyedDecodingContainer {
     }
 }
 
-extension DecodingUnkeyed {
+extension DecodeUnkeyed {
     var paths: [Path] {
         get { return self.decoder.wrapper?.paths ?? [] }
         set { self.decoder.wrapper?.paths = newValue }
     }
 }
 
-extension DecodingUnkeyed {
+extension DecodeUnkeyed {
     mutating func decodeNil() throws -> Bool {
         self.paths.push(value: Path.index(by: currentIndex))
         defer { self.paths.pop() }
@@ -157,7 +157,7 @@ extension DecodingUnkeyed {
     }
 }
 
-extension DecodingUnkeyed {
+extension DecodeUnkeyed {
     mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
         codingPath.append(currentKey)
         defer { codingPath.removeLast() }
@@ -169,7 +169,7 @@ extension DecodingUnkeyed {
     }
 }
 
-extension DecodingUnkeyed {
+extension DecodeUnkeyed {
     mutating func superDecoder() throws -> Decoder {
         return InnerDecoder(json: JSON.array(json), at: decoder.codingPath)
     }

@@ -1,6 +1,6 @@
 import Foundation
 
-class EncodingUnkeyed: UnkeyedEncodingContainer {
+class EncodeUnkeyed: UnkeyedEncodingContainer {
     private var storage: [JSONValue] = []
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
@@ -29,33 +29,33 @@ class EncodingUnkeyed: UnkeyedEncodingContainer {
     }
 }
 
-extension EncodingUnkeyed {
+extension EncodeUnkeyed {
     var paths: [Path] {
         get { return self.encoder.wrapper?.paths ?? [] }
         set { self.encoder.wrapper?.paths = newValue }
     }
 }
 
-extension EncodingUnkeyed {
+extension EncodeUnkeyed {
     func encodeNil() throws {
         var container = self.nestedSingleValueContainer()
         try container.encodeNil()
     }
 
     func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-        let container = EncodingUnkeyed(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodeUnkeyed(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return container
     }
 
     private func nestedSingleValueContainer() -> SingleValueEncodingContainer {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return container
     }
 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-        let container = EncodingKeyed<NestedKey>(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodeKeyed<NestedKey>(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return KeyedEncodingContainer(container)
     }
@@ -98,14 +98,14 @@ extension EncodingUnkeyed {
     }
 }
 
-extension EncodingUnkeyed {
+extension EncodeUnkeyed {
     func url(value: Encodable) throws -> Encodable {
         guard let url = value as? URL else { throw Coding.Exception.invalidTransform() }
         return url.absoluteString
     }
 }
 
-extension EncodingUnkeyed {
+extension EncodeUnkeyed {
     func date(value: Encodable) throws -> Encodable {
         guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
         var mapping: Encodable = ""
@@ -131,7 +131,7 @@ extension EncodingUnkeyed {
     }
 }
 
-extension EncodingUnkeyed: JSONValue {
+extension EncodeUnkeyed: JSONValue {
     var jsonValue: JSON {
         let elements: [JSON] = self.storage.map {
             return $0.jsonValue

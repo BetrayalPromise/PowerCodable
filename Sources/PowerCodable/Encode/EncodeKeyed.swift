@@ -30,7 +30,7 @@ fileprivate class Storage<Key: CodingKey> {
     }
 }
 
-struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
+struct EncodeKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
     private(set) var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
     private var storage = Storage<Key>()
@@ -47,16 +47,16 @@ struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
     }
 }
 
-extension EncodingKeyed {
+extension EncodeKeyed {
     var paths: [Path] {
         get { return self.encoder.wrapper?.paths ?? [] }
         set { self.encoder.wrapper?.paths = newValue }
     }
 }
 
-extension EncodingKeyed {
+extension EncodeKeyed {
     mutating func encodeNil(forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -73,7 +73,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Bool, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -90,7 +90,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: String, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -107,7 +107,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Double, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -124,7 +124,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Float, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -141,7 +141,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Int, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -158,7 +158,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Int8, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -175,7 +175,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Int16, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -192,7 +192,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Int32, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -209,7 +209,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: Int64, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -226,7 +226,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: UInt, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -243,7 +243,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: UInt8, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -260,7 +260,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: UInt16, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -277,7 +277,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: UInt32, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -294,7 +294,7 @@ extension EncodingKeyed {
     }
 
     mutating func encode(_ value: UInt64, forKey key: Key) throws {
-        let container = EncodingSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
             self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
             defer { self.paths.pop() }
@@ -465,13 +465,13 @@ extension EncodingKeyed {
     }
 
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-        let container = EncodingKeyed<NestedKey>(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeKeyed<NestedKey>(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
         return KeyedEncodingContainer(container)
     }
 
     mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
-        let container = EncodingUnkeyed(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeUnkeyed(encoder: self.encoder, codingPath: self.codingPath, userInfo: self.userInfo)
         self.storage.append(key: key.stringValue, value: container, encoder: self.encoder)
         return container
     }
@@ -485,14 +485,14 @@ extension EncodingKeyed {
     }
 }
 
-extension EncodingKeyed {
+extension EncodeKeyed {
     func url(value: Encodable) throws -> Encodable {
         guard let url = value as? URL else { throw Coding.Exception.invalidTransform() }
         return url.absoluteString
     }
 }
 
-extension EncodingKeyed {
+extension EncodeKeyed {
     func data(value: Encodable) throws -> Encodable {
         guard let mapping = value as? Data else { throw Coding.Exception.invalidTransform() }
         switch self.encoder.wrapper?.strategy.dataValueMappable ?? .base64 {
@@ -503,7 +503,7 @@ extension EncodingKeyed {
     }
 }
 
-extension EncodingKeyed {
+extension EncodeKeyed {
     func date(value: Encodable) throws -> Encodable {
         guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
         var mapping: Encodable = ""
@@ -529,7 +529,7 @@ extension EncodingKeyed {
     }
 }
 
-extension EncodingKeyed: JSONValue {
+extension EncodeKeyed: JSONValue {
     var jsonValue: JSON {
         let elements: [String: JSON] = self.storage.elements.map {
             return ($0.0, $0.1.jsonValue)

@@ -1,6 +1,6 @@
 import Foundation
 
-class EncodingSingleValue: SingleValueEncodingContainer {
+class EncodeSingleValue: SingleValueEncodingContainer {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
     fileprivate var storage: JSON = .unknow
@@ -13,14 +13,14 @@ class EncodingSingleValue: SingleValueEncodingContainer {
     }
 }
 
-extension EncodingSingleValue {
+extension EncodeSingleValue {
     var paths: [Path] {
         get { return self.encoder.wrapper?.paths ?? [] }
         set { self.encoder.wrapper?.paths = newValue }
     }
 }
 
-extension EncodingSingleValue {
+extension EncodeSingleValue {
     func encodeNil() throws {
         debugPrint(self.storage)
         switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
@@ -228,7 +228,7 @@ extension EncodingSingleValue {
     }
 }
 
-extension EncodingSingleValue: JSONValue {
+extension EncodeSingleValue: JSONValue {
     var jsonValue: JSON {
         return self.storage
     }

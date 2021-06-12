@@ -24,6 +24,57 @@ final class DecodeTests: XCTestCase {
         }
     }
     
+    func testEmptyContainer() {
+        if true {
+            let data0: Data = """
+            []
+            """.data(using: String.Encoding.utf8) ?? Data()
+            do {
+                let model = try decoder.decode(type: [Bool].self, from: data0)
+                XCTAssertEqual(model.count, 0)
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
+        }
+        
+        if true {
+            let data: Data = """
+            {}
+            """.data(using: String.Encoding.utf8) ?? Data()
+            struct A: Codable {
+                let int: Int
+                let int8: Int8
+                let int16: Int16
+                let int32: Int32
+                let int64: Int64
+                let uint: UInt
+                let uint8: UInt8
+                let uint16: UInt16
+                let uint32: UInt32
+                let uint64: UInt64
+                let float: Float
+                let double: Double
+            }
+            do {
+                let model = try decoder.decode(type: A.self, from: data)
+                XCTAssertEqual(model.int, 0)
+                XCTAssertEqual(model.int8, 0)
+                XCTAssertEqual(model.int16, 0)
+                XCTAssertEqual(model.int32, 0)
+                XCTAssertEqual(model.int64, 0)
+                XCTAssertEqual(model.uint, 0)
+                XCTAssertEqual(model.uint8, 0)
+                XCTAssertEqual(model.uint16, 0)
+                XCTAssertEqual(model.uint32, 0)
+                XCTAssertEqual(model.uint64, 0)
+                XCTAssertEqual(model.float, 0)
+                XCTAssertEqual(model.double, 0)
+            } catch {
+                XCTAssertNil(error, error.localizedDescription)
+            }
+        }
+    }
+    
     func testBool() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}, "", "dfadfad"]
@@ -53,7 +104,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[20], false)
             XCTAssertEqual(model[22], false)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -85,7 +136,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], false)
             XCTAssertEqual(model[20], false)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -117,7 +168,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -149,7 +200,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -181,7 +232,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -213,7 +264,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -245,7 +296,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -277,7 +328,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -309,7 +360,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -341,7 +392,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -373,7 +424,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -405,7 +456,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -469,7 +520,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -501,7 +552,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -533,7 +584,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -565,7 +616,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -597,7 +648,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -630,7 +681,7 @@ final class DecodeTests: XCTestCase {
                 XCTAssertEqual(model[19], 0)
                 XCTAssertEqual(model[20], 0)
             } catch {
-                XCTFail("error")
+                XCTFail(error.localizedDescription)
             }
         }
     }
@@ -663,7 +714,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -695,7 +746,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -727,7 +778,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -759,7 +810,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -791,7 +842,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -824,7 +875,7 @@ final class DecodeTests: XCTestCase {
                 XCTAssertEqual(model[19], 0)
                 XCTAssertEqual(model[20], 0)
             } catch {
-                XCTFail("error")
+                XCTFail(error.localizedDescription)
             }
         }
     }
@@ -857,7 +908,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], 0)
             XCTAssertEqual(model[20], 0)
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -890,7 +941,7 @@ final class DecodeTests: XCTestCase {
                 XCTAssertEqual(model[19], "[:]")
                 XCTAssertEqual(model[20], "[:]")
             } catch {
-                XCTFail("error")
+                XCTFail(error.localizedDescription)
             }
         }
         
@@ -924,22 +975,11 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model[19], "[:]")
             XCTAssertEqual(model[20], "[:]")
         } catch {
-            XCTFail("error")
+            XCTFail(error.localizedDescription)
         }
     }
     
     func testArray() {
-        do {
-            let data: Data = """
-                []
-            """.data(using: String.Encoding.utf8) ?? Data()
-            do {
-                let model = try decoder.decode(type: [Bool].self, from: data) 
-                XCTAssertEqual(model.count, 0)
-            } catch {
-                XCTAssertNil(error, error.localizedDescription)
-            }
-        }
         do {
             struct Root: Codable {
                 var abc: String?
@@ -1113,7 +1153,7 @@ final class DecodeTests: XCTestCase {
         
         do {
             struct Adapter: DecodeValueMappable {
-                func toInt(paths: [Path], value: JSON) -> Int {
+                static func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" && value.isInt$ && value.int$ == 4 {
                         return 0
                     }
@@ -1149,7 +1189,7 @@ final class DecodeTests: XCTestCase {
         }
         do {
             struct Adapter: DecodeValueMappable {
-                func toInt(paths: [Path], value: JSON) -> Int {
+                static func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" {
                         return 0
                     }
@@ -1181,7 +1221,7 @@ final class DecodeTests: XCTestCase {
         
         do {
             struct Adapter: DecodeValueMappable {
-                func toInt(paths: [Path], value: JSON) -> Int {
+                static func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" {
                         return 0
                     }

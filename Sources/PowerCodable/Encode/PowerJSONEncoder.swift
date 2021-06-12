@@ -81,19 +81,19 @@ class InnerEncoder: Encoder {
     }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
-        let container = EncodingKeyed<Key>(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeKeyed<Key>(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return KeyedEncodingContainer(container)
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
-        let container = EncodingUnkeyed(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeUnkeyed(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
-        let container = EncodingSingleValue(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
     }
