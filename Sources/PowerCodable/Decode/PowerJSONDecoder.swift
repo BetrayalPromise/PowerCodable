@@ -106,7 +106,7 @@ extension InnerDecoder {
     }
 }
 
-extension InnerDecoder: DecodingValueMappable {}
+extension InnerDecoder: DecodeValueMapping {}
 
 // MARK: - Keyed和Unkeyed解码
 extension InnerDecoder {

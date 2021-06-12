@@ -148,7 +148,7 @@ extension PowerJSONEncoder {
             case .array(let elements):
                 try writeJSONArray(elements: elements)
             case .object(let object):
-                try writeJSONObject(object: object.toJSONTuples())
+                try writeJSONObject(object: object.toPowerTuples())
                 break
             default:
                 try writeJSONPrimitive(value: topLevel)
@@ -213,7 +213,7 @@ extension PowerJSONEncoder {
             case .array(let array):
                 try writeJSONArray(elements: array)
             case .object(let object):
-                try writeJSONObject(object: object.toJSONTuples())
+                try writeJSONObject(object: object.toPowerTuples())
             case .unknow:
                 throw Coding.Exception.invalidUnknow()
             }
@@ -271,7 +271,7 @@ extension PowerJSONEncoder {
             return result
         }
 
-        func writeJSONObject(object: [JSONTuples]) throws {
+        func writeJSONObject(object: [PowerTuples]) throws {
             try writer.write("{")
 
             if prettyPrinted {

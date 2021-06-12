@@ -533,7 +533,7 @@ extension EncodingKeyed: JSONValue {
     var jsonValue: JSON {
         let elements: [String: JSON] = self.storage.elements.map {
             return ($0.0, $0.1.jsonValue)
-        }.toJSONObject()
+        }.toPowerObject()
         return .object(elements)
     }
 }

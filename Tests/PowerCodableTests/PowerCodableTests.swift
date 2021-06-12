@@ -1,42 +1,26 @@
 import XCTest
 @testable import PowerCodable
 
-final class PowerCodableDecodeTests: XCTestCase {
+final class DecodeTests: XCTestCase {
     let decoder = PowerJSONDecoder()
     
-    func testNil() {
+    /// 处理null, {}, []
+    func testEmpty() {
         let data: Data = """
-            {"a": null, "b":[]}
+            {"a": null, "b":[], "c": {}}
         """.data(using: String.Encoding.utf8) ?? Data()
-        
         struct A: Decodable {
             let a: Bool
             let b: Bool
+            let c: Bool
         }
-        
-        struct B: Decodable {
-            let a: Bool?
-        }
-        
-        struct Adapter: DecodingValueMappable {
-            func toBool(paths: [Path], value: JSON) -> Bool {
-                return false
-            }
-        }
-        
         do {
-            self.decoder.strategy.enableMappingEmptyValue = true
-            let modelA: A = try decoder.decode(type: A.self, from: data)
-            XCTAssertEqual(modelA.a, false)
-            
-            self.decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
-            defer {
-                self.decoder.strategy.valueMapping = .useDefaultValues
-            }
-            let modelB: B = try decoder.decode(type: B.self, from: data)
-            XCTAssertEqual(modelB.a, false)
+            let model: A = try decoder.decode(type: A.self, from: data)
+            XCTAssertEqual(model.a, false)
+            XCTAssertEqual(model.b, false)
+            XCTAssertEqual(model.c, false)
         } catch {
-            XCTFail("测试失败")
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1128,7 +1112,7 @@ final class PowerCodableDecodeTests: XCTestCase {
         }
         
         do {
-            struct Adapter: DecodingValueMappable {
+            struct Adapter: DecodeValueMapping {
                 func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" && value.isInt$ && value.int$ == 4 {
                         return 0
@@ -1164,7 +1148,7 @@ final class PowerCodableDecodeTests: XCTestCase {
             }
         }
         do {
-            struct Adapter: DecodingValueMappable {
+            struct Adapter: DecodeValueMapping {
                 func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" {
                         return 0
@@ -1196,7 +1180,7 @@ final class PowerCodableDecodeTests: XCTestCase {
         }
         
         do {
-            struct Adapter: DecodingValueMappable {
+            struct Adapter: DecodeValueMapping {
                 func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" {
                         return 0
@@ -1655,7 +1639,7 @@ final class PowerCodableDecodeTests: XCTestCase {
     }
 }
 
-final class PowerCodableEncodeTests: XCTestCase {
+final class EncodeTests: XCTestCase {
     let encoder = PowerJSONEncoder()
     func testEncode()  {
         struct A : Encodable, EncodingKeyMappable {

@@ -23,7 +23,7 @@ extension PowerJSONDecoder {
         /// 默认处理
         case useDefaultValues
         /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体)
-        case useCustomValues(delegete: DecodingValueMappable)
+        case useCustomValues(delegete: DecodeValueMapping)
     }
 
     /// Data解码策略
