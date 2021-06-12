@@ -1650,7 +1650,12 @@ final class DecodeTests: XCTestCase {
         """#
         do {
             let root: JSON = try PowerJSONDecoder().decode(type: JSON.self, from: jsondoc.data(using: .utf8)!)
-            print(root)
+            XCTAssertEqual(root["imAString"], JSON(stringLiteral: "aString"))
+            XCTAssertEqual(root["imAnInt"], JSON(integerLiteral: 1))
+            XCTAssertEqual(root["imADouble"], JSON(floatLiteral: 0.5))
+            XCTAssertEqual(root["imABool"], JSON(booleanLiteral: true))
+            XCTAssertEqual(root["imAnArray"], JSON(arrayLiteral: 1, 2, "3", false))
+            XCTAssertEqual(root["imAnObject"], JSON(dictionaryLiteral: ("imAnotherString", "anotherString")))
         } catch {
             XCTFail(error.localizedDescription)
         }
