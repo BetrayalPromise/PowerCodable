@@ -23,7 +23,7 @@ extension PowerJSONDecoder {
         /// 默认处理
         case useDefaultValues
         /// delegete指实现DecodingValueConvertible协议(类结构题枚举或者自定义的实体)
-        case useCustomValues(delegete: DecodeValueMapping)
+        case useCustomValues(delegete: DecodeValueMappable)
     }
 
     /// Data解码策略
@@ -56,7 +56,7 @@ extension PowerJSONDecoder {
         case deferredToDate, utc
         /// iso8601时间格式字符串转转Date
         case iso8601
-        /// 根据 valueMapping设定的值
+        /// 根据 valueMappable设定的值
         case custom((Decoder, [Path], DateConvertible) throws -> Date)
     }
 }

@@ -5,17 +5,17 @@ public struct DecodingStrategy {
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     /// 这个策略是指模型的字段在经过策略处理后(snake camel, pascal, upper, lower)该字段会已这种处理后的表现形式在进行解码处理
     /// 例如 模型字段 var stringData: String经过snake处理成为string_data, 经历camel处理成为stringData, 经历pascal处理成为string-data, 经历upper处理成为STRINGDATE, 经历lower处理成为stringdata, 再进行下一步处理. 该策略是全局的会影响所有的字段解析
-    public var keyMapping: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
+    public var keyMappable: PowerJSONDecoder.KeyDecodingStrategy = .useDefaultKeys
     /// 针对一般情况下的值处理
-    public var valueMapping: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
+    public var valueMappable: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
     /// 针对转Data处理
-    public var dataValueMapping: PowerJSONDecoder.DataDecodingStrategy = .useDefaultValues
+    public var dataValueMappable: PowerJSONDecoder.DataDecodingStrategy = .useDefaultValues
     /// 针对转Date处理
-    public var dateValueMapping: PowerJSONDecoder.DateDecodingStrategy = .secondsSince1970(json: .second)
+    public var dateValueMappable: PowerJSONDecoder.DateDecodingStrategy = .secondsSince1970(json: .second)
     /// 针对浮点型值(nan, +infinity, -infinity)处理
-    public var nonConformingFloatValueMapping: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
+    public var nonConformingFloatValueMappable: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
     /// 仅仅针对nil值转为T?的处理,false则不能接受自定义的nil处理,true则接受自定义的nil处理
-    public var enableMappingEmptyValue: Bool = false
+    public var enableMappableEmptyValue: Bool = false
     
     /// 针对树形结构中存在的任意的一个节点开始解码(包含此节点,节点必须也是容器结构,通俗讲就是随便选去一个数组或字典进行解码)
     public var startPaths: [Path]? = nil
@@ -61,7 +61,7 @@ final class InnerDecoder: Decoder {
     var json: JSON
     var currentJSON: JSON
     unowned var wrapper: PowerJSONDecoder?
-    var mappingKeys: [String: [String]]?
+    var MappableKeys: [String: [String]]?
 
     var paths: [Path] {
         get { return self.wrapper?.paths ?? [] }
@@ -106,7 +106,7 @@ extension InnerDecoder {
     }
 }
 
-extension InnerDecoder: DecodeValueMapping {}
+extension InnerDecoder: DecodeValueMappable {}
 
 // MARK: - Keyed和Unkeyed解码
 extension InnerDecoder {
@@ -145,7 +145,7 @@ extension InnerDecoder {
         case let .bool(bool):
             return bool ? 1 : 0
         case let .string(string):
-            switch self.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToZero() {
+            switch self.wrapper?.strategy.nonConformingFloatValueMappable ?? .convertToZero() {
             case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
                     throw Coding.Exception.invalidRule(sets: positiveInfinity, positiveInfinity, negativeInfinity)
@@ -255,8 +255,8 @@ extension InnerDecoder {
     /// - Returns: 返回处理后的模型
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
         currentJSON = object
-        if let type: DecodingKeyMappable.Type = T.self as? DecodingKeyMappable.Type {
-            self.mappingKeys = type.modelDecodingKeys()
+        if let type: DecodeKeyMappable.Type = T.self as? DecodeKeyMappable.Type {
+            self.MappableKeys = type.decodeKeys()
         }
         if T.self == URL.self {
             let container = DecodingSingleValue(decoder: self, json: currentJSON)
@@ -286,11 +286,11 @@ extension InnerDecoder {
     /// - Parameter object: json对象
     /// - Returns: 是否为空
     func unboxNil(object: JSON) -> Bool {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return object == .null
         case .useCustomValues(delegete: _):
-            if (self.wrapper?.strategy.enableMappingEmptyValue ?? false) && object == .null {
+            if (self.wrapper?.strategy.enableMappableEmptyValue ?? false) && object == .null {
                 return false
             } else {
                 return object == .null
@@ -302,7 +302,7 @@ extension InnerDecoder {
 // MARK: - SingleValue解码
 extension InnerDecoder {
     func unbox(object: JSON) throws -> Bool {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toBool(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -311,7 +311,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> Int {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toInt(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -320,7 +320,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> Int8 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toInt8(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -329,7 +329,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> Int16 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toInt16(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -338,7 +338,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> Int32 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toInt32(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -347,7 +347,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> Int64 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toInt64(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -356,7 +356,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> UInt {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toUInt(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -365,7 +365,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> UInt8 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toUInt8(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -374,7 +374,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> UInt16 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toUInt16(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -383,7 +383,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> UInt32 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toUInt32(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -392,7 +392,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> UInt64 {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toUInt64(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -401,7 +401,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> Float {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toFloat(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -410,7 +410,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> Double {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toDouble(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):
@@ -419,7 +419,7 @@ extension InnerDecoder {
     }
 
     func unbox(object: JSON) throws -> String {
-        switch self.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             return try self.toString(paths: self.paths, value: object)
         case .useCustomValues(delegete: let delegate):

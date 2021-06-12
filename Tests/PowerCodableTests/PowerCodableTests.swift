@@ -967,8 +967,8 @@ final class DecodeTests: XCTestCase {
     
     func testDictionary() {
         do {
-            struct Root: Codable, DecodingKeyMappable {
-                static func modelDecodingKeys() -> [String: [String]] {
+            struct Root: Codable, DecodeKeyMappable {
+                static func decodeKeys() -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
                 let info: Bool
@@ -1084,7 +1084,7 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-    func testMapping() {
+    func testMappable() {
         do {
             struct A: Codable {
                 var a: [B?]
@@ -1112,7 +1112,7 @@ final class DecodeTests: XCTestCase {
         }
         
         do {
-            struct Adapter: DecodeValueMapping {
+            struct Adapter: DecodeValueMappable {
                 func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" && value.isInt$ && value.int$ == 4 {
                         return 0
@@ -1139,7 +1139,7 @@ final class DecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueMappable = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1148,7 +1148,7 @@ final class DecodeTests: XCTestCase {
             }
         }
         do {
-            struct Adapter: DecodeValueMapping {
+            struct Adapter: DecodeValueMappable {
                 func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" {
                         return 0
@@ -1170,7 +1170,7 @@ final class DecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueMappable = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1180,7 +1180,7 @@ final class DecodeTests: XCTestCase {
         }
         
         do {
-            struct Adapter: DecodeValueMapping {
+            struct Adapter: DecodeValueMappable {
                 func toInt(paths: [Path], value: JSON) -> Int {
                     if paths.current == "[:]gender" {
                         return 0
@@ -1212,7 +1212,7 @@ final class DecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueMapping = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueMappable = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1352,10 +1352,10 @@ final class DecodeTests: XCTestCase {
             "baidubaibaidu": "http://192.168.0.103"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        struct Root :Codable, DecodingKeyMappable {
+        struct Root :Codable, DecodeKeyMappable {
             let baidu: URL
             
-            static func modelDecodingKeys() -> [String: [String]] {
+            static func decodeKeys() -> [String: [String]] {
                 return ["baidu": ["baidubaibaidu", "baidu"]]
             }
         }
@@ -1522,7 +1522,7 @@ final class DecodeTests: XCTestCase {
             struct Root: Codable {
                 let date : Date
             }
-            self.decoder.strategy.dateValueMapping = .custom({ (decoder, paths, value) -> Date in
+            self.decoder.strategy.dateValueMappable = .custom({ (decoder, paths, value) -> Date in
                 return Date()
             })
             let model: Root = try decoder.decode(type: Root.self, from: data)
@@ -1541,7 +1541,7 @@ final class DecodeTests: XCTestCase {
         print(string.toDate())
     }
     
-    func testKeyMapping() {
+    func testKeyMappable() {
         //        print("abcAbcAbcAbcAbc".toCamelCase())
         //        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
         //        print("abcAbcAbcAbcAbc".toSnakeCase())
@@ -1553,9 +1553,9 @@ final class DecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.keyMapping = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.keyMappable = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.strategy.keyMapping = .useDefaultKeys
+            self.decoder.strategy.keyMappable = .useDefaultKeys
         }
         do {
             struct Root: Codable {
@@ -1642,7 +1642,7 @@ final class DecodeTests: XCTestCase {
 final class EncodeTests: XCTestCase {
     let encoder = PowerJSONEncoder()
     func testEncode()  {
-        struct A : Encodable, EncodingKeyMappable {
+        struct A : Encodable, EncodeKeyMappable {
             var bool: Bool = true
             var int: Int = 0
             var int8: Int8 = 1
@@ -1657,7 +1657,7 @@ final class EncodeTests: XCTestCase {
             var float: Float = 100.0
             var double: Double = 100.0
             var string: String = "ABCD"
-            static func modelEncodingKeys() -> [String: String] {
+            static func encodeKeys() -> [String: String] {
                 return ["string": "hello"]
             }
         }
@@ -1770,9 +1770,9 @@ final class EncodeTests: XCTestCase {
     
     func testURL() {
         do {
-            struct Root: Codable, EncodingKeyMappable {
+            struct Root: Codable, EncodeKeyMappable {
                 var baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
-                static func modelEncodingKeys() -> [String: String] {
+                static func encodeKeys() -> [String: String] {
                     return ["baidu": "google"]
                 }
             }
@@ -1847,9 +1847,9 @@ final class EncodeTests: XCTestCase {
             var boolBool = false
         }
         
-        self.encoder.strategy.keyMapping = .useSnakeKeys(.default)
+        self.encoder.strategy.keyMappable = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keyMapping = .useDefaultKeys
+            self.encoder.strategy.keyMappable = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -1861,10 +1861,10 @@ final class EncodeTests: XCTestCase {
     }
     
     func testValue() {
-        struct A: Encodable, EncodingKeyMappable {
+        struct A: Encodable, EncodeKeyMappable {
             var boolBool = false
             
-            static func modelEncodingKeys() -> [String : String] {
+            static func encodeKeys() -> [String : String] {
                 return ["boolBool": "a"]
             }
             
@@ -1876,9 +1876,9 @@ final class EncodeTests: XCTestCase {
             }
         }
         
-        self.encoder.strategy.keyMapping = .useSnakeKeys(.default)
+        self.encoder.strategy.keyMappable = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keyMapping = .useDefaultKeys
+            self.encoder.strategy.keyMappable = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -1923,7 +1923,7 @@ final class EncodeTests: XCTestCase {
                 let a: Data = Data(hexString: "0x234223423")
             }
             do {
-                encoder.strategy.dataValueMapping = .base64
+                encoder.strategy.dataValueMappable = .base64
                 let json = try encoder.encode(value: A(), to: JSON.self)
                 /// Data本质上就是二进制的数组
                 XCTAssertNotEqual(json["a"].array$?.count, 0)
@@ -1938,7 +1938,7 @@ final class EncodeTests: XCTestCase {
             let a: Date = Date()
         }
         do {
-            self.encoder.strategy.dateValueMapping = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
+            self.encoder.strategy.dateValueMappable = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
         } catch  {

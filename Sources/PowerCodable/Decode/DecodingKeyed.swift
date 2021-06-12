@@ -25,38 +25,38 @@ class DecodingKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
 
     @inline(__always)
     private func getObject(forKey key: Key) throws -> JSON {
-        var mappingKey: String = ""
-        switch self.decoder.wrapper?.strategy.keyMapping ?? .useDefaultKeys {
+        var MappableKey: String = ""
+        switch self.decoder.wrapper?.strategy.keyMappable ?? .useDefaultKeys {
         case .useDefaultKeys:
-            mappingKey = key.stringValue
+            MappableKey = key.stringValue
         case .useCamelKeys(let c):
-            mappingKey = key.stringValue.toCamelCase(format: c)
+            MappableKey = key.stringValue.toCamelCase(format: c)
         case .useSnakeKeys(let c):
-            mappingKey = key.stringValue.toSnakeCase(format: c)
+            MappableKey = key.stringValue.toSnakeCase(format: c)
         case .usePascalKeys(let c):
-            mappingKey = key.stringValue.toPascalCase(format: c)
+            MappableKey = key.stringValue.toPascalCase(format: c)
         case .useUpperKeys:
-            mappingKey = key.stringValue.toUpperCase()
+            MappableKey = key.stringValue.toUpperCase()
         case .useLowerKeys:
-            mappingKey = key.stringValue.toLowerCase()
+            MappableKey = key.stringValue.toLowerCase()
         case .useCustom(let closure):
-            mappingKey = closure(self.paths).stringValue
+            MappableKey = closure(self.paths).stringValue
         }
-        guard let object = self.json[mappingKey] else {
+        guard let object = self.json[MappableKey] else {
             if self.json.count == 0 {
                 return JSON(dictionaryLiteral: ("", ""))
             } else {
-                if self.decoder.mappingKeys != nil {
-                    for k in self.decoder.mappingKeys?[key.stringValue] ?? [] {
+                if self.decoder.MappableKeys != nil {
+                    for k in self.decoder.MappableKeys?[key.stringValue] ?? [] {
                         switch self.json[k] {
                         case .none: continue
                         case .some(let json): return json
                         }
                     }
-                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement MappingDecodingKeys")
+                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement DecodeKeysMappable")
                     return JSON(dictionaryLiteral: ("", ""))
                 } else {
-                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement MappingDecodingKeys")
+                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement DecodeKeysMappable")
                     return JSON(dictionaryLiteral: ("", ""))
                 }
             }

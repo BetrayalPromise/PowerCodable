@@ -7,7 +7,7 @@ fileprivate class Storage<Key: CodingKey> {
 
     func append(key: String, value: JSONValue, encoder: InnerEncoder) {
         var mappingKey: String = ""
-        switch encoder.strategy.keyMapping {
+        switch encoder.strategy.keyMappable {
         case .useDefaultKeys:
             mappingKey = key
         case .useCamelKeys(let c):
@@ -41,8 +41,8 @@ struct EncodingKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
         self.encoder = encoder
         self.codingPath = codingPath
         self.userInfo = userInfo
-        if let value: EncodingKeyMappable = encoder.value as? EncodingKeyMappable {
-            self.mapping = type(of: value).modelEncodingKeys()
+        if let value: EncodeKeyMappable = encoder.value as? EncodeKeyMappable {
+            self.mapping = type(of: value).encodeKeys()
         }
     }
 }
@@ -495,7 +495,7 @@ extension EncodingKeyed {
 extension EncodingKeyed {
     func data(value: Encodable) throws -> Encodable {
         guard let mapping = value as? Data else { throw Coding.Exception.invalidTransform() }
-        switch self.encoder.wrapper?.strategy.dataValueMapping ?? .base64 {
+        switch self.encoder.wrapper?.strategy.dataValueMappable ?? .base64 {
         case .deferredToData, .hexadecimalArray: return value
         case .base64: return mapping.base64EncodedString()
         case .custom(let closure): return try closure(mapping, self.encoder)
@@ -507,7 +507,7 @@ extension EncodingKeyed {
     func date(value: Encodable) throws -> Encodable {
         guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
         var mapping: Encodable = ""
-        switch self.encoder.wrapper?.strategy.dateValueMapping ?? .utc {
+        switch self.encoder.wrapper?.strategy.dateValueMappable ?? .utc {
         case .deferredToDate, .utc:
             mapping = DateFormatter.utc().string(from: value)
         case .iso8601:

@@ -23,7 +23,7 @@ extension EncodingSingleValue {
 extension EncodingSingleValue {
     func encodeNil() throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Null())
         case .useCustomValues(delegete: let delegete):
@@ -33,7 +33,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: Bool) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
@@ -43,7 +43,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: String) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
@@ -54,7 +54,7 @@ extension EncodingSingleValue {
     func encode(_ value: Double) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloatValueMappable ?? .convertToString() {
             case .throw: throw Coding.Exception.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -73,7 +73,7 @@ extension EncodingSingleValue {
             case .object(let object): self.storage = .object(object); return
             }
         }
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
@@ -84,7 +84,7 @@ extension EncodingSingleValue {
     func encode(_ value: Float) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloatValueMapping ?? .convertToString() {
+            switch self.encoder.wrapper?.strategy.nonConformingFloatValueMappable ?? .convertToString() {
             case .throw: throw Coding.Exception.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -103,7 +103,7 @@ extension EncodingSingleValue {
             case .object(let object): self.storage = .object(object); return
             }
         }
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Double(value))
         case .useCustomValues(delegete: let delegete):
@@ -113,7 +113,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: Int) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -123,7 +123,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: Int8) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -133,7 +133,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: Int16) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -143,7 +143,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: Int32) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -153,7 +153,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: Int64) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
@@ -163,7 +163,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: UInt) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -173,7 +173,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: UInt8) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -183,7 +183,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: UInt16) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -193,7 +193,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: UInt32) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
@@ -203,7 +203,7 @@ extension EncodingSingleValue {
 
     func encode(_ value: UInt64) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+        switch self.encoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
         case .useDefaultValues:
             self.storage = self.encoder.toJSON(paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):

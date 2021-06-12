@@ -36,19 +36,19 @@ extension Array: DateConvertible where Element == JSON {}
 extension Dictionary: DateConvertible where Key == String, Value == JSON {}
 
 // MARK: - 解码key转化协议
-public protocol DecodingKeyMappable {
+public protocol DecodeKeyMappable {
     /// 可接受的keys
-    static func modelDecodingKeys() -> [String: [String]]
+    static func decodeKeys() -> [String: [String]]
 }
 
-extension DecodingKeyMappable {
-    static func modelDecodingKeys() -> [String: [String]] {
+extension DecodeKeyMappable {
+    static func decodeKeys() -> [String: [String]] {
         return ["": []]
     }
 }
 
 // MARK: - 解码value转化协议
-public protocol DecodeValueMapping {
+public protocol DecodeValueMappable {
     // MARK: - Bool
     func toBool(paths: [Path], value: JSON) throws -> Bool
 
@@ -102,7 +102,7 @@ public protocol DecodeValueMapping {
 }
 
 // MARK: - BOOL
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toBool(paths: [Path], value: JSON) throws -> Bool {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -118,7 +118,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - INT
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toInt(paths: [Path], value: JSON) throws -> Int {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -134,7 +134,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - INT8
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toInt8(paths: [Path], value: JSON) throws -> Int8 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -150,7 +150,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - INT16
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toInt16(paths: [Path], value: JSON) throws -> Int16 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -166,7 +166,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - INT32
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toInt32(paths: [Path], value: JSON) throws -> Int32 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -182,7 +182,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - INT64
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toInt64(paths: [Path], value: JSON) throws -> Int64 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -198,7 +198,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - UINT
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toUInt(paths: [Path], value: JSON) throws -> UInt {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -214,7 +214,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - UInt8
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toUInt8(paths: [Path], value: JSON) throws -> UInt8 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -230,7 +230,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - UInt16
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toUInt16(paths: [Path], value: JSON) throws -> UInt16 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -246,7 +246,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - UInt32
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toUInt32(paths: [Path], value: JSON) throws -> UInt32 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -262,7 +262,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - UInt64
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toUInt64(paths: [Path], value: JSON) throws -> UInt64 {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -278,7 +278,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - Float
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toFloat(paths: [Path], value: JSON) throws -> Float {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -294,7 +294,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - Double
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toDouble(paths: [Path], value: JSON) throws -> Double {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -310,7 +310,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - String
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toString(paths: [Path], value: JSON) throws -> String {
         switch value {
         case .unknow: throw Coding.Exception.invalidUnknow()
@@ -326,7 +326,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - Data
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toData(paths: [Path], value: JSON) throws -> Data {
         guard let decoder: InnerDecoder = self as? InnerDecoder else { return BoxData(json: value).data }
         switch value {
@@ -334,7 +334,7 @@ extension DecodeValueMapping {
         case .null: return BoxData(json: value).data
         case .bool(_): return BoxData(json: value).data
         case .integer(let integer):
-            switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+            switch decoder.wrapper?.strategy.dataValueMappable ?? .useDefaultValues {
             case .base64:
                 return integer.toData()?.base64EncodedData() ?? BoxData(json: value).data.base64EncodedData()
             case .deferredToData:
@@ -353,7 +353,7 @@ extension DecodeValueMapping {
                 }
             }
         case .double(let double):
-            switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+            switch decoder.wrapper?.strategy.dataValueMappable ?? .useDefaultValues {
             case .base64:
                 return double.toData()?.base64EncodedData() ?? BoxData(json: value).data.base64EncodedData()
             case .useDefaultValues:
@@ -372,7 +372,7 @@ extension DecodeValueMapping {
                 return Data(bytes: &value, count: size)
             }
         case .string(let string):
-            switch decoder.wrapper?.strategy.dataValueMapping ?? .useDefaultValues {
+            switch decoder.wrapper?.strategy.dataValueMappable ?? .useDefaultValues {
             case .base64:
                 return string.toData()?.base64EncodedData() ?? BoxData(json: value).data.base64EncodedData()
             case .useDefaultValues:
@@ -397,7 +397,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - URL
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toURL(paths: [Path], value: JSON) throws -> URL {
         switch value {
         case .unknow: throw Coding.Exception.invalidTransform()
@@ -418,7 +418,7 @@ extension DecodeValueMapping {
 }
 
 // MARK: - Date
-extension DecodeValueMapping {
+extension DecodeValueMappable {
     func toDate(paths: [Path], value: JSON) throws -> Date {
         guard let decoder: InnerDecoder = self as? InnerDecoder else { return BoxDate(json: value).date }
         switch value {
@@ -426,7 +426,7 @@ extension DecodeValueMapping {
         case .null: return BoxDate(json: value).date
         case .bool(_): return BoxDate(json: value).date
         case .integer(let integer):
-            switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+            switch decoder.wrapper?.strategy.dateValueMappable ?? .secondsSince1970(json: .second) {
             case .custom(let closure):
                 do {
                     return try closure(decoder, decoder.paths, value)
@@ -457,7 +457,7 @@ extension DecodeValueMapping {
                 return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
             }
         case .double(let double):
-            switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+            switch decoder.wrapper?.strategy.dateValueMappable ?? .secondsSince1970(json: .second) {
             case .custom(let closure):
                 do {
                     return try closure(decoder, decoder.paths, value)
@@ -484,7 +484,7 @@ extension DecodeValueMapping {
                 return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
             }
         case .string(let string):
-            switch decoder.wrapper?.strategy.dateValueMapping ?? .secondsSince1970(json: .second) {
+            switch decoder.wrapper?.strategy.dateValueMappable ?? .secondsSince1970(json: .second) {
             case .custom(let closure):
                 do {
                     return try closure(decoder, decoder.paths, value)
@@ -521,14 +521,14 @@ extension DecodeValueMapping {
 }
 
 // MARK: - 编码key转化协议
-public protocol EncodingKeyMappable {
+public protocol EncodeKeyMappable {
     /// 可转变的keys
     /// /// 优先级是策略中最高的 如果制定了编码器的Key策略,同时也实现了该协议,最终是该协议生效而不是设置编码器Key的生效
-    static func modelEncodingKeys() -> [String: String]
+    static func encodeKeys() -> [String: String]
 }
 
-extension EncodingKeyMappable {
-    static func modelEncodingKeys() -> [String: String] {
+extension EncodeKeyMappable {
+    static func encodeKeys() -> [String: String] {
         return ["": ""]
     }
 }

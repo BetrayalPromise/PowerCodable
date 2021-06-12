@@ -101,30 +101,30 @@ extension DecodingSingleValue {
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         debugPrint(self.json)
         if type == URL.self {
-            switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            switch self.decoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
             case .useDefaultValues: return try self.decoder.toURL(paths: self.paths, value: self.json) as! T
             case .useCustomValues(delegete: let delegate):
-                if (self.decoder.wrapper?.strategy.enableMappingEmptyValue ?? false) && self.json == .null {
+                if (self.decoder.wrapper?.strategy.enableMappableEmptyValue ?? false) && self.json == .null {
                     return try delegate.toURL(paths: self.paths, value: self.json) as! T
                 } else {
                     return try self.decoder.toURL(paths: self.paths, value: self.json) as! T
                 }
             }
         } else if type == Date.self {
-            switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            switch self.decoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
             case .useDefaultValues: return try self.decoder.toDate(paths: self.paths, value: self.json) as! T
             case .useCustomValues(delegete: let delegate):
-                if (self.decoder.wrapper?.strategy.enableMappingEmptyValue ?? false) && self.json == .null {
+                if (self.decoder.wrapper?.strategy.enableMappableEmptyValue ?? false) && self.json == .null {
                     return try delegate.toDate(paths: self.paths, value: self.json) as! T
                 } else {
                     return try self.decoder.toDate(paths: self.paths, value: self.json) as! T
                 }
             }
         } else if type == Data.self {
-            switch self.decoder.wrapper?.strategy.valueMapping ?? .useDefaultValues {
+            switch self.decoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
             case .useDefaultValues: return try self.decoder.toData(paths: self.paths, value: self.json) as! T
             case .useCustomValues(delegete: let delegate):
-                if (self.decoder.wrapper?.strategy.enableMappingEmptyValue ?? false) && self.json == .null {
+                if (self.decoder.wrapper?.strategy.enableMappableEmptyValue ?? false) && self.json == .null {
                     return try delegate.toData(paths: self.paths, value: self.json) as! T
                 } else {
                     return try self.decoder.toData(paths: self.paths, value: self.json) as! T
