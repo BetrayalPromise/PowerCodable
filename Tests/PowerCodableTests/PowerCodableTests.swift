@@ -13,7 +13,7 @@ final class DecodeTests: XCTestCase {
             let a: Bool
             let b: Bool
             let c: Bool
-            static func modelFieldAbsorbFields() -> [String : [String]] {
+            static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                 return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
             }
         }
@@ -982,6 +982,69 @@ final class DecodeTests: XCTestCase {
         }
     }
     
+    func testInfinityAndNonentity() {
+        struct Numbers: Codable {
+            let a: Float
+            let b: Double
+            let c: Float
+            let d: Double
+            let e: Float
+            let f: Double
+            let g: Float
+            let h: Double
+            
+            let i: Float
+            let j: Float
+            let k: Float
+            
+            let l: Double
+            let m: Double
+            let n: Double
+        }
+        let data: Data = """
+        {
+          "a": "nan",
+          "b": "Nan",
+          "c": "nAn",
+          "d": "naN",
+          "e": "NAn",
+          "f": "NaN",
+          "g": "nAN",
+          "h": "NAN",
+          "i": "-infinity",
+          "j": "infinity",
+          "k": "+infinity",
+          "l": "-infinity",
+          "m": "infinity",
+          "n": "+infInitY"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        
+        do {
+            let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
+            XCTAssertEqual(json.a.isNaN, true)
+            XCTAssertEqual(json.b.isNaN, true)
+            XCTAssertEqual(json.c.isNaN, true)
+            XCTAssertEqual(json.d.isNaN, true)
+            XCTAssertEqual(json.e.isNaN, true)
+            XCTAssertEqual(json.f.isNaN, true)
+            XCTAssertEqual(json.g.isNaN, true)
+            XCTAssertEqual(json.h.isNaN, true)
+            XCTAssertEqual(json.i, -Float.infinity)
+            XCTAssertEqual(json.j, Float.infinity)
+            XCTAssertEqual(json.k, Float.infinity)
+            XCTAssertEqual(json.l, -Double.infinity)
+            XCTAssertEqual(json.m, Double.infinity)
+            XCTAssertEqual(json.n, Double.infinity)
+            
+            XCTAssertTrue(json.l.isInfinite)
+            XCTAssertTrue(json.m.isInfinite)
+            XCTAssertTrue(json.n.isInfinite)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
     func testArray() {
         do {
             struct Root: Codable {
@@ -1011,7 +1074,7 @@ final class DecodeTests: XCTestCase {
     func testDictionary() {
         do {
             struct Root: Codable, DecodeKeyMappable {
-                static func modelFieldAbsorbFields() -> [String: [String]] {
+                static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
                 let info: Bool
@@ -1071,63 +1134,455 @@ final class DecodeTests: XCTestCase {
     //        }
     //    }
     
-    func testWrapperIgnore() {
+    func testNested0() {
         do {
-            let data: Data = #"""
-                {
-                    "name": "abc",
-                    "info": "info",
-                    "data": "datat"
+            let data: Data = """
+                {"a": [{"b": [{"c": [{"d": [{"c": "over"}]}]}]}]}
+            """.data(using: String.Encoding.utf8) ?? Data()
+            struct Root: Codable {
+                struct a: Codable {
+                    struct b: Codable {
+                        struct c: Codable {
+                            struct d: Codable {
+                                let c: String
+                            }
+                            let d: [d]
+                        }
+                        let c: [c]
+                    }
+                    let b: [b]
                 }
-            """#.data(using: String.Encoding.utf8) ?? Data()
-            
-            struct Information: Codable {
-                @Decoding.IgnoreNonoptional()
-                var name: String = "10JQKA"
-                @Decoding.IgnoreOptional()
-                var info: String? = nil
-                var data: String? = nil
+                let a: [a]
             }
             do {
-                let model = try decoder.decode(type: Information.self, from: data)
-                XCTAssertEqual(model.name, "10JQKA")
-                XCTAssertEqual(model.info, nil)
-                print(model.data ?? "")
+                let model: Root? = try decoder.decode(type: Root.self, from: data)
+                XCTAssertEqual(model?.a[0].b[0].c[0].d[0].c, "over")
             } catch {
-                XCTFail()
-            }
-        }
-        do {
-            let data: Data = #"""
-                {
-                    "name0": 0,
-                    "name1": 1,
-                    "name2": 2,
-                    "name3": 3
-                }
-            """#.data(using: String.Encoding.utf8) ?? Data()
-            
-            struct Information: Decodable {
-                @Default(value: "name0")
-                var name0: String
-                @Default(value: "name1")
-                var name1: String
-                @Default(value: nil)
-                var name2: Bool?
-                @Default(value: true)
-                var name3: Bool
-            }
-            let decoder = JSONDecoder()
-            do {
-                let model = try decoder.decode(Information.self, from: data)
-                print(model)
-            } catch {
-                XCTFail()
+                XCTFail(error.localizedDescription)
             }
         }
     }
     
-    func testMappable() {
+//    func testNested1() {
+//        class Person: Codable {
+//            var name: String = ""
+//            var parent: Person?
+//        }
+//
+//        let json: [String: Any] = [
+//            "name": "0",
+//            "parent": ["name": "1"]
+//        ]
+//        do {
+//            let model: Person = try self.decoder.decode(type: Person.self, from: json)
+//            XCTAssertEqual(model.name, "0")
+//            XCTAssertEqual(model.parent?.name, "1")
+//        } catch {
+//            XCTFail(error.localizedDescription)
+//        }
+//    }
+    
+    func testParadigm() {
+        struct NetResponse<Element: Codable>: Codable {
+            var data: Element? = nil
+            var msg: String = ""
+            private(set) var code: Int = 0
+        }
+        
+        struct User: Codable {
+            var id: String = ""
+            var nickName: String = ""
+        }
+        
+        struct Goods: Codable {
+            private(set) var price: CGFloat = 0.0
+            var name: String = ""
+        }
+        
+        do {
+            let json = """
+            {
+                "data": {"nickName": "KaKa", "id": 213234234},
+                "msg": "Success",
+                "code" : 200
+            }
+            """
+            let model: NetResponse<User> = try self.decoder.decode(type: NetResponse<User>.self, from: json)
+            XCTAssert(model.msg == "Success")
+            XCTAssert(model.code == 200)
+            XCTAssert(model.data?.nickName == "KaKa")
+            XCTAssert(model.data?.id == "213234234")
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        do {
+            let json = """
+            {
+                "data": [
+                    {"price": "6199", "name": "iPhone XR"},
+                    {"price": "8199", "name": "iPhone XS"},
+                    {"price": "9099", "name": "iPhone Max"}
+                ],
+                "msg": "Success",
+                "code" : 200
+            }
+            """
+            let model: NetResponse<[Goods]> = try self.decoder.decode(type: NetResponse<[Goods]>.self, from: json)
+            XCTAssert(model.msg == "Success")
+            XCTAssert(model.code == 200)
+            XCTAssert(model.data?.count == 3)
+            XCTAssert(model.data?[0].price == 6199)
+            XCTAssert(model.data?[0].name == "iPhone XR")
+            XCTAssert(model.data?[1].price == 8199)
+            XCTAssert(model.data?[1].name == "iPhone XS")
+            XCTAssert(model.data?[2].price == 9099)
+            XCTAssert(model.data?[2].name == "iPhone Max")
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testURL() {
+        let data: Data = """
+        {
+            "baidubaibaidu": "http://192.168.0.103"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        struct Root :Codable, DecodeKeyMappable {
+            let baidu: URL
+            
+            static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                return ["baidu": ["baidubaibaidu", "baidu"]]
+            }
+        }
+        do {
+            let model: Root = try decoder.decode(type: Root.self, from: data)
+            XCTAssertEqual(model.baidu.absoluteString, "http://192.168.0.103")
+            print(model.baidu)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testType() {
+        /// Data -> Decodable
+        do {
+            let data: Data = """
+                [false, true]
+            """.data(using: String.Encoding.utf8) ?? Data()
+            let json = try decoder.decode(type: [Bool].self, from: data)
+            print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        /// String -> Decodable
+        do {
+            let string: String = """
+                [false, true]
+            """
+            let json = try decoder.decode(type: [Bool].self, from: string)
+            print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        /// JSON -> Decodable
+        do {
+            let root = JSON(array: [.bool(false), .bool(true)])
+            let json = try decoder.decode(type: [Bool].self, from: root)
+            print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        /// JSON -> Decodable
+        do {
+            let root = JSON(array: [.bool(false), .bool(true)])
+            let json = try decoder.decode(type: [Bool].self, from: root)
+            print(json)
+            XCTAssertEqual(json[0], false)
+            XCTAssertEqual(json[1], true)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        /// JSONWrapper -> Decodable
+        do {
+            let root = JSONWrapper(wrapper: [true, false])
+            let json = try decoder.decode(type: [Bool].self, from: root)
+            XCTAssertEqual(json[0], true)
+            XCTAssertEqual(json[1], false)
+            print(json)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testDate() {
+        //        1603782840000
+        let data: Data = """
+        {
+            "date": "1603782840123"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        do {
+            struct Root: Codable {
+                let date : Date
+            }
+            self.decoder.strategy.dateValueMappable = .custom({ (decoder, paths, value) -> Date in
+                return Date()
+            })
+            let model: Root = try decoder.decode(type: Root.self, from: data)
+            print(model)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        let now = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        print(now.formatted(format:  "%y|%Y|%m|%d|%I|%H|%M|%S|%w|%z|%Z") ?? "")
+        
+        let string = "1603539281"
+        print(string.toDate())
+    }
+    
+//    func testKeyDelegateMappable() {
+//        // 全部字段不符合模型定义
+//        do {
+//            struct Adapter: DecodeKeyMappable {
+//                static func modelFieldAbsorbFields() -> [String : [String]] {
+//                    
+//                }
+//            }
+//            
+//            let data: Data = """
+//            {
+//                "a0": "a",
+//                "b0": "b",
+//                "c0": {
+//                    "c0": "c",
+//                    "d0": "d",
+//                    "e0": {
+//                        "e0": "e",
+//                        "f0": "f",
+//                        "g0": "g"
+//                    }
+//                }
+//            }
+//            """.data(using: String.Encoding.utf8) ?? Data()
+//            do {
+//                struct Root : Codable, DecodeKeyMappable {
+//                    let a : String?
+//                    let b : String?
+//                    let c : C?
+//                    
+//                    static func modelFieldAbsorbFields() -> [String: [String]] {
+//                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
+//                    }
+//                }
+//                struct C : Codable, DecodeKeyMappable {
+//                    let c : String?
+//                    let d : String?
+//                    let e : E?
+//                    
+//                    static func modelFieldAbsorbFields() -> [String: [String]] {
+//                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
+//                    }
+//                }
+//                struct E : Codable, DecodeKeyMappable {
+//                    let f : String?
+//                    let g : String?
+//                    static func modelFieldAbsorbFields() -> [String: [String]] {
+//                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
+//                    }
+//                }
+//                let model = try decoder.decode(type: Root.self, from: data)
+//                XCTAssertEqual(model.a, "a")
+//                XCTAssertEqual(model.b, "b")
+//                XCTAssertEqual(model.c?.c, "c")
+//                XCTAssertEqual(model.c?.d, "d")
+//                XCTAssertEqual(model.c?.e?.f, "f")
+//                XCTAssertEqual(model.c?.e?.g, "g")
+//            } catch {
+//                XCTFail(error.localizedDescription)
+//            }
+//        }
+//    }
+    
+    func testKeyFormatMappable() {
+        let data: Data = """
+        {
+            "string_data": "string"
+        }
+        """.data(using: String.Encoding.utf8) ?? Data()
+        self.decoder.strategy.keyMappable = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        defer {
+            self.decoder.strategy.keyMappable = .useDefaultKeys
+        }
+        do {
+            struct Root: Codable {
+                let stringData: String
+            }
+            let json = try decoder.decode(type: Root.self, from: data)
+            print(json)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testKeyCustomMappable() {
+        // 全部字段不符合模型定义
+        do {
+            let data: Data = """
+            {
+                "a0": "a",
+                "b0": "b",
+                "c0": {
+                    "c0": "c",
+                    "d0": "d",
+                    "e0": {
+                        "e0": "e",
+                        "f0": "f",
+                        "g0": "g"
+                    }
+                }
+            }
+            """.data(using: String.Encoding.utf8) ?? Data()
+            do {
+                struct Root : Codable, DecodeKeyMappable {
+                    let a : String?
+                    let b : String?
+                    let c : C?
+                    
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
+                    }
+                }
+                struct C : Codable, DecodeKeyMappable {
+                    let c : String?
+                    let d : String?
+                    let e : E?
+                    
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
+                    }
+                }
+                struct E : Codable, DecodeKeyMappable {
+                    let f : String?
+                    let g : String?
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
+                    }
+                }
+                let model = try decoder.decode(type: Root.self, from: data)
+                XCTAssertEqual(model.a, "a")
+                XCTAssertEqual(model.b, "b")
+                XCTAssertEqual(model.c?.c, "c")
+                XCTAssertEqual(model.c?.d, "d")
+                XCTAssertEqual(model.c?.e?.f, "f")
+                XCTAssertEqual(model.c?.e?.g, "g")
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+        
+        // 部分字段不符合模型定义
+        do {
+            let data: Data = """
+            {
+                "a0": "a",
+                "b": "b",
+                "c0": {
+                    "c0": "c",
+                    "d": "d",
+                    "e0": {
+                        "e0": "e",
+                        "f": "f",
+                        "g0": "g"
+                    }
+                }
+            }
+            """.data(using: String.Encoding.utf8) ?? Data()
+            do {
+                struct Root : Codable, DecodeKeyMappable {
+                    let a : String?
+                    let b : String?
+                    let c : C?
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
+                    }
+                }
+                struct C : Codable, DecodeKeyMappable {
+                    let c : String?
+                    let d : String?
+                    let e : E?
+                    
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
+                    }
+                }
+                struct E : Codable, DecodeKeyMappable {
+                    let f : String?
+                    let g : String?
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
+                    }
+                }
+                let model = try decoder.decode(type: Root.self, from: data)
+                XCTAssertEqual(model.a, "a")
+                XCTAssertEqual(model.b, "b")
+                XCTAssertEqual(model.c?.c, "c")
+                XCTAssertEqual(model.c?.d, "d")
+                XCTAssertEqual(model.c?.e?.f, "f")
+                XCTAssertEqual(model.c?.e?.g, "g")
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+        
+        do {
+            do {
+                let data: Data = """
+                {
+                    "a0": {"a0": "a", "b": "b"},
+                    "b0": "b"
+                }
+                """.data(using: String.Encoding.utf8) ?? Data()
+                struct Root: Codable, DecodeKeyMappable {
+                    let a: A
+                    let b: String
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["a": ["a", "a0"], "b": ["b", "b0"]]
+                    }
+                }
+                struct A: Codable, DecodeKeyMappable {
+                    let b: String
+                    let a: String
+                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                        return ["a": ["a", "a0"]]
+                    }
+                }
+                let model = try decoder.decode(type: Root.self, from: data)
+                XCTAssertEqual(model.a.a, "a")
+                XCTAssertEqual(model.a.b, "b")
+                XCTAssertEqual(model.b, "b")
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+    }
+    
+    func testValueDelegateMappable() {
         do {
             struct A: Codable {
                 var a: [B?]
@@ -1265,453 +1720,32 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-    func testPath() {
+    func testCustomMappable() {
         let data: Data = """
         {
-            "gender": 3,
-            "name": "3",
-            "age": 4,
-            "hellow": [true, false, "null"]
+            "hello": "hello",
+            "world": "world"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        let json = data.toJSON()
-        let age = json["age"]
-        print(age?.path() ?? "")
-        print(json?.path() ?? "")
-    }
-    
-    func testNested0() {
         do {
-            let data: Data = """
-                {"a": [{"b": [{"c": [{"d": [{"c": "over"}]}]}]}]}
-            """.data(using: String.Encoding.utf8) ?? Data()
-            struct Root: Codable {
-                struct a: Codable {
-                    struct b: Codable {
-                        struct c: Codable {
-                            struct d: Codable {
-                                let c: String
-                            }
-                            let d: [d]
-                        }
-                        let c: [c]
+            struct Root: Codable, DecodeValueMappable {
+                let hello: String
+                let world: String
+                
+                static func toString(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> String {
+                    if paths.current == "[:]hello" {
+                        return "!hello"
+                    } else if paths.current == "[:]world" {
+                        return "world"
                     }
-                    let b: [b]
+                    return ""
                 }
-                let a: [a]
-            }
-            do {
-                let model: Root? = try decoder.decode(type: Root.self, from: data)
-                XCTAssertEqual(model?.a[0].b[0].c[0].d[0].c, "over")
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
-        }
-    }
-    
-//    func testNested1() {
-//        class Person: Codable {
-//            var name: String = ""
-//            var parent: Person?
-//        }
-//
-//        let json: [String: Any] = [
-//            "name": "0",
-//            "parent": ["name": "1"]
-//        ]
-//        do {
-//            let model: Person = try self.decoder.decode(type: Person.self, from: json)
-//            XCTAssertEqual(model.name, "0")
-//            XCTAssertEqual(model.parent?.name, "1")
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-    
-    func testParadigm() {
-        struct NetResponse<Element: Codable>: Codable {
-            var data: Element? = nil
-            var msg: String = ""
-            private(set) var code: Int = 0
-        }
-        
-        struct User: Codable {
-            var id: String = ""
-            var nickName: String = ""
-        }
-        
-        struct Goods: Codable {
-            private(set) var price: CGFloat = 0.0
-            var name: String = ""
-        }
-        
-        do {
-            let json = """
-            {
-                "data": {"nickName": "KaKa", "id": 213234234},
-                "msg": "Success",
-                "code" : 200
-            }
-            """
-            let model: NetResponse<User> = try self.decoder.decode(type: NetResponse<User>.self, from: json)
-            XCTAssert(model.msg == "Success")
-            XCTAssert(model.code == 200)
-            XCTAssert(model.data?.nickName == "KaKa")
-            XCTAssert(model.data?.id == "213234234")
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
-        do {
-            let json = """
-            {
-                "data": [
-                    {"price": "6199", "name": "iPhone XR"},
-                    {"price": "8199", "name": "iPhone XS"},
-                    {"price": "9099", "name": "iPhone Max"}
-                ],
-                "msg": "Success",
-                "code" : 200
-            }
-            """
-            let model: NetResponse<[Goods]> = try self.decoder.decode(type: NetResponse<[Goods]>.self, from: json)
-            XCTAssert(model.msg == "Success")
-            XCTAssert(model.code == 200)
-            XCTAssert(model.data?.count == 3)
-            XCTAssert(model.data?[0].price == 6199)
-            XCTAssert(model.data?[0].name == "iPhone XR")
-            XCTAssert(model.data?[1].price == 8199)
-            XCTAssert(model.data?[1].name == "iPhone XS")
-            XCTAssert(model.data?[2].price == 9099)
-            XCTAssert(model.data?[2].name == "iPhone Max")
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testURL() {
-        let data: Data = """
-        {
-            "baidubaibaidu": "http://192.168.0.103"
-        }
-        """.data(using: String.Encoding.utf8) ?? Data()
-        struct Root :Codable, DecodeKeyMappable {
-            let baidu: URL
-            
-            static func modelFieldAbsorbFields() -> [String: [String]] {
-                return ["baidu": ["baidubaibaidu", "baidu"]]
-            }
-        }
-        do {
-            let model: Root = try decoder.decode(type: Root.self, from: data)
-            XCTAssertEqual(model.baidu.absoluteString, "http://192.168.0.103")
-            print(model.baidu)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testType() {
-        /// Data -> Decodable
-        do {
-            let data: Data = """
-                [false, true]
-            """.data(using: String.Encoding.utf8) ?? Data()
-            let json = try decoder.decode(type: [Bool].self, from: data)
-            print(json)
-            XCTAssertEqual(json[0], false)
-            XCTAssertEqual(json[1], true)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
-        /// String -> Decodable
-        do {
-            let string: String = """
-                [false, true]
-            """
-            let json = try decoder.decode(type: [Bool].self, from: string)
-            print(json)
-            XCTAssertEqual(json[0], false)
-            XCTAssertEqual(json[1], true)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
-        /// JSON -> Decodable
-        do {
-            let root = JSON(array: [.bool(false), .bool(true)])
-            let json = try decoder.decode(type: [Bool].self, from: root)
-            print(json)
-            XCTAssertEqual(json[0], false)
-            XCTAssertEqual(json[1], true)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
-        /// JSON -> Decodable
-        do {
-            let root = JSON(array: [.bool(false), .bool(true)])
-            let json = try decoder.decode(type: [Bool].self, from: root)
-            print(json)
-            XCTAssertEqual(json[0], false)
-            XCTAssertEqual(json[1], true)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
-        /// JSONWrapper -> Decodable
-        do {
-            let root = JSONWrapper(wrapper: [true, false])
-            let json = try decoder.decode(type: [Bool].self, from: root)
-            XCTAssertEqual(json[0], true)
-            XCTAssertEqual(json[1], false)
-            print(json)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testNumber() {
-        struct Numbers: Codable {
-            let a: Float
-            let b: Double
-            let c: Float
-            let d: Double
-            let e: Float
-            let f: Double
-            let g: Float
-            let h: Double
-            
-            let i: Float
-            let j: Float
-            let k: Float
-            
-            let l: Double
-            let m: Double
-            let n: Double
-        }
-        let data: Data = """
-        {
-          "a": "nan",
-          "b": "Nan",
-          "c": "nAn",
-          "d": "naN",
-          "e": "NAn",
-          "f": "NaN",
-          "g": "nAN",
-          "h": "NAN",
-          "i": "-infinity",
-          "j": "infinity",
-          "k": "+infinity",
-          "l": "-infinity",
-          "m": "infinity",
-          "n": "+infInitY"
-        }
-        """.data(using: String.Encoding.utf8) ?? Data()
-        
-        do {
-            let json: Numbers = try decoder.decode(type: Numbers.self, from: data)
-            XCTAssertEqual(json.a.isNaN, true)
-            XCTAssertEqual(json.b.isNaN, true)
-            XCTAssertEqual(json.c.isNaN, true)
-            XCTAssertEqual(json.d.isNaN, true)
-            XCTAssertEqual(json.e.isNaN, true)
-            XCTAssertEqual(json.f.isNaN, true)
-            XCTAssertEqual(json.g.isNaN, true)
-            XCTAssertEqual(json.h.isNaN, true)
-            XCTAssertEqual(json.i, -Float.infinity)
-            XCTAssertEqual(json.j, Float.infinity)
-            XCTAssertEqual(json.k, Float.infinity)
-            XCTAssertEqual(json.l, -Double.infinity)
-            XCTAssertEqual(json.m, Double.infinity)
-            XCTAssertEqual(json.n, Double.infinity)
-            
-            XCTAssertTrue(json.l.isInfinite)
-            XCTAssertTrue(json.m.isInfinite)
-            XCTAssertTrue(json.n.isInfinite)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testNull() {
-        let data: Data = """
-        {
-        
-        }
-        """.data(using: String.Encoding.utf8) ?? Data()
-        do {
-            struct Root: Codable {
-                let hello : String
             }
             let json = try decoder.decode(type: Root.self, from: data)
-            print(json)
-            XCTAssertEqual(json.hello, "[:]")
+            XCTAssertEqual(json.hello, "!hello")
+            XCTAssertEqual(json.world, "world")
         } catch {
             XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testDate() {
-        //        1603782840000
-        let data: Data = """
-        {
-            "date": "1603782840123"
-        }
-        """.data(using: String.Encoding.utf8) ?? Data()
-        do {
-            struct Root: Codable {
-                let date : Date
-            }
-            self.decoder.strategy.dateValueMappable = .custom({ (decoder, paths, value) -> Date in
-                return Date()
-            })
-            let model: Root = try decoder.decode(type: Root.self, from: data)
-            print(model)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-        
-        let now = Date()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        print(now.formatted(format:  "%y|%Y|%m|%d|%I|%H|%M|%S|%w|%z|%Z") ?? "")
-        
-        let string = "1603539281"
-        print(string.toDate())
-    }
-    
-    func testFormatKeyMappable() {
-        let data: Data = """
-        {
-            "string_data": "string"
-        }
-        """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.keyMappable = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
-        defer {
-            self.decoder.strategy.keyMappable = .useDefaultKeys
-        }
-        do {
-            struct Root: Codable {
-                let stringData: String
-            }
-            let json = try decoder.decode(type: Root.self, from: data)
-            print(json)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testKeyMappable() {
-        // 全部字段不符合模型定义
-        do {
-            let data: Data = """
-            {
-                "a0": "a",
-                "b0": "b",
-                "c0": {
-                    "c0": "c",
-                    "d0": "d",
-                    "e0": {
-                        "e0": "e",
-                        "f0": "f",
-                        "g0": "g"
-                    }
-                }
-            }
-            """.data(using: String.Encoding.utf8) ?? Data()
-            do {
-                struct Root : Codable, DecodeKeyMappable {
-                    let a : String?
-                    let b : String?
-                    let c : C?
-                    
-                    static func modelFieldAbsorbFields() -> [String: [String]] {
-                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
-                    }
-                }
-                struct C : Codable, DecodeKeyMappable {
-                    let c : String?
-                    let d : String?
-                    let e : E?
-                    
-                    static func modelFieldAbsorbFields() -> [String: [String]] {
-                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
-                    }
-                }
-                struct E : Codable, DecodeKeyMappable {
-                    let f : String?
-                    let g : String?
-                    static func modelFieldAbsorbFields() -> [String: [String]] {
-                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
-                    }
-                }
-                let model = try decoder.decode(type: Root.self, from: data)
-                XCTAssertEqual(model.a, "a")
-                XCTAssertEqual(model.b, "b")
-                XCTAssertEqual(model.c?.c, "c")
-                XCTAssertEqual(model.c?.d, "d")
-                XCTAssertEqual(model.c?.e?.f, "f")
-                XCTAssertEqual(model.c?.e?.g, "g")
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
-        }
-        
-        // 部分字段不符合模型定义
-        do {
-            let data: Data = """
-            {
-                "a0": "a",
-                "b": "b",
-                "c0": {
-                    "c0": "c",
-                    "d": "d",
-                    "e0": {
-                        "e0": "e",
-                        "f": "f",
-                        "g0": "g"
-                    }
-                }
-            }
-            """.data(using: String.Encoding.utf8) ?? Data()
-            do {
-                struct Root : Codable, DecodeKeyMappable {
-                    let a : String?
-                    let b : String?
-                    let c : C?
-                    static func modelFieldAbsorbFields() -> [String: [String]] {
-                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
-                    }
-                }
-                struct C : Codable, DecodeKeyMappable {
-                    let c : String?
-                    let d : String?
-                    let e : E?
-                    
-                    static func modelFieldAbsorbFields() -> [String: [String]] {
-                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
-                    }
-                }
-                struct E : Codable, DecodeKeyMappable {
-                    let f : String?
-                    let g : String?
-                    static func modelFieldAbsorbFields() -> [String: [String]] {
-                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
-                    }
-                }
-                let model = try decoder.decode(type: Root.self, from: data)
-                XCTAssertEqual(model.a, "a")
-                XCTAssertEqual(model.b, "b")
-                XCTAssertEqual(model.c?.c, "c")
-                XCTAssertEqual(model.c?.d, "d")
-                XCTAssertEqual(model.c?.e?.f, "f")
-                XCTAssertEqual(model.c?.e?.g, "g")
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
         }
     }
     

@@ -37,12 +37,12 @@ extension Dictionary: DateConvertible where Key == String, Value == JSON {}
 
 // MARK: - 解码key转化协议
 public protocol DecodeKeyMappable {
-    /// json转化为model时候, model 可以接受的json字段结合
-    static func modelFieldAbsorbFields() -> [String: [String]]
+    /// json转化为model时候, model可以接受的json字段结合
+    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]]
 }
 
 extension DecodeKeyMappable {
-    static func modelFieldAbsorbFields() -> [String: [String]] {
+    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
         return ["": []]
     }
 }

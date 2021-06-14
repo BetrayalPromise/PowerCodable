@@ -46,8 +46,8 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
             if self.json.count == 0 {
                 return JSON(dictionaryLiteral: ("", ""))
             } else {
-                if self.decoder.keys.last != nil {
-                    for k in self.decoder.keys.last?[key.stringValue] ?? [] {
+                if self.decoder.keysStore.last != nil {
+                    for k in self.decoder.keysStore.last?[key.stringValue] ?? [] {
                         switch self.json[k] {
                         case .none: continue
                         case .some(let json): return json
