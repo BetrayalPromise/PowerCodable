@@ -13,7 +13,7 @@ final class DecodeTests: XCTestCase {
             let a: Bool
             let b: Bool
             let c: Bool
-            static func moodelToKeys() -> [String: [String]] {
+            static func modelFieldAbsorbFields() -> [String : [String]] {
                 return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
             }
         }
@@ -36,7 +36,7 @@ final class DecodeTests: XCTestCase {
                 let model = try decoder.decode(type: [Bool].self, from: data0)
                 XCTAssertEqual(model.count, 0)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         
@@ -73,7 +73,7 @@ final class DecodeTests: XCTestCase {
                 XCTAssertEqual(model.float, 0)
                 XCTAssertEqual(model.double, 0)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
     }
@@ -995,7 +995,7 @@ final class DecodeTests: XCTestCase {
                 let model = try decoder.decode(type: Root.self, from: data)
                 XCTAssertEqual(model.info?.count, 0)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         
@@ -1004,7 +1004,7 @@ final class DecodeTests: XCTestCase {
             let model: [Int8] = try decoder.decode(type: [Int8].self, from: json)
             print(model)
         } catch {
-            XCTAssertNil(error)
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1024,7 +1024,7 @@ final class DecodeTests: XCTestCase {
                 let model = try decoder.decode(type: Root.self, from: data)
                 XCTAssertEqual(model.info, true)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         
@@ -1048,7 +1048,7 @@ final class DecodeTests: XCTestCase {
                 let model: Root? = try decoder.decode(type: Root.self, from: data)
                 XCTAssert(model?.key?.key?.key == "key")
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
     }
@@ -1067,7 +1067,7 @@ final class DecodeTests: XCTestCase {
     //            let model: Person? = try decoder.decode(type: Person.self, from: json)
     //            print(model)
     //        } catch {
-    //            XCTAssertNil(error)
+    //            XCTFail(error)
     //        }
     //    }
     
@@ -1150,7 +1150,7 @@ final class DecodeTests: XCTestCase {
                 XCTAssert((model.a[1]?.gender ?? Gender.unknow) == Gender.female)
                 XCTAssert((model.a[2]?.gender ?? Gender.unknow) == Gender.unknow)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         
@@ -1187,7 +1187,7 @@ final class DecodeTests: XCTestCase {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         do {
@@ -1218,7 +1218,7 @@ final class DecodeTests: XCTestCase {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         
@@ -1260,7 +1260,7 @@ final class DecodeTests: XCTestCase {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
     }
@@ -1304,29 +1304,29 @@ final class DecodeTests: XCTestCase {
                 let model: Root? = try decoder.decode(type: Root.self, from: data)
                 XCTAssertEqual(model?.a[0].b[0].c[0].d[0].c, "over")
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
     }
     
-    func testNested1() {
-        class Person: Codable {
-            var name: String = ""
-            var parent: Person?
-        }
-        
-        let json: [String: Any] = [
-            "name": "0",
-            "parent": ["name": "1"]
-        ]
-        do {
-            let model: Person = try self.decoder.decode(type: Person.self, from: json)
-            XCTAssertEqual(model.name, "0")
-            XCTAssertEqual(model.parent?.name, "1")
-        } catch {
-            XCTAssertNil(error, error.localizedDescription)
-        }
-    }
+//    func testNested1() {
+//        class Person: Codable {
+//            var name: String = ""
+//            var parent: Person?
+//        }
+//
+//        let json: [String: Any] = [
+//            "name": "0",
+//            "parent": ["name": "1"]
+//        ]
+//        do {
+//            let model: Person = try self.decoder.decode(type: Person.self, from: json)
+//            XCTAssertEqual(model.name, "0")
+//            XCTAssertEqual(model.parent?.name, "1")
+//        } catch {
+//            XCTFail(error.localizedDescription)
+//        }
+//    }
     
     func testParadigm() {
         struct NetResponse<Element: Codable>: Codable {
@@ -1359,7 +1359,7 @@ final class DecodeTests: XCTestCase {
             XCTAssert(model.data?.nickName == "KaKa")
             XCTAssert(model.data?.id == "213234234")
         } catch {
-            XCTAssertNil(error, error.localizedDescription)
+            XCTFail(error.localizedDescription)
         }
         
         do {
@@ -1385,7 +1385,7 @@ final class DecodeTests: XCTestCase {
             XCTAssert(model.data?[2].price == 9099)
             XCTAssert(model.data?[2].name == "iPhone Max")
         } catch {
-            XCTAssertNil(error, error.localizedDescription)
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1407,7 +1407,7 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(model.baidu.absoluteString, "http://192.168.0.103")
             print(model.baidu)
         } catch {
-            XCTAssertNil(error, error.localizedDescription)
+            XCTFail(error.localizedDescription)
         }
     }
     
@@ -1605,6 +1605,7 @@ final class DecodeTests: XCTestCase {
     }
     
     func testKeyMappable() {
+        // 全部字段不符合模型定义
         do {
             let data: Data = """
             {
@@ -1627,6 +1628,60 @@ final class DecodeTests: XCTestCase {
                     let b : String?
                     let c : C?
                     
+                    static func modelFieldAbsorbFields() -> [String: [String]] {
+                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
+                    }
+                }
+                struct C : Codable, DecodeKeyMappable {
+                    let c : String?
+                    let d : String?
+                    let e : E?
+                    
+                    static func modelFieldAbsorbFields() -> [String: [String]] {
+                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
+                    }
+                }
+                struct E : Codable, DecodeKeyMappable {
+                    let f : String?
+                    let g : String?
+                    static func modelFieldAbsorbFields() -> [String: [String]] {
+                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
+                    }
+                }
+                let model = try decoder.decode(type: Root.self, from: data)
+                XCTAssertEqual(model.a, "a")
+                XCTAssertEqual(model.b, "b")
+                XCTAssertEqual(model.c?.c, "c")
+                XCTAssertEqual(model.c?.d, "d")
+                XCTAssertEqual(model.c?.e?.f, "f")
+                XCTAssertEqual(model.c?.e?.g, "g")
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+        
+        // 部分字段不符合模型定义
+        do {
+            let data: Data = """
+            {
+                "a0": "a",
+                "b": "b",
+                "c0": {
+                    "c0": "c",
+                    "d": "d",
+                    "e0": {
+                        "e0": "e",
+                        "f": "f",
+                        "g0": "g"
+                    }
+                }
+            }
+            """.data(using: String.Encoding.utf8) ?? Data()
+            do {
+                struct Root : Codable, DecodeKeyMappable {
+                    let a : String?
+                    let b : String?
+                    let c : C?
                     static func modelFieldAbsorbFields() -> [String: [String]] {
                         return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
                     }
@@ -1875,7 +1930,7 @@ final class EncodeTests: XCTestCase {
                 let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
                 XCTAssertEqual(json["google"], "http://www.baidu.com")
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         do {
@@ -1884,7 +1939,7 @@ final class EncodeTests: XCTestCase {
                 XCTAssertEqual(json[0], "http://www.baidu.com")
                 XCTAssertEqual(json[1], "http://www.baidu.com")
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
     }
@@ -1899,7 +1954,7 @@ final class EncodeTests: XCTestCase {
                 let model = try encoder.encode(value: Root(), to: JSON.self)
                 XCTAssertEqual(model["baidu"], JSON.null)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
         do {
@@ -1908,7 +1963,7 @@ final class EncodeTests: XCTestCase {
                 let model = try encoder.encode(value: root, to: String.self)
                 print(model)
             } catch {
-                XCTAssertNil(error, error.localizedDescription)
+                XCTFail(error.localizedDescription)
             }
         }
     }
