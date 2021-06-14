@@ -7,12 +7,15 @@ final class DecodeTests: XCTestCase {
     /// 处理null, {}, []
     func testEmpty() {
         let data: Data = """
-            {"a": null, "b":[], "c": {}}
+            {"a0": null, "b0":[], "c0": {}}
         """.data(using: String.Encoding.utf8) ?? Data()
-        struct A: Decodable {
+        struct A: Decodable, DecodeKeyMappable {
             let a: Bool
             let b: Bool
             let c: Bool
+            static func moodelToKeys() -> [String: [String]] {
+                return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
+            }
         }
         do {
             let model: A = try decoder.decode(type: A.self, from: data)
@@ -1008,7 +1011,7 @@ final class DecodeTests: XCTestCase {
     func testDictionary() {
         do {
             struct Root: Codable, DecodeKeyMappable {
-                static func decodeKeys() -> [String: [String]] {
+                static func modelFieldAbsorbFields() -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
                 let info: Bool
@@ -1395,7 +1398,7 @@ final class DecodeTests: XCTestCase {
         struct Root :Codable, DecodeKeyMappable {
             let baidu: URL
             
-            static func decodeKeys() -> [String: [String]] {
+            static func modelFieldAbsorbFields() -> [String: [String]] {
                 return ["baidu": ["baidubaibaidu", "baidu"]]
             }
         }
@@ -1580,13 +1583,7 @@ final class DecodeTests: XCTestCase {
         print(string.toDate())
     }
     
-    func testKeyMappable() {
-        //        print("abcAbcAbcAbcAbc".toCamelCase())
-        //        print("abcAbcAbcAbcAbc".toPascalCase(format: StringCaseFormat.PascalCase.default, use: "*"))
-        //        print("abcAbcAbcAbcAbc".toSnakeCase())
-        //        print("abcAbcAbcAbcAbc".toUpperCase())
-        //        print("abcAbcAbcAbcAbc".toLowerCase())
-        
+    func testFormatKeyMappable() {
         let data: Data = """
         {
             "string_data": "string"
@@ -1604,6 +1601,62 @@ final class DecodeTests: XCTestCase {
             print(json)
         } catch {
             XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testKeyMappable() {
+        do {
+            let data: Data = """
+            {
+                "a0": "a",
+                "b0": "b",
+                "c0": {
+                    "c0": "c",
+                    "d0": "d",
+                    "e0": {
+                        "e0": "e",
+                        "f0": "f",
+                        "g0": "g"
+                    }
+                }
+            }
+            """.data(using: String.Encoding.utf8) ?? Data()
+            do {
+                struct Root : Codable, DecodeKeyMappable {
+                    let a : String?
+                    let b : String?
+                    let c : C?
+                    
+                    static func modelFieldAbsorbFields() -> [String: [String]] {
+                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
+                    }
+                }
+                struct C : Codable, DecodeKeyMappable {
+                    let c : String?
+                    let d : String?
+                    let e : E?
+                    
+                    static func modelFieldAbsorbFields() -> [String: [String]] {
+                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
+                    }
+                }
+                struct E : Codable, DecodeKeyMappable {
+                    let f : String?
+                    let g : String?
+                    static func modelFieldAbsorbFields() -> [String: [String]] {
+                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
+                    }
+                }
+                let model = try decoder.decode(type: Root.self, from: data)
+                XCTAssertEqual(model.a, "a")
+                XCTAssertEqual(model.b, "b")
+                XCTAssertEqual(model.c?.c, "c")
+                XCTAssertEqual(model.c?.d, "d")
+                XCTAssertEqual(model.c?.e?.f, "f")
+                XCTAssertEqual(model.c?.e?.g, "g")
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
         }
     }
     
@@ -1678,8 +1731,6 @@ final class DecodeTests: XCTestCase {
         } catch {
             XCTFail(error.localizedDescription)
         }
-        
-
     }
 }
 

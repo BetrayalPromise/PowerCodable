@@ -20,7 +20,7 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     }
     
     func contains(_ key: Key) -> Bool {
-        return self.json[key.stringValue] != nil
+        return true
     }
 
     @inline(__always)
@@ -46,8 +46,8 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
             if self.json.count == 0 {
                 return JSON(dictionaryLiteral: ("", ""))
             } else {
-                if self.decoder.MappableKeys != nil {
-                    for k in self.decoder.MappableKeys?[key.stringValue] ?? [] {
+                if self.decoder.keys.last != nil {
+                    for k in self.decoder.keys.last?[key.stringValue] ?? [] {
                         switch self.json[k] {
                         case .none: continue
                         case .some(let json): return json
