@@ -488,64 +488,61 @@ extension InnerDecoder {
     }
 }
 
-// MARK: -  浮点型(Float, Double)处理
+// MARK: -  Float处理
 extension InnerDecoder {
-    /// 浮点型解码处理
+    /// 字符串型解码处理
     /// - Parameters:
     ///   - object: json对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox<T>(object: JSON, forKey key: CodingKey) throws -> T where T: BinaryFloatingPoint, T: LosslessStringConvertible {
+    func unbox(object: JSON, forKey key: CodingKey) throws -> Float {
         codingPath.append(key)
         defer { codingPath.removeLast() }
         return try unbox(object: object)
     }
     
-    /// 浮点型(Float, Doube, Float80)解码处理
-    /// - Parameter object: json对象
-    /// - Throws: 解码key
-    /// - Returns: 返回处理后的模型
-    func unbox<T>(object: JSON) throws -> T where T: BinaryFloatingPoint, T: LosslessStringConvertible {
-        if T.self == Float.self {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
-            case .useDefaultValues:
-                return T(try InnerDecoder.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object))
-            case .useCustomValues(delegete: let delegete):
-                return T(try Swift.type(of: delegete).toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object))
-            }
-        } else if T.self == Double.self {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
-            case .useDefaultValues:
-                return T(try InnerDecoder.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object))
-            case .useCustomValues(delegete: let delegete):
-                return T(try Swift.type(of: delegete).toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object))
-            }
-        } else if T.self == Float80.self {
-            // TODO: Float80处理
-            throw Coding.Exception.invalidTransform()
+    func unbox(object: JSON) throws -> Float {
+        if self.valuesStore.count >= 1 {
+            let type: DecodeValueMappable.Type = self.valuesStore.last!
+            return try type.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            throw Coding.Exception.invalidTransform()
+            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            case .useDefaultValues:
+                return try Self.self.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            case .useCustomValues(delegete: let delegate):
+                return try type(of: delegate).toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            }
         }
     }
 }
 
+// MARK: -  Double处理
 extension InnerDecoder {
-    /// 整型解码处理
+    /// 字符串型解码处理
     /// - Parameters:
     ///   - object: json对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox<T>(type: DecodeValueMappable.Type, object: JSON, forKey key: CodingKey) throws -> T where T: DecodeValueMappable {
+    func unbox(object: JSON, forKey key: CodingKey) throws -> Double {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(type: type, object: object)
+        return try unbox(object: object)
     }
     
-    func unbox<T>(type: DecodeValueMappable.Type, object: JSON) throws -> T where T: DecodeValueMappable {
-        print("a")
-        return InnerDecoder(json: json) as! T
+    func unbox(object: JSON) throws -> Double {
+        if self.valuesStore.count >= 1 {
+            let type: DecodeValueMappable.Type = self.valuesStore.last!
+            return try type.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+        } else {
+            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            case .useDefaultValues:
+                return try Self.self.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            case .useCustomValues(delegete: let delegate):
+                return try type(of: delegate).toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            }
+        }
     }
 }
 
