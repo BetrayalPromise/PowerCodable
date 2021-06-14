@@ -13,7 +13,7 @@ final class DecodeTests: XCTestCase {
             let a: Bool
             let b: Bool
             let c: Bool
-            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                 return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
             }
         }
@@ -1074,7 +1074,7 @@ final class DecodeTests: XCTestCase {
     func testDictionary() {
         do {
             struct Root: Codable, DecodeKeyMappable {
-                static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
                 let info: Bool
@@ -1252,7 +1252,7 @@ final class DecodeTests: XCTestCase {
         struct Root :Codable, DecodeKeyMappable {
             let baidu: URL
             
-            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                 return ["baidu": ["baidubaibaidu", "baidu"]]
             }
         }
@@ -1464,7 +1464,7 @@ final class DecodeTests: XCTestCase {
                     let b : String?
                     let c : C?
                     
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
                     }
                 }
@@ -1473,14 +1473,14 @@ final class DecodeTests: XCTestCase {
                     let d : String?
                     let e : E?
                     
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
                     }
                 }
                 struct E : Codable, DecodeKeyMappable {
                     let f : String?
                     let g : String?
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
                     }
                 }
@@ -1518,7 +1518,7 @@ final class DecodeTests: XCTestCase {
                     let a : String?
                     let b : String?
                     let c : C?
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
                     }
                 }
@@ -1527,14 +1527,14 @@ final class DecodeTests: XCTestCase {
                     let d : String?
                     let e : E?
                     
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
                     }
                 }
                 struct E : Codable, DecodeKeyMappable {
                     let f : String?
                     let g : String?
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
                     }
                 }
@@ -1561,14 +1561,14 @@ final class DecodeTests: XCTestCase {
                 struct Root: Codable, DecodeKeyMappable {
                     let a: A
                     let b: String
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["a": ["a", "a0"], "b": ["b", "b0"]]
                     }
                 }
                 struct A: Codable, DecodeKeyMappable {
                     let b: String
                     let a: String
-                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                         return ["a": ["a", "a0"]]
                     }
                 }
@@ -1720,7 +1720,7 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-    func testCustomMappable() {
+    func testValueCustomMappable() {
         let data: Data = """
         {
             "hello": "hello",
@@ -1841,7 +1841,7 @@ final class EncodeTests: XCTestCase {
             var float: Float = 100.0
             var double: Double = 100.0
             var string: String = "ABCD"
-            static func modelEncodeKeys() -> [String: String] {
+            static func modelEncodeKeys(decoder: PowerJSONEncoder, paths: [Path]) -> [String : String] {
                 return ["string": "hello"]
             }
         }
@@ -1955,10 +1955,10 @@ final class EncodeTests: XCTestCase {
     func testURL() {
         do {
             struct Root: Codable, EncodeKeyMappable {
-                var baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
-                static func modelEncodeKeys() -> [String: String] {
+                static func modelEncodeKeys(decoder: PowerJSONEncoder, paths: [Path]) -> [String : String] {
                     return ["baidu": "google"]
                 }
+                var baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
             }
             do {
                 let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
@@ -2046,18 +2046,11 @@ final class EncodeTests: XCTestCase {
     
     func testValue() {
         struct A: Encodable, EncodeKeyMappable {
-            var boolBool = false
-            
-            static func modelEncodeKeys() -> [String : String] {
+            static func modelEncodeKeys(decoder: PowerJSONEncoder, paths: [Path]) -> [String : String] {
                 return ["boolBool": "a"]
             }
             
-            static func modelEncodingValues(paths: [Path], value: JSON) -> JSON {
-                if paths.current == "[:]a" {
-                    return JSON.init(nilLiteral: ())
-                }
-                return value
-            }
+            var boolBool = false
         }
         
         self.encoder.strategy.keyMappable = .useSnakeKeys(.default)
@@ -2075,7 +2068,7 @@ final class EncodeTests: XCTestCase {
         }
     }
     
-    func testNumber() {
+    func testInfinityAndNonentity() {
         struct A: Encodable {
             let a = Float.nan
             let b = -Float.infinity

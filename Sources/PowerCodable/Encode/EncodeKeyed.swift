@@ -42,7 +42,7 @@ struct EncodeKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
         self.codingPath = codingPath
         self.userInfo = userInfo
         if let value: EncodeKeyMappable = encoder.value as? EncodeKeyMappable {
-            self.mapping = type(of: value).modelEncodeKeys()
+            self.mapping = type(of: value).modelEncodeKeys(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths)
         }
     }
 }
