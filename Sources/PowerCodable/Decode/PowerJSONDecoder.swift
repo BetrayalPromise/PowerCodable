@@ -568,7 +568,7 @@ extension InnerDecoder {
         currentJSON = object
         print(Swift.type(of: T.self))
         if let type: DecodeKeyMappable.Type = T.self as? DecodeKeyMappable.Type {
-            self.keysStore.append(type.modelFieldAbsorbFields(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object))
+            self.keysStore.append(type.modelDecodeKeys(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object))
         }
         if let type: DecodeValueMappable.Type = T.self as? DecodeValueMappable.Type {
             self.valuesStore.append(type)

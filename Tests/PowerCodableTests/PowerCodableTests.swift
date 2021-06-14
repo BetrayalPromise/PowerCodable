@@ -13,7 +13,7 @@ final class DecodeTests: XCTestCase {
             let a: Bool
             let b: Bool
             let c: Bool
-            static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                 return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
             }
         }
@@ -1074,7 +1074,7 @@ final class DecodeTests: XCTestCase {
     func testDictionary() {
         do {
             struct Root: Codable, DecodeKeyMappable {
-                static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                     return ["info": ["a", "b"], "b": ["b"]]
                 }
                 let info: Bool
@@ -1252,7 +1252,7 @@ final class DecodeTests: XCTestCase {
         struct Root :Codable, DecodeKeyMappable {
             let baidu: URL
             
-            static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                 return ["baidu": ["baidubaibaidu", "baidu"]]
             }
         }
@@ -1360,7 +1360,7 @@ final class DecodeTests: XCTestCase {
 //        // 全部字段不符合模型定义
 //        do {
 //            struct Adapter: DecodeKeyMappable {
-//                static func modelFieldAbsorbFields() -> [String : [String]] {
+//                static func modelDecodeKeys() -> [String : [String]] {
 //                    
 //                }
 //            }
@@ -1386,7 +1386,7 @@ final class DecodeTests: XCTestCase {
 //                    let b : String?
 //                    let c : C?
 //                    
-//                    static func modelFieldAbsorbFields() -> [String: [String]] {
+//                    static func modelDecodeKeys() -> [String: [String]] {
 //                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
 //                    }
 //                }
@@ -1395,14 +1395,14 @@ final class DecodeTests: XCTestCase {
 //                    let d : String?
 //                    let e : E?
 //                    
-//                    static func modelFieldAbsorbFields() -> [String: [String]] {
+//                    static func modelDecodeKeys() -> [String: [String]] {
 //                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
 //                    }
 //                }
 //                struct E : Codable, DecodeKeyMappable {
 //                    let f : String?
 //                    let g : String?
-//                    static func modelFieldAbsorbFields() -> [String: [String]] {
+//                    static func modelDecodeKeys() -> [String: [String]] {
 //                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
 //                    }
 //                }
@@ -1464,7 +1464,7 @@ final class DecodeTests: XCTestCase {
                     let b : String?
                     let c : C?
                     
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
                     }
                 }
@@ -1473,14 +1473,14 @@ final class DecodeTests: XCTestCase {
                     let d : String?
                     let e : E?
                     
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
                     }
                 }
                 struct E : Codable, DecodeKeyMappable {
                     let f : String?
                     let g : String?
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
                     }
                 }
@@ -1518,7 +1518,7 @@ final class DecodeTests: XCTestCase {
                     let a : String?
                     let b : String?
                     let c : C?
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
                     }
                 }
@@ -1527,14 +1527,14 @@ final class DecodeTests: XCTestCase {
                     let d : String?
                     let e : E?
                     
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
                     }
                 }
                 struct E : Codable, DecodeKeyMappable {
                     let f : String?
                     let g : String?
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
                     }
                 }
@@ -1561,14 +1561,14 @@ final class DecodeTests: XCTestCase {
                 struct Root: Codable, DecodeKeyMappable {
                     let a: A
                     let b: String
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["a": ["a", "a0"], "b": ["b", "b0"]]
                     }
                 }
                 struct A: Codable, DecodeKeyMappable {
                     let b: String
                     let a: String
-                    static func modelFieldAbsorbFields(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
+                    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path], value: JSON) -> [String: [String]] {
                         return ["a": ["a", "a0"]]
                     }
                 }
@@ -1841,7 +1841,7 @@ final class EncodeTests: XCTestCase {
             var float: Float = 100.0
             var double: Double = 100.0
             var string: String = "ABCD"
-            static func encodeKeys() -> [String: String] {
+            static func modelEncodeKeys() -> [String: String] {
                 return ["string": "hello"]
             }
         }
@@ -1956,7 +1956,7 @@ final class EncodeTests: XCTestCase {
         do {
             struct Root: Codable, EncodeKeyMappable {
                 var baidu: URL = try! URL.buildURL(string: "http://www.baidu.com")
-                static func encodeKeys() -> [String: String] {
+                static func modelEncodeKeys() -> [String: String] {
                     return ["baidu": "google"]
                 }
             }
@@ -2048,7 +2048,7 @@ final class EncodeTests: XCTestCase {
         struct A: Encodable, EncodeKeyMappable {
             var boolBool = false
             
-            static func encodeKeys() -> [String : String] {
+            static func modelEncodeKeys() -> [String : String] {
                 return ["boolBool": "a"]
             }
             
