@@ -1,14 +1,19 @@
 import Foundation
 
 extension PowerJSONDecoder {
+    public enum KeyFormatDecodingStrategy {
+        case useDefaultKeys // 原始key
+        case useSnakeKeys(StringCaseFormat.SnakeCase) // 蛇形key
+        case useCamelKeys(StringCaseFormat.CamelCase) // 驼峰key
+        case usePascalKeys(StringCaseFormat.PascalCase) // 帕斯卡key
+        case useUpperKeys // 大写的key
+        case useLowerKeys // 小写的key
+        case useCustom(([CodingKey]) -> CodingKey)
+    }
+    
     public enum KeyDecodingStrategy {
         case useDefaultKeys
-        case useSnakeKeys(StringCaseFormat.SnakeCase)
-        case useCamelKeys(StringCaseFormat.CamelCase)
-        case usePascalKeys(StringCaseFormat.PascalCase)
-        case useUpperKeys
-        case useLowerKeys
-        case useCustom(([CodingKey]) -> CodingKey)
+        case useCustomKeys(delegete: DecodeKeyMappable)
     }
 
     public enum NonConformingFloatDecodingStrategy {

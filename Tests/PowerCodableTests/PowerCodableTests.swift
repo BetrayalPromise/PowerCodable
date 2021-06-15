@@ -1425,9 +1425,9 @@ final class DecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.keyMappable = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.keyFormatMappable = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.strategy.keyMappable = .useDefaultKeys
+            self.decoder.strategy.keyFormatMappable = .useDefaultKeys
         }
         do {
             struct Root: Codable {

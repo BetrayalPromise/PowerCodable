@@ -26,21 +26,14 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     @inline(__always)
     private func getObject(forKey key: Key) throws -> JSON {
         var useKey: String = ""
-        switch self.decoder.wrapper?.strategy.keyMappable ?? .useDefaultKeys {
-        case .useDefaultKeys:
-            useKey = key.stringValue
-        case .useCamelKeys(let c):
-            useKey = key.stringValue.toCamelCase(format: c)
-        case .useSnakeKeys(let c):
-            useKey = key.stringValue.toSnakeCase(format: c)
-        case .usePascalKeys(let c):
-            useKey = key.stringValue.toPascalCase(format: c)
-        case .useUpperKeys:
-            useKey = key.stringValue.toUpperCase()
-        case .useLowerKeys:
-            useKey = key.stringValue.toLowerCase()
-        case .useCustom(let closure):
-            useKey = closure(self.paths).stringValue
+        switch self.decoder.wrapper?.strategy.keyFormatMappable ?? .useDefaultKeys {
+        case .useDefaultKeys: useKey = key.stringValue
+        case .useCamelKeys(let c): useKey = key.stringValue.toCamelCase(format: c)
+        case .useSnakeKeys(let c): useKey = key.stringValue.toSnakeCase(format: c)
+        case .usePascalKeys(let c): useKey = key.stringValue.toPascalCase(format: c)
+        case .useUpperKeys: useKey = key.stringValue.toUpperCase()
+        case .useLowerKeys: useKey = key.stringValue.toLowerCase()
+        case .useCustom(let closure): useKey = closure(self.paths).stringValue
         }
         guard let object = self.json[useKey] else {
             if self.json.count == 0 {
