@@ -285,7 +285,7 @@ extension DecodeValueMappable {
         case .null: return BoxFloat(json: value).float
         case .bool(let bool): return bool == true ? 1 : 0
         case let .string(string):
-            switch decoder.strategy.nonConformingFloatValueMappable {
+            switch decoder.strategy.nonConformingFloatValueStrategy {
             case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
                     throw Coding.Exception.invalidRule(sets: positiveInfinity, positiveInfinity, negativeInfinity)
@@ -327,7 +327,7 @@ extension DecodeValueMappable {
         case .null: return BoxDouble(json: value).double
         case .bool(let bool): return bool == true ? 1 : 0
         case let .string(string):
-            switch decoder.strategy.nonConformingFloatValueMappable {
+            switch decoder.strategy.nonConformingFloatValueStrategy {
             case .convertToZero(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if (positiveInfinity &~ negativeInfinity &~ nan).count != 0 {
                     throw Coding.Exception.invalidRule(sets: positiveInfinity, positiveInfinity, negativeInfinity)
@@ -386,7 +386,7 @@ extension DecodeValueMappable {
         case .null: return BoxData(json: value).data
         case .bool(_): return BoxData(json: value).data
         case .integer(let integer):
-            switch decoder.wrapper?.strategy.dataValueMappable ?? .useDefaultValues {
+            switch decoder.wrapper?.strategy.dataValueStrategy ?? .useDefaultValues {
             case .base64:
                 return integer.toData()?.base64EncodedData() ?? BoxData(json: value).data.base64EncodedData()
             case .deferredToData:
@@ -405,7 +405,7 @@ extension DecodeValueMappable {
                 }
             }
         case .double(let double):
-            switch decoder.wrapper?.strategy.dataValueMappable ?? .useDefaultValues {
+            switch decoder.wrapper?.strategy.dataValueStrategy ?? .useDefaultValues {
             case .base64:
                 return double.toData()?.base64EncodedData() ?? BoxData(json: value).data.base64EncodedData()
             case .useDefaultValues:
@@ -424,7 +424,7 @@ extension DecodeValueMappable {
                 return Data(bytes: &value, count: size)
             }
         case .string(let string):
-            switch decoder.wrapper?.strategy.dataValueMappable ?? .useDefaultValues {
+            switch decoder.wrapper?.strategy.dataValueStrategy ?? .useDefaultValues {
             case .base64:
                 return string.toData()?.base64EncodedData() ?? BoxData(json: value).data.base64EncodedData()
             case .useDefaultValues:
@@ -478,7 +478,7 @@ extension DecodeValueMappable {
         case .null: return BoxDate(json: value).date
         case .bool(_): return BoxDate(json: value).date
         case .integer(let integer):
-            switch decoder.wrapper?.strategy.dateValueMappable ?? .secondsSince1970(json: .second) {
+            switch decoder.wrapper?.strategy.dateValueStrategy ?? .secondsSince1970(json: .second) {
             case .custom(let closure):
                 do {
                     return try closure(decoder, decoder.paths, value)
@@ -509,7 +509,7 @@ extension DecodeValueMappable {
                 return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
             }
         case .double(let double):
-            switch decoder.wrapper?.strategy.dateValueMappable ?? .secondsSince1970(json: .second) {
+            switch decoder.wrapper?.strategy.dateValueStrategy ?? .secondsSince1970(json: .second) {
             case .custom(let closure):
                 do {
                     return try closure(decoder, decoder.paths, value)
@@ -536,7 +536,7 @@ extension DecodeValueMappable {
                 return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
             }
         case .string(let string):
-            switch decoder.wrapper?.strategy.dateValueMappable ?? .secondsSince1970(json: .second) {
+            switch decoder.wrapper?.strategy.dateValueStrategy ?? .secondsSince1970(json: .second) {
             case .custom(let closure):
                 do {
                     return try closure(decoder, decoder.paths, value)

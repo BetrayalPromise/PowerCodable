@@ -55,7 +55,7 @@ public struct Path: CodingKey {
 }
 
 public extension Array where Element == Path {
-    mutating func push(value: Element, options: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys) {
+    mutating func push(value: Element, options: PowerJSONEncoder.KeyFormatEncodingStrategy = .useDefaultKeys) {
         switch value.container {
         case .array:
             self.append(value)

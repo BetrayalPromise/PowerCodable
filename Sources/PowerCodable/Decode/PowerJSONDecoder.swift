@@ -5,17 +5,17 @@ public struct DecodingStrategy {
     ///  nil转化为可选类型开关 如果开启的话 nil -> Type? 则不一定会生成 nil值 取决于用户自己根据需求
     /// 这个策略是指模型的字段在经过策略处理后(snake camel, pascal, upper, lower)该字段会已这种处理后的表现形式在进行解码处理
     /// 例如 模型字段 var stringData: String经过snake处理成为string_data, 经历camel处理成为stringData, 经历pascal处理成为string-data, 经历upper处理成为STRINGDATE, 经历lower处理成为stringdata, 再进行下一步处理. 该策略是全局的会影响所有的字段解析(主要处理格式问题)
-    public var keyFormatMappable: PowerJSONDecoder.KeyFormatDecodingStrategy = .useDefaultKeys
+    public var keyFormatStrategy: PowerJSONDecoder.KeyFormatDecodingStrategy = .useDefaultKeys
     /// 针对一般情况下的值处理
-    public var valueMappable: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
+    public var valueStrategy: PowerJSONDecoder.ValueDecodingStrategy = .useDefaultValues
     /// 针对转Data处理
-    public var dataValueMappable: PowerJSONDecoder.DataDecodingStrategy = .useDefaultValues
+    public var dataValueStrategy: PowerJSONDecoder.DataDecodingStrategy = .useDefaultValues
     /// 针对转Date处理
-    public var dateValueMappable: PowerJSONDecoder.DateDecodingStrategy = .secondsSince1970(json: .second)
+    public var dateValueStrategy: PowerJSONDecoder.DateDecodingStrategy = .secondsSince1970(json: .second)
     /// 针对浮点型值(nan, +infinity, -infinity)处理
-    public var nonConformingFloatValueMappable: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
+    public var nonConformingFloatValueStrategy: PowerJSONDecoder.NonConformingFloatDecodingStrategy = .convertToString()
     /// 仅仅针对nil值转为T?的处理,false则不能接受自定义的nil处理,true则接受自定义的nil处理
-    public var enableMappableEmptyValue: Bool = false
+    public var enableEmptyValueStrategy: Bool = false
     
     /// 针对树形结构中存在的任意的一个节点开始解码(包含此节点,节点必须也是容器结构,通俗讲就是随便选去一个数组或字典进行解码)
     public var startPaths: [Path]? = nil
@@ -127,11 +127,11 @@ extension InnerDecoder {
     /// - Parameter object: json对象
     /// - Returns: 是否为空
     func unboxNil(object: JSON) -> Bool {
-        switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+        switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
             return object == .null
         case .useCustomValues(delegete: _):
-            if (self.wrapper?.strategy.enableMappableEmptyValue ?? false) && object == .null {
+            if (self.wrapper?.strategy.enableEmptyValueStrategy ?? false) && object == .null {
                 return false
             } else {
                 return object == .null
@@ -159,7 +159,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -188,7 +188,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -217,7 +217,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -246,7 +246,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -275,7 +275,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -304,7 +304,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -333,7 +333,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -362,7 +362,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -391,7 +391,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -420,7 +420,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -449,7 +449,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -478,7 +478,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -507,7 +507,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):
@@ -536,7 +536,7 @@ extension InnerDecoder {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
             return try type.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
         } else {
-            switch self.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
                 return try Self.self.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
             case .useCustomValues(delegete: let delegate):

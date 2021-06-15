@@ -1337,7 +1337,7 @@ final class DecodeTests: XCTestCase {
             struct Root: Codable {
                 let date : Date
             }
-            self.decoder.strategy.dateValueMappable = .custom({ (decoder, paths, value) -> Date in
+            self.decoder.strategy.dateValueStrategy = .custom({ (decoder, paths, value) -> Date in
                 return Date()
             })
             let model: Root = try decoder.decode(type: Root.self, from: data)
@@ -1425,9 +1425,9 @@ final class DecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.keyFormatMappable = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.keyFormatStrategy = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.strategy.keyFormatMappable = .useDefaultKeys
+            self.decoder.strategy.keyFormatStrategy = .useDefaultKeys
         }
         do {
             struct Root: Codable {
@@ -1641,7 +1641,7 @@ final class DecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueMappable = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueStrategy = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1672,7 +1672,7 @@ final class DecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueMappable = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueStrategy = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1714,7 +1714,7 @@ final class DecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueMappable = .useCustomValues(delegete: Adapter())
+            decoder.strategy.valueStrategy = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -2060,9 +2060,9 @@ final class EncodeTests: XCTestCase {
             var boolBool = false
         }
         
-        self.encoder.strategy.keyMappable = .useSnakeKeys(.default)
+        self.encoder.strategy.keyFormatStrategy = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keyMappable = .useDefaultKeys
+            self.encoder.strategy.keyFormatStrategy = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -2082,9 +2082,9 @@ final class EncodeTests: XCTestCase {
             var boolBool = false
         }
         
-        self.encoder.strategy.keyMappable = .useSnakeKeys(.default)
+        self.encoder.strategy.keyFormatStrategy = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keyMappable = .useDefaultKeys
+            self.encoder.strategy.keyFormatStrategy = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -2129,7 +2129,7 @@ final class EncodeTests: XCTestCase {
                 let a: Data = Data(hexString: "0x234223423")
             }
             do {
-                encoder.strategy.dataValueMappable = .base64
+                encoder.strategy.dataValueStrategy = .base64
                 let json = try encoder.encode(value: A(), to: JSON.self)
                 /// Data本质上就是二进制的数组
                 XCTAssertNotEqual(json["a"].array$?.count, 0)
@@ -2144,7 +2144,7 @@ final class EncodeTests: XCTestCase {
             let a: Date = Date()
         }
         do {
-            self.encoder.strategy.dateValueMappable = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
+            self.encoder.strategy.dateValueStrategy = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
         } catch  {

@@ -101,30 +101,30 @@ extension DecodeSingleValue {
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         debugPrint(self.json)
         if type == URL.self {
-            switch self.decoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.decoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues: return try InnerDecoder.toURL(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
             case .useCustomValues(delegete: let delegate):
-                if (self.decoder.wrapper?.strategy.enableMappableEmptyValue ?? false) && self.json == .null {
+                if (self.decoder.wrapper?.strategy.enableEmptyValueStrategy ?? false) && self.json == .null {
                     return try Swift.type(of: delegate).toURL(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
                 } else {
                     return try InnerDecoder.toURL(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
                 }
             }
         } else if type == Date.self {
-            switch self.decoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.decoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues: return try InnerDecoder.toDate(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
             case .useCustomValues(delegete: let delegate):
-                if (self.decoder.wrapper?.strategy.enableMappableEmptyValue ?? false) && self.json == .null {
+                if (self.decoder.wrapper?.strategy.enableEmptyValueStrategy ?? false) && self.json == .null {
                     return try Swift.type(of: delegate).toDate(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
                 } else {
                     return try InnerDecoder.toDate(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
                 }
             }
         } else if type == Data.self {
-            switch self.decoder.wrapper?.strategy.valueMappable ?? .useDefaultValues {
+            switch self.decoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues: return try InnerDecoder.toData(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
             case .useCustomValues(delegete: let delegate):
-                if (self.decoder.wrapper?.strategy.enableMappableEmptyValue ?? false) && self.json == .null {
+                if (self.decoder.wrapper?.strategy.enableEmptyValueStrategy ?? false) && self.json == .null {
                     return try Swift.type(of: delegate).toData(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T
                 } else {
                     return try InnerDecoder.toData(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: self.json) as! T

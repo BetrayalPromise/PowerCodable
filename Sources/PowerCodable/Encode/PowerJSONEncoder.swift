@@ -1,17 +1,17 @@
 import Foundation
 
 public struct EncodingStrategy {
-    public var output: PowerJSONEncoder.OutputFormatting = []
-    public var keyMappable: PowerJSONEncoder.KeyEncodingStrategy = .useDefaultKeys
-    public var dateValueMappable: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
-    public var dataValueMappable: PowerJSONEncoder.DataEncodingStrategy = .base64
-    public var nonConformingFloatValueMappable: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
-    public var valueMappable: PowerJSONEncoder.ValueEncodingStrategy = .useDefaultValues
+    public var outputStrategy: PowerJSONEncoder.OutputFormatting = []
+    public var keyFormatStrategy: PowerJSONEncoder.KeyFormatEncodingStrategy = .useDefaultKeys
+    public var dateValueStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
+    public var dataValueStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
+    public var nonConformingFloatValueStrategy: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
+    public var valueStrategy: PowerJSONEncoder.ValueEncodingStrategy = .useDefaultValues
 }
 
 public class PowerJSONEncoder {
     public var strategy = EncodingStrategy()
-    public var paths: [Path] = []
+    var paths: [Path] = []
 
     /// 逆向模型转化
     /// - Parameters:
@@ -29,7 +29,7 @@ public class PowerJSONEncoder {
             try value.encode(to: encoder)
             json = encoder.jsonValue
         }
-        let options = Formatter.Options(formatting: self.strategy.output, dataEncoding: self.strategy.dataValueMappable, dateEncoding: self.strategy.dateValueMappable, keyEncoding: self.strategy.keyMappable)
+        let options = Formatter.Options(formatting: self.strategy.outputStrategy, dataEncoding: self.strategy.dataValueStrategy, dateEncoding: self.strategy.dateValueStrategy, keyEncoding: self.strategy.keyFormatStrategy)
         let formatter = Formatter(topLevel: json, options: options, encoder: encoder)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {

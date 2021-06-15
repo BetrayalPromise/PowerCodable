@@ -45,7 +45,7 @@ extension PowerJSONEncoder {
         case useCustomValues(delegete: EncodingValueMappable)
     }
 
-    public enum KeyEncodingStrategy {
+    public enum KeyFormatEncodingStrategy {
         case useDefaultKeys
         case useSnakeKeys(StringCaseFormat.SnakeCase)
         case useCamelKeys(StringCaseFormat.CamelCase)
@@ -119,7 +119,7 @@ extension PowerJSONEncoder {
             let formatting: OutputFormatting
             let dataEncoding: DataEncodingStrategy
             let dateEncoding: DateEncodingStrategy
-            let keyEncoding: KeyEncodingStrategy
+            let keyEncoding: KeyFormatEncodingStrategy
         }
 
         private var topLevel: JSON

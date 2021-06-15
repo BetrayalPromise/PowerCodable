@@ -26,7 +26,7 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     @inline(__always)
     private func getObject(forKey key: Key) throws -> JSON {
         var useKey: String = ""
-        switch self.decoder.wrapper?.strategy.keyFormatMappable ?? .useDefaultKeys {
+        switch self.decoder.wrapper?.strategy.keyFormatStrategy ?? .useDefaultKeys {
         case .useDefaultKeys: useKey = key.stringValue
         case .useCamelKeys(let c): useKey = key.stringValue.toCamelCase(format: c)
         case .useSnakeKeys(let c): useKey = key.stringValue.toSnakeCase(format: c)

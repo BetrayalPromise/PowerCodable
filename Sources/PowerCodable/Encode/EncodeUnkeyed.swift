@@ -109,7 +109,7 @@ extension EncodeUnkeyed {
     func date(value: Encodable) throws -> Encodable {
         guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
         var mapping: Encodable = ""
-        switch self.encoder.wrapper?.strategy.dateValueMappable ?? .utc {
+        switch self.encoder.wrapper?.strategy.dateValueStrategy ?? .utc {
         case .deferredToDate, .utc:
             mapping = DateFormatter.utc().string(from: value)
         case .iso8601:
