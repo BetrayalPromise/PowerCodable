@@ -8,12 +8,12 @@ extension PowerJSONDecoder {
         case usePascalKeys(StringCaseFormat.PascalCase) // 帕斯卡key
         case useUpperKeys // 大写的key
         case useLowerKeys // 小写的key
-        case useCustom(([CodingKey]) -> CodingKey)
+//        case useCustom(([CodingKey]) -> CodingKey)
     }
     
     public enum KeyDecodingStrategy {
         case useDefaultKeys
-        case useCustomKeys(delegete: DecodeKeyMappable)
+        case useCustomKeys(closue: ((CodingKey, [Path]) -> CodingKey))
     }
 
     public enum NonConformingFloatDecodingStrategy {

@@ -25,17 +25,22 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
 
     @inline(__always)
     private func getObject(forKey key: Key) throws -> JSON {
-        var useKey: String = ""
-        switch self.decoder.wrapper?.strategy.keyFormatStrategy ?? .useDefaultKeys {
-        case .useDefaultKeys: useKey = key.stringValue
-        case .useCamelKeys(let c): useKey = key.stringValue.toCamelCase(format: c)
-        case .useSnakeKeys(let c): useKey = key.stringValue.toSnakeCase(format: c)
-        case .usePascalKeys(let c): useKey = key.stringValue.toPascalCase(format: c)
-        case .useUpperKeys: useKey = key.stringValue.toUpperCase()
-        case .useLowerKeys: useKey = key.stringValue.toLowerCase()
-        case .useCustom(let closure): useKey = closure(self.paths).stringValue
+        var usedKey: String = ""
+        switch self.decoder.wrapper?.strategy.keyMappingStrategy ?? .useDefaultKeys {
+        case .useDefaultKeys: usedKey = key.stringValue
+        case .useCustomKeys(closue: let closue): usedKey = closue(key, self.paths).stringValue
         }
-        guard let object = self.json[useKey] else {
+        
+        switch self.decoder.wrapper?.strategy.keyFormatStrategy ?? .useDefaultKeys {
+        case .useDefaultKeys: break
+        case .useCamelKeys(let c): usedKey = usedKey.toCamelCase(format: c)
+        case .useSnakeKeys(let c): usedKey = usedKey.toSnakeCase(format: c)
+        case .usePascalKeys(let c): usedKey = usedKey.toPascalCase(format: c)
+        case .useUpperKeys: usedKey = usedKey.toUpperCase()
+        case .useLowerKeys: usedKey = usedKey.toLowerCase()
+        }
+        
+        guard let object = self.json[usedKey] else {
             if self.json.count == 0 {
                 return JSON(dictionaryLiteral: ("", ""))
             } else {
