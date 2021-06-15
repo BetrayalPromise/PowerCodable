@@ -3,7 +3,7 @@ import Foundation
 @available(swift 5.1)
 public struct Decoding: Codable {
     private static var optionalValue: Any? = nil
-    private static var nonoptionalValue: Any = Null()
+    private static var nonoptionalValue: Any = BoxNull()
 
     /// 不使用JSON数据的值, 而使用自定义实体的默认初始化值
     @propertyWrapper

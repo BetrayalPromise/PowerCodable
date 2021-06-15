@@ -25,24 +25,24 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
 
     @inline(__always)
     private func getObject(forKey key: Key) throws -> JSON {
-        var mappableKey: String = ""
+        var useKey: String = ""
         switch self.decoder.wrapper?.strategy.keyMappable ?? .useDefaultKeys {
         case .useDefaultKeys:
-            mappableKey = key.stringValue
+            useKey = key.stringValue
         case .useCamelKeys(let c):
-            mappableKey = key.stringValue.toCamelCase(format: c)
+            useKey = key.stringValue.toCamelCase(format: c)
         case .useSnakeKeys(let c):
-            mappableKey = key.stringValue.toSnakeCase(format: c)
+            useKey = key.stringValue.toSnakeCase(format: c)
         case .usePascalKeys(let c):
-            mappableKey = key.stringValue.toPascalCase(format: c)
+            useKey = key.stringValue.toPascalCase(format: c)
         case .useUpperKeys:
-            mappableKey = key.stringValue.toUpperCase()
+            useKey = key.stringValue.toUpperCase()
         case .useLowerKeys:
-            mappableKey = key.stringValue.toLowerCase()
+            useKey = key.stringValue.toLowerCase()
         case .useCustom(let closure):
-            mappableKey = closure(self.paths).stringValue
+            useKey = closure(self.paths).stringValue
         }
-        guard let object = self.json[mappableKey] else {
+        guard let object = self.json[useKey] else {
             if self.json.count == 0 {
                 return JSON(dictionaryLiteral: ("", ""))
             } else {

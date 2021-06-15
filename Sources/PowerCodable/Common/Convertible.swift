@@ -1,6 +1,6 @@
 import Foundation
 
-public typealias PowerNull = Null
+public typealias PowerNull = BoxNull
 public typealias PowerBool = Bool
 public typealias PowerInteger = Int64
 public typealias PowerDouble = Double
@@ -587,41 +587,41 @@ extension EncodeKeyMappable {
 
 // MARK: - 编码value转化协议
 public protocol EncodingValueMappable {
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerNull) -> JSON
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerBool) -> JSON
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerInteger) -> JSON
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerDouble) -> JSON
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerString) -> JSON
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerObject) -> JSON
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerArray) -> JSON
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerNull) -> JSON
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerBool) -> JSON
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerInteger) -> JSON
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerDouble) -> JSON
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerString) -> JSON
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerObject) -> JSON
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerArray) -> JSON
 }
 
 extension EncodingValueMappable {
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerNull) -> JSON {
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerNull) -> JSON {
         return JSON(nilLiteral: ())
     }
 
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerBool) -> JSON {
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerBool) -> JSON {
         return JSON(booleanLiteral: value)
     }
 
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerInteger) -> JSON {
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerInteger) -> JSON {
         return JSON(integerLiteral: IntegerLiteralType(value))
     }
 
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerDouble) -> JSON {
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerDouble) -> JSON {
         return JSON(floatLiteral: value)
     }
 
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerString) -> JSON {
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerString) -> JSON {
         return JSON(stringLiteral: value)
     }
 
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerObject) -> JSON {
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerObject) -> JSON {
         return JSON(object: value)
     }
 
-    func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerArray) -> JSON {
+    static func toJSON(decoder: PowerJSONEncoder, paths: [Path], value: PowerArray) -> JSON {
         return JSON(array: value)
     }
 }

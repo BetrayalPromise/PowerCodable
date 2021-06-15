@@ -1,7 +1,7 @@
 import Foundation
 
 /// 用以表示空值
-public struct Null: Codable {
+public struct BoxNull: Codable {
 
 }
 
@@ -142,10 +142,10 @@ public struct BoxString {
 }
 
 public struct BoxURL {
-    let url: URL = URL(string: "")!
+    let url: URL = URL(string: "https://www.baidu.com")!
     let json: JSON
     init(json: JSON) {
-        debugPrint("Warnning: \(json) can not transform to URL, use URL(string: \"\")! as default, or implement DecodeValueMappable Protocal method to handle")
+        debugPrint("Warnning: \(json) can not transform to URL, use URL(string: \"https://www.baidu.com\")! as default, or implement DecodeValueMappable Protocal method to handle")
         self.json = json
     }
 }

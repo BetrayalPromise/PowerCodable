@@ -1434,10 +1434,14 @@ final class DecodeTests: XCTestCase {
                 let stringData: String
             }
             let json = try decoder.decode(type: Root.self, from: data)
-            print(json)
+            XCTAssertEqual(json.stringData, "string")
         } catch {
             XCTFail(error.localizedDescription)
         }
+    }
+    
+    func testKeyDelegateMappable() {
+
     }
     
     func testKeyCustomMappable() {
@@ -1721,13 +1725,13 @@ final class DecodeTests: XCTestCase {
     }
     
     func testValueCustomMappable() {
-        let data: Data = """
-        {
-            "hello": "hello",
-            "world": "world"
-        }
-        """.data(using: String.Encoding.utf8) ?? Data()
         do {
+            let data: Data = """
+            {
+                "hello": "hello",
+                "world": "world"
+            }
+            """.data(using: String.Encoding.utf8) ?? Data()
             struct Root: Codable, DecodeValueMappable {
                 let hello: String
                 let world: String
@@ -1744,6 +1748,37 @@ final class DecodeTests: XCTestCase {
             let json = try decoder.decode(type: Root.self, from: data)
             XCTAssertEqual(json.hello, "!hello")
             XCTAssertEqual(json.world, "world")
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        do {
+            let data: Data = """
+                [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}, "", "dfadfad"]
+                """.data(using: String.Encoding.utf8) ?? Data()
+            let model: [Bool] = try decoder.decode(type: [Bool].self, from: data)
+            XCTAssertEqual(model[0], true)
+            XCTAssertEqual(model[1], false)
+            XCTAssertEqual(model[2], false)
+            XCTAssertEqual(model[3], true)
+            XCTAssertEqual(model[4], false)
+            XCTAssertEqual(model[5], false)
+            XCTAssertEqual(model[6], false)
+            XCTAssertEqual(model[7], false)
+            XCTAssertEqual(model[8], false)
+            XCTAssertEqual(model[9], false)
+            XCTAssertEqual(model[10], false)
+            XCTAssertEqual(model[11], false)
+            XCTAssertEqual(model[12], false)
+            XCTAssertEqual(model[13], false)
+            XCTAssertEqual(model[14], false)
+            XCTAssertEqual(model[15], false)
+            XCTAssertEqual(model[16], false)
+            XCTAssertEqual(model[17], false)
+            XCTAssertEqual(model[18], false)
+            XCTAssertEqual(model[19], false)
+            XCTAssertEqual(model[20], false)
+            XCTAssertEqual(model[22], false)
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -1889,7 +1924,7 @@ final class EncodeTests: XCTestCase {
         }
     }
     
-    func testArray0() {
+    func testArray() {
         do {
             let json: JSON = try encoder.encode(value: [true, false], to: JSON.self)
             XCTAssertEqual(json[0], true)
@@ -1897,9 +1932,7 @@ final class EncodeTests: XCTestCase {
         } catch  {
             XCTFail(error.localizedDescription)
         }
-    }
-    
-    func testArray1() {
+        
         do {
             let json: JSON = try encoder.encode(value: [[true, true], [false]], to: JSON.self)
             XCTAssertEqual(json[0][0], true)
@@ -1908,41 +1941,37 @@ final class EncodeTests: XCTestCase {
         } catch  {
             XCTFail(error.localizedDescription)
         }
-    }
-    
-    func testArray2() {
-        struct Root: Encodable {
-            var `as`: [[A]] = [[A(), A()]]
-        }
-        struct A: Encodable {
-            var bool = false
-        }
+
         do {
+            struct Root: Encodable {
+                var `as`: [[A]] = [[A(), A()]]
+            }
+            struct A: Encodable {
+                var bool = false
+            }
             let json: JSON = try encoder.encode(value: Root(), to: JSON.self)
             XCTAssertEqual(json["as"][0][0]["bool"], false)
             XCTAssertEqual(json["as"][0][1]["bool"], false)
         } catch  {
             XCTFail(error.localizedDescription)
         }
-    }
-    
-    func testArray() {
-        struct Root: Encodable {
-            var `as`: [A] = []
-            var bs: [B] = [B()]
-            var cs: [C] = [C(), C()]
-        }
-        struct A: Encodable {
-            var bool = false
-        }
-        struct B: Encodable {
-            var int: Int = 0
-        }
-        struct C: Encodable {
-            var string = "string"
-        }
-        let root = Root()
+
         do {
+            struct Root: Encodable {
+                var `as`: [A] = []
+                var bs: [B] = [B()]
+                var cs: [C] = [C(), C()]
+            }
+            struct A: Encodable {
+                var bool = false
+            }
+            struct B: Encodable {
+                var int: Int = 0
+            }
+            struct C: Encodable {
+                var string = "string"
+            }
+            let root = Root()
             let json: JSON = try encoder.encode(value: root, to: JSON.self)
             XCTAssertEqual(json["as"], [])
             XCTAssertEqual(json["bs"][0]["int"], 0)
