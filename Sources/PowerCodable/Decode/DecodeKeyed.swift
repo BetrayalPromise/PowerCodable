@@ -40,6 +40,20 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
         case .useLowerKeys: usedKey = usedKey.toLowerCase()
         }
         
+        let wholeResult: [String: [String]] = self.decoder.keysStore.last ?? ["": []]
+        /// 包含key转换处理
+        if wholeResult.keys.contains(usedKey) {
+            let absorbKeys: [String] = wholeResult[usedKey] ?? []
+            for item in absorbKeys {
+                if self.json[item] != nil {
+                    usedKey = item
+                    break
+                } else {
+                    continue
+                }
+            }
+        } 
+        
         guard let object = self.json[usedKey] else {
             if self.json.count == 0 {
                 return JSON(dictionaryLiteral: ("", ""))
