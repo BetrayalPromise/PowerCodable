@@ -1265,7 +1265,7 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-    func testType() {
+    func testJSON() {
         /// Data -> Decodable
         do {
             let data: Data = """
@@ -1422,6 +1422,7 @@ final class DecodeTests: XCTestCase {
     func testKeyFormatMappable() {
         let data: Data = """
         {
+            "intData": "int",
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
@@ -1430,18 +1431,35 @@ final class DecodeTests: XCTestCase {
             self.decoder.strategy.keyFormatStrategy = .useDefaultKeys
         }
         do {
-            struct Root: Codable {
+            struct Root: Codable, DecodeKeyMappable {
                 let stringData: String
+                let intData: String
+                
+                static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String : [String]] {
+                    return ["stringData": ["string_data"], "intData": ["intData", "int_data"]]
+                }
             }
             let json = try decoder.decode(type: Root.self, from: data)
+            XCTAssertEqual(json.intData, "int")
             XCTAssertEqual(json.stringData, "string")
         } catch {
             XCTFail(error.localizedDescription)
         }
     }
     
-    func testKeyDelegateMappable() {
+    func testGlobalKeyDelegateMappable() {
+        let data: Data = """
+        [true, false]
+        """.data(using: String.Encoding.utf8) ?? Data()
 
+        
+        do {
+            let json = try decoder.decode(type: [Bool].self, from: data)
+            XCTAssertEqual(json[0], true)
+            XCTAssertEqual(json[1], false)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
     }
     
     func testKeyCustomMappable() {
@@ -1809,7 +1827,7 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-    func testJSON() {
+    func testJSONValue() {
         let jsondoc = #"""
         {
           "imAString": "aString",
@@ -1853,5 +1871,14 @@ final class DecodeTests: XCTestCase {
         } catch {
             XCTFail(error.localizedDescription)
         }
+    }
+    
+    func testType() {
+        struct A: Decodable, DecodeKeyMappable, DecodeValueMappable {
+            
+        }
+        
+        XCTAssertEqual(A.kindOfDecodeKeyMappable(), true)
+        XCTAssertEqual(A.kindOfDecodeValueMappable(), true)
     }
 }

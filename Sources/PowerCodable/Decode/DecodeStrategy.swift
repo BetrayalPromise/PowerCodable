@@ -1,6 +1,7 @@
 import Foundation
 
 extension PowerJSONDecoder {
+    /// 数据源的数据key采用的格式形式
     public enum KeyFormatDecodingStrategy {
         case useDefaultKeys // 原始key
         case useSnakeKeys(StringCaseFormat.SnakeCase) // 蛇形key
@@ -8,11 +9,12 @@ extension PowerJSONDecoder {
         case usePascalKeys(StringCaseFormat.PascalCase) // 帕斯卡key
         case useUpperKeys // 大写的key
         case useLowerKeys // 小写的key
-//        case useCustom(([CodingKey]) -> CodingKey)
     }
     
     public enum KeyDecodingStrategy {
         case useDefaultKeys
+        // TODO: 待处理
+//        case useGlobalDelegateKeys(delegate: GlobalDecodeKeyMappable)
         case useCustomKeys(closue: ((CodingKey, [Path]) -> CodingKey))
     }
 

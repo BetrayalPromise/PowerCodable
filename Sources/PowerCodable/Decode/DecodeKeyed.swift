@@ -29,6 +29,11 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
         switch self.decoder.wrapper?.strategy.keyMappingStrategy ?? .useDefaultKeys {
         case .useDefaultKeys: usedKey = key.stringValue
         case .useCustomKeys(closue: let closue): usedKey = closue(key, self.paths).stringValue
+//        case .useGlobalDelegateKeys(delegate: let delegate):
+//            let result: [String: [String]] = type(of: delegate).decodeKeys(decoder: self.decoder.wrapper ?? PowerJSONDecoder(), paths: self.paths)
+//            for item in result[key.stringValue] ?? [] {
+//
+//            }
         }
         
         switch self.decoder.wrapper?.strategy.keyFormatStrategy ?? .useDefaultKeys {

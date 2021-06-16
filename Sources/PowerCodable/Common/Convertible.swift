@@ -37,12 +37,30 @@ extension Dictionary: DateConvertible where Key == String, Value == JSON {}
 
 // MARK: - 解码key转化协议
 public protocol DecodeKeyMappable {
-    /// json转化为model时候, model可以接受的json字段结合
+    /// json转化为model时候,model可以接受的json字段集合,并且不受到编码策略keyFormatStrategy的影响
+    /// - Parameters:
+    ///   - decoder: 解码器
+    ///   - paths: 编码路径集合
     static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]]
 }
 
 extension DecodeKeyMappable {
-    static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
+    public static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
+        return ["": []]
+    }
+}
+
+
+public protocol GlobalDecodeKeyMappable {
+    /// json转化为model时候,model可以接受的json字段集合,并且不受到编码策略keyFormatStrategy的影响,接管DecodeKeyMappable的所有权限
+    /// - Parameters:
+    ///   - decoder: 解码器
+    ///   - paths: 编码路径集合
+    static func decodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]]
+}
+
+extension GlobalDecodeKeyMappable {
+    static func decodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
         return ["": []]
     }
 }
@@ -706,4 +724,54 @@ extension Array: CodingSupport where Element == Any {
         }
     }
     typealias Wrapper = Array
+}
+
+
+extension Decodable {
+    func array() -> Bool {
+        guard let _ = self as? Array<Any> else {
+            return true
+        }
+        return true
+    }
+    
+    func object() -> Bool {
+        guard let _ =  self as? Dictionary<AnyHashable, Any> else {
+            return false
+        }
+         return true
+    }
+}
+
+
+public extension Decodable {
+    static func enableKeyMappable() -> Bool {
+        if let _: DecodeKeyMappable.Type = Self.self as? DecodeKeyMappable.Type {
+            return true
+        }
+        return false
+    }
+    
+    static func enableValueMappable() -> Bool {
+        if let _: DecodeValueMappable.Type = Self.self as? DecodeValueMappable.Type {
+            return true
+        }
+        return false
+    }
+}
+
+extension Decodable {
+    static func kindOfDecodeKeyMappable() -> Bool {
+        if let _: DecodeKeyMappable.Type = Self.self as? DecodeKeyMappable.Type {
+            return true
+        }
+        return false
+    }
+    
+    static func kindOfDecodeValueMappable() -> Bool {
+        if let _: DecodeValueMappable.Type = Self.self as? DecodeValueMappable.Type {
+            return true
+        }
+        return false
+    }
 }

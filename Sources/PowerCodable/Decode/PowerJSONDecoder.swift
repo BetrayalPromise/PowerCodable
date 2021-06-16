@@ -64,7 +64,7 @@ final class InnerDecoder: Decoder {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var json: JSON
-    var currentJSON: JSON
+//    var self.json: JSON
     unowned var wrapper: PowerJSONDecoder?
     
     var keysStore: [[String: [String]]] = []
@@ -78,21 +78,21 @@ final class InnerDecoder: Decoder {
     init(json: JSON, at codingPath: [CodingKey] = []) {
         self.codingPath = codingPath
         self.json = json
-        self.currentJSON = json
+//        self.self.json = json
     }
 }
 
 extension InnerDecoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        return try container(keyedBy: type, wrapping: currentJSON)
+        return try container(keyedBy: type, wrapping: self.json)
     }
     
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        return try unkeyedContainer(wrapping: currentJSON)
+        return try unkeyedContainer(wrapping: self.json)
     }
     
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-        return DecodeSingleValue(decoder: self, json: currentJSON)
+        return DecodeSingleValue(decoder: self, json: self.json)
     }
 }
 
@@ -570,27 +570,31 @@ extension InnerDecoder {
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
     func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
-        currentJSON = object
+        self.json = object
         print(Swift.type(of: T.self))
         if let type: DecodeKeyMappable.Type = T.self as? DecodeKeyMappable.Type {
-            self.keysStore.append(type.modelDecodeKeys(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths))
+            if !object.isArray$ {
+                self.keysStore.append(type.modelDecodeKeys(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths))
+            }
         }
         if let type: DecodeValueMappable.Type = T.self as? DecodeValueMappable.Type {
             self.valuesStore.append(type)
         }
         if T.self == URL.self {
-            let container = DecodeSingleValue(decoder: self, json: currentJSON)
+            let container = DecodeSingleValue(decoder: self, json: self.json)
             return try container.decode(T.self)
         } else if T.self == Date.self {
-            let container = DecodeSingleValue(decoder: self, json: currentJSON)
+            let container = DecodeSingleValue(decoder: self, json: self.json)
             return try container.decode(T.self)
         } else if T.self == Data.self {
-            let container = DecodeSingleValue(decoder: self, json: currentJSON)
+            let container = DecodeSingleValue(decoder: self, json: self.json)
             return try container.decode(T.self)
         }
         defer {
             if self.keysStore.count > 0 {
-                self.keysStore.removeLast()
+                if !object.isArray$ {
+                    self.keysStore.removeLast()
+                }
             }
             if self.valuesStore.count > 0 {
                 self.valuesStore.removeLast()
