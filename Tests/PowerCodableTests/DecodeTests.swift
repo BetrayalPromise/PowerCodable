@@ -1632,11 +1632,11 @@ final class DecodeTests: XCTestCase {
         
         do {
             struct Adapter: DecodeValueMappable {
-                static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
-                    if paths.path == "[:]gender" && value.isInt$ && value.int$ == 4 {
+                static func toInt(decoder: PowerJSONDecoder, paths: [Path], json: JSON) throws -> Int {
+                    if paths.path == "[:]gender" && json.isInt$ && json.int$ == 4 {
                         return 0
                     }
-                    return value.int$ ?? 0
+                    return json.int$ ?? 0
                 }
             }
             
@@ -1668,11 +1668,11 @@ final class DecodeTests: XCTestCase {
         }
         do {
             struct Adapter: DecodeValueMappable {
-                static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
+                static func toInt(decoder: PowerJSONDecoder, paths: [Path], json: JSON) throws -> Int {
                     if paths.path == "[:]gender" {
                         return 0
                     }
-                    return value.int$ ?? 0
+                    return json.int$ ?? 0
                 }
             }
             
@@ -1700,11 +1700,11 @@ final class DecodeTests: XCTestCase {
         
         do {
             struct Adapter: DecodeValueMappable {
-                static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
+                static func toInt(decoder: PowerJSONDecoder, paths: [Path], json: JSON) throws -> Int {
                     if paths.path == "[:]gender" {
                         return 0
                     }
-                    return value.int$ ?? 0
+                    return json.int$ ?? 0
                 }
             }
             struct Human: Codable {
@@ -1753,7 +1753,7 @@ final class DecodeTests: XCTestCase {
                 let hello: String
                 let world: String
                 
-                static func toString(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> String {
+                static func toString(decoder: PowerJSONDecoder, paths: [Path], json: JSON) throws -> String {
                     if paths.path == "[:]hello" {
                         return "!hello"
                     } else if paths.path == "[:]world" {

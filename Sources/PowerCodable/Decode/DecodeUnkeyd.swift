@@ -20,6 +20,7 @@ struct DecodeUnkeyed: UnkeyedDecodingContainer {
     private let json: [JSON]
 
     init(decoder: InnerDecoder, json: [JSON]) {
+        print(#function)
         self.json = json
         self.decoder = decoder
     }
@@ -29,7 +30,7 @@ struct DecodeUnkeyed: UnkeyedDecodingContainer {
     }
 
     @inline(__always)
-    private mutating func getCurrentObject() throws -> JSON {
+    private mutating func getObject() throws -> JSON {
         guard !isAtEnd else { throw Coding.Exception.valueNotFound(type: JSON.self, codingPath: decoder.codingPath + [currentKey]) }
         defer { self.currentIndex += 1 }
         return json[self.currentIndex]
@@ -48,112 +49,112 @@ extension DecodeUnkeyed {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unboxNil(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unboxNil(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Bool.Type) throws -> Bool {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Int.Type) throws -> Int {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Int8.Type) throws -> Int8 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Int16.Type) throws -> Int16 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Int32.Type) throws -> Int32 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Int64.Type) throws -> Int64 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: UInt.Type) throws -> UInt {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: UInt8.Type) throws -> UInt8 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: UInt16.Type) throws -> UInt16 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: UInt32.Type) throws -> UInt32 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: UInt64.Type) throws -> UInt64 {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Float.Type) throws -> Float {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: Double.Type) throws -> Double {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode(_ type: String.Type) throws -> String {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey)
     }
 
     mutating func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
         self.paths.push(value: Path.index(by: self.currentIndex))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unboxDecodable(object: getCurrentObject(), forKey: self.currentKey)
+        return try decoder.unbox(json: self.getObject(), forKey: self.currentKey, type: type)
     }
 }
 
@@ -161,11 +162,11 @@ extension DecodeUnkeyed {
     mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
         codingPath.append(currentKey)
         defer { codingPath.removeLast() }
-        return try decoder.container(keyedBy: type, wrapping: getCurrentObject())
+        return try decoder.container(keyedBy: type, json: self.getObject())
     }
 
     mutating func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
-        return try decoder.unkeyedContainer(wrapping: getCurrentObject())
+        return try decoder.unkeyedContainer(json: self.getObject())
     }
 }
 

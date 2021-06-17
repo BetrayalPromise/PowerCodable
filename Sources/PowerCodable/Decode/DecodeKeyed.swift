@@ -5,12 +5,15 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     private unowned let decoder: InnerDecoder
     private let json: [String: JSON]
     
+    var type: DecodeKeyMappable.Type?
+    
     var codingPath: [CodingKey] {
         get { return decoder.codingPath }
         set { decoder.codingPath = newValue }
     }
     
     init(decoder: InnerDecoder,  json: [String: JSON]) {
+        print(#function)
         self.decoder  = decoder
         self.json = json
     }
@@ -94,112 +97,112 @@ extension DecodeKeyed {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: String.Type, forKey key: Key) throws -> String {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unbox(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decodeNil(forKey key: Key) throws -> Bool {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unboxNil(object: getObject(forKey: key), forKey: key)
+        return try decoder.unboxNil(json: self.getObject(forKey: key), forKey: key)
     }
 
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T: Decodable {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
         debugPrint(self.paths.path)
-        return try decoder.unboxDecodable(object: getObject(forKey: key), forKey: key)
+        return try decoder.unbox(json: self.getObject(forKey: key), forKey: key, type: type)
     }
 }
 
@@ -207,16 +210,16 @@ extension DecodeKeyed {
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        let object = try getObject(forKey: key)
-        return try decoder.container(keyedBy: type, wrapping: object)
+        let object = try self.getObject(forKey: key)
+        return try decoder.container(keyedBy: type, json: object)
     }
 
     func nestedUnkeyedContainer(forKey key: K) throws -> UnkeyedDecodingContainer {
         codingPath.append(key)
         defer { codingPath.removeLast() }
 
-        let object = try getObject(forKey: key)
-        return try decoder.unkeyedContainer(wrapping: object)
+        let object = try self.getObject(forKey: key)
+        return try decoder.unkeyedContainer(json: object)
     }
 
     func superDecoder() throws -> Decoder {

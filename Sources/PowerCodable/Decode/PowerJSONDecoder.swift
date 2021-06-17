@@ -53,7 +53,7 @@ public final class PowerJSONDecoder {
                     fatalError()
                 }
             } ?? json
-            return try decoder.unboxDecodable(object: used)
+            return try decoder.unbox(json: used, type: type)
         } catch {
             throw error
         }
@@ -64,7 +64,6 @@ final class InnerDecoder: Decoder {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var json: JSON
-//    var self.json: JSON
     unowned var wrapper: PowerJSONDecoder?
     
     var keysStore: [[String: [String]]] = []
@@ -78,17 +77,16 @@ final class InnerDecoder: Decoder {
     init(json: JSON, at codingPath: [CodingKey] = []) {
         self.codingPath = codingPath
         self.json = json
-//        self.self.json = json
     }
 }
 
 extension InnerDecoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        return try container(keyedBy: type, wrapping: self.json)
+        return try self.container(keyedBy: type, json: self.json)
     }
     
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        return try unkeyedContainer(wrapping: self.json)
+        return try self.unkeyedContainer(json: self.json)
     }
     
     func singleValueContainer() throws -> SingleValueDecodingContainer {
@@ -97,17 +95,17 @@ extension InnerDecoder {
 }
 
 extension InnerDecoder {
-    func container<Key>(keyedBy type: Key.Type, wrapping object: JSON) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
-        guard case let .object(unwrappedObject) = object else {
-            throw Coding.Exception.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: object)
+    func container<Key>(keyedBy type: Key.Type, json: JSON) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
+        guard case let .object(unwrappedObject) = json else {
+            throw Coding.Exception.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: json)
         }
         let container = DecodeKeyed<Key>(decoder: self, json: unwrappedObject)
         return KeyedDecodingContainer(container)
     }
     
-    func unkeyedContainer(wrapping object: JSON) throws -> UnkeyedDecodingContainer {
-        guard case let .array(array) = object else {
-            throw Coding.Exception.typeMismatch(type: [JSON].self, codingPath: self.codingPath, reality: object)
+    func unkeyedContainer(json: JSON) throws -> UnkeyedDecodingContainer {
+        guard case let .array(array) = json else {
+            throw Coding.Exception.typeMismatch(type: [JSON].self, codingPath: self.codingPath, reality: json)
         }
         return DecodeUnkeyed(decoder: self, json: array)
     }
@@ -119,27 +117,27 @@ extension InnerDecoder: DecodeValueMappable {}
 extension InnerDecoder {
     /// 是否解码空
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Returns: 是否为空
-    func unboxNil(object: JSON, forKey key: CodingKey) -> Bool {
+    func unboxNil(json: JSON, forKey key: CodingKey) -> Bool {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return unboxNil(object: object)
+        return unboxNil(json: json)
     }
     
     /// 是否解码空
-    /// - Parameter object: json对象
+    /// - Parameter json: JSON对象
     /// - Returns: 是否为空
-    func unboxNil(object: JSON) -> Bool {
+    func unboxNil(json: JSON) -> Bool {
         switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            return object == .null
+            return json == .null
         case .useCustomValues(delegete: _):
-            if (self.wrapper?.strategy.enableEmptyValueStrategy ?? false) && object == .null {
+            if (self.wrapper?.strategy.enableEmptyValueStrategy ?? false) && json == .null {
                 return false
             } else {
-                return object == .null
+                return json == .null
             }
         }
     }
@@ -149,26 +147,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 布尔型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Bool {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Bool {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Bool {
+    func unbox(json: JSON) throws -> Bool {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -178,26 +176,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Int {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Int {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Int {
+    func unbox(json: JSON) throws -> Int {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -207,26 +205,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Int8 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Int8 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Int8 {
+    func unbox(json: JSON) throws -> Int8 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -236,26 +234,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Int16 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Int16 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Int16 {
+    func unbox(json: JSON) throws -> Int16 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -265,26 +263,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Int32 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Int32 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Int32 {
+    func unbox(json: JSON) throws -> Int32 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -294,26 +292,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Int64 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Int64 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Int64 {
+    func unbox(json: JSON) throws -> Int64 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -323,26 +321,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> UInt {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> UInt {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> UInt {
+    func unbox(json: JSON) throws -> UInt {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -352,26 +350,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> UInt8 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> UInt8 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> UInt8 {
+    func unbox(json: JSON) throws -> UInt8 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -381,26 +379,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> UInt16 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> UInt16 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> UInt16 {
+    func unbox(json: JSON) throws -> UInt16 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -410,26 +408,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> UInt32 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> UInt32 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> UInt32 {
+    func unbox(json: JSON) throws -> UInt32 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -439,26 +437,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> UInt64 {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> UInt64 {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> UInt64 {
+    func unbox(json: JSON) throws -> UInt64 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -468,26 +466,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> String {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> String {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> String {
+    func unbox(json: JSON) throws -> String {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -497,26 +495,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Float {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Float {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Float {
+    func unbox(json: JSON) throws -> Float {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -526,26 +524,26 @@ extension InnerDecoder {
 extension InnerDecoder {
     /// 字符串型解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unbox(object: JSON, forKey key: CodingKey) throws -> Double {
+    func unbox(json: JSON, forKey key: CodingKey) throws -> Double {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unbox(object: object)
+        return try unbox(json: json)
     }
     
-    func unbox(object: JSON) throws -> Double {
+    func unbox(json: JSON) throws -> Double {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+            return try type.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
             switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try Self.self.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, value: object)
+                return try type(of: delegate).toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -553,31 +551,36 @@ extension InnerDecoder {
 
 // MARK: -  范型T处理
 extension InnerDecoder {
-    /// T型解码处理
+    /// 解码处理
     /// - Parameters:
-    ///   - object: json对象
+    ///   - json: JSON对象
     ///   - key: 解码key
+    ///   - type: 解码类型
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unboxDecodable<T>(object: JSON, forKey key: CodingKey) throws -> T where T: Decodable {
+    func unbox<T>(json: JSON, forKey key: CodingKey, type: T.Type) throws -> T where T: Decodable {
         codingPath.append(key)
         defer { codingPath.removeLast() }
-        return try unboxDecodable(object: object)
+        return try unbox(json: json, type: type)
     }
     
-    /// 解码顶层处理
-    /// - Parameter object: json对象
+    /// 解码处理
+    /// - Parameters:
+    ///   - json: JSON对象
+    ///   - type: 解码类型
     /// - Throws: 处理异常
     /// - Returns: 返回处理后的模型
-    func unboxDecodable<T>(object: JSON) throws -> T where T: Decodable {
-        self.json = object
+    func unbox<T>(json: JSON, type: T.Type) throws -> T where T: Decodable {
+        self.json = json
         print(Swift.type(of: T.self))
-        if let type: DecodeKeyMappable.Type = T.self as? DecodeKeyMappable.Type {
-            if !object.isArray$ {
+        if let type: DecodeKeyMappable.Type = type as? DecodeKeyMappable.Type {
+            if !json.isArray$ {
                 self.keysStore.append(type.modelDecodeKeys(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths))
+            } else {
+                print("Array<Decodable> type implementation DecodeKeyMappable protocol meaningless")
             }
         }
-        if let type: DecodeValueMappable.Type = T.self as? DecodeValueMappable.Type {
+        if let type: DecodeValueMappable.Type = type as? DecodeValueMappable.Type {
             self.valuesStore.append(type)
         }
         if T.self == URL.self || T.self == Date.self || T.self == Data.self {
@@ -586,7 +589,7 @@ extension InnerDecoder {
         }
         defer {
             if self.keysStore.count > 0 {
-                if !object.isArray$ {
+                if !json.isArray$ {
                     self.keysStore.removeLast()
                 }
             }
@@ -594,7 +597,6 @@ extension InnerDecoder {
                 self.valuesStore.removeLast()
             }
         }
-        debugPrint(Swift.type(of: T.self))
         return try T.init(from: self)
     }
 }
