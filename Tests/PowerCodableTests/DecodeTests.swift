@@ -1116,25 +1116,26 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-    //    func testNest() {
-    //        class Person: Codable {
-    //            var name: String = ""
-    //            var parent: Person?
-    //        }
-    //
-    //        let json: [String: Any] = [
-    //            "name": "Jack",
-    //            "parent": ["name": "Jim"]
-    //        ]
-    //        do {
-    //            let model: Person? = try decoder.decode(type: Person.self, from: json)
-    //            print(model)
-    //        } catch {
-    //            XCTFail(error)
-    //        }
-    //    }
+        func testTypeNest() {
+            class Person: Codable {
+                var name: String = ""
+                var parent: Person?
+            }
     
-    func testNested0() {
+            let json: [String: Any] = [
+                "name": "Jack",
+                "parent": ["name": "Jim"]
+            ]
+            do {
+                let model: Person? = try decoder.decode(type: Person.self, from: json)
+                XCTAssertEqual(model?.name, "Jack")
+                XCTAssertEqual(model?.parent?.name, "Jim")
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+    
+    func testNested() {
         do {
             let data: Data = """
                 {"a": [{"b": [{"c": [{"d": [{"c": "over"}]}]}]}]}
@@ -1632,7 +1633,7 @@ final class DecodeTests: XCTestCase {
         do {
             struct Adapter: DecodeValueMappable {
                 static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
-                    if paths.current == "[:]gender" && value.isInt$ && value.int$ == 4 {
+                    if paths.path == "[:]gender" && value.isInt$ && value.int$ == 4 {
                         return 0
                     }
                     return value.int$ ?? 0
@@ -1668,7 +1669,7 @@ final class DecodeTests: XCTestCase {
         do {
             struct Adapter: DecodeValueMappable {
                 static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
-                    if paths.current == "[:]gender" {
+                    if paths.path == "[:]gender" {
                         return 0
                     }
                     return value.int$ ?? 0
@@ -1700,7 +1701,7 @@ final class DecodeTests: XCTestCase {
         do {
             struct Adapter: DecodeValueMappable {
                 static func toInt(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> Int {
-                    if paths.current == "[:]gender" {
+                    if paths.path == "[:]gender" {
                         return 0
                     }
                     return value.int$ ?? 0
@@ -1753,9 +1754,9 @@ final class DecodeTests: XCTestCase {
                 let world: String
                 
                 static func toString(decoder: PowerJSONDecoder, paths: [Path], value: JSON) throws -> String {
-                    if paths.current == "[:]hello" {
+                    if paths.path == "[:]hello" {
                         return "!hello"
-                    } else if paths.current == "[:]world" {
+                    } else if paths.path == "[:]world" {
                         return "world"
                     }
                     return ""
@@ -1880,5 +1881,7 @@ final class DecodeTests: XCTestCase {
         
         XCTAssertEqual(A.kindOfDecodeKeyMappable(), true)
         XCTAssertEqual(A.kindOfDecodeValueMappable(), true)
+        
+//        XCTAssertEqual(A.kind(of: Protocol.self), true)
     }
 }

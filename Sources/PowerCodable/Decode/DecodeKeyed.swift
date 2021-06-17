@@ -61,7 +61,7 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
         
         guard let object = self.json[usedKey] else {
             if self.json.count == 0 {
-                return JSON(dictionaryLiteral: ("", ""))
+                return JSON.null
             } else {
                 if self.decoder.keysStore.last != nil {
                     for k in self.decoder.keysStore.last?[key.stringValue] ?? [] {
@@ -70,11 +70,11 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
                         case .some(let json): return json
                         }
                     }
-                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement DecodeKeysMappable")
-                    return JSON(dictionaryLiteral: ("", ""))
+                    debugPrint("CodingPath: \(self.paths.path), Key: \(key.stringValue) not found, use default value (JSON.null), if you want to custom define key please implement DecodeKeysMappable")
+                    return JSON.null
                 } else {
-                    debugPrint("key: \(key.stringValue) not found, use default value, if you want to custom define key please implement DecodeKeysMappable")
-                    return JSON(dictionaryLiteral: ("", ""))
+                    debugPrint("CodingPath: \(self.paths.path), Key: \(key.stringValue) not found, use default value (JSON.null), if you want to custom define key please implement DecodeKeysMappable")
+                    return JSON.null
                 }
             }
         }
@@ -93,112 +93,112 @@ extension DecodeKeyed {
     func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: String.Type, forKey key: Key) throws -> String {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unbox(object: getObject(forKey: key), forKey: key)
     }
 
     func decodeNil(forKey key: Key) throws -> Bool {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unboxNil(object: getObject(forKey: key), forKey: key)
     }
 
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T: Decodable {
         self.paths.push(value: Path.index(by: key.stringValue))
         defer { self.paths.pop() }
-        debugPrint(self.paths.current)
+        debugPrint(self.paths.path)
         return try decoder.unboxDecodable(object: getObject(forKey: key), forKey: key)
     }
 }

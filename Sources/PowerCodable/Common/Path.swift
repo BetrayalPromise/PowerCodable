@@ -57,25 +57,17 @@ public struct Path: CodingKey {
 public extension Array where Element == Path {
     mutating func push(value: Element, options: PowerJSONEncoder.KeyFormatEncodingStrategy = .useDefaultKeys) {
         switch value.container {
-        case .array:
-            self.append(value)
+        case .array: self.append(value)
         case .object:
             var key: String = ""
             switch options {
-            case .useDefaultKeys:
-                key = value.indexPath
-            case .useCamelKeys(let c):
-                key = value.indexPath.toCamelCase(format: c)
-            case .useSnakeKeys(let c):
-                key = value.indexPath.toSnakeCase(format: c)
-            case .usePascalKeys(let c):
-                key = value.indexPath.toPascalCase(format: c)
-            case .useUpperKeys:
-                key = value.indexPath.toUpperCase()
-            case .useLowerKeys:
-                key = value.indexPath.toLowerCase()
-            case .useCustom(let closure):
-                key = closure(self).stringValue
+            case .useDefaultKeys: key = value.indexPath
+            case .useCamelKeys(let c): key = value.indexPath.toCamelCase(format: c)
+            case .useSnakeKeys(let c): key = value.indexPath.toSnakeCase(format: c)
+            case .usePascalKeys(let c): key = value.indexPath.toPascalCase(format: c)
+            case .useUpperKeys: key = value.indexPath.toUpperCase()
+            case .useLowerKeys: key = value.indexPath.toLowerCase()
+            case .useCustom(let closure): key = closure(self).stringValue
             }
             self.append(Path(information: Container.object.rawValue + key, container: Container.object, indexPath: key))
         }
@@ -85,7 +77,8 @@ public extension Array where Element == Path {
         if self.count > 0 { self.removeLast() }
     }
 
-    var current: String {
+    /// 当前使用的编码路径
+    var path: String {
         return self.reduce("") { (result, item) -> String in
             return result + (item.information)
         }
