@@ -35,7 +35,7 @@ public final class PowerJSONDecoder {
     ///   - from: 数据源, 只支持[Data String JSONWrapper(json结构) JSON](必须是容器类)
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
-    func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: CodingSupport {
+    public func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: CodingSupport {
         guard let data: Data = from.dataWrapper else { throw Coding.Exception.invalidData() }
         do {
             let json: JSON = try JSON.Parser.parse(data)

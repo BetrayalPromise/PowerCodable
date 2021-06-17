@@ -19,7 +19,7 @@ public class PowerJSONEncoder {
     ///   - outputType: 输出类型, 只支持[Data String JSONWrapper(json结构) JSON]
     /// - Throws: 解析异常
     /// - Returns: 输出值
-    func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: CodingSupport {
+    public func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: CodingSupport {
         let encoder = InnerEncoder(value: value)
         encoder.wrapper = self
         var json: JSON = .unknow

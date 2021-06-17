@@ -644,7 +644,7 @@ extension EncodingValueMappable {
     }
 }
 
-protocol CodingSupport {
+public protocol CodingSupport {
     /// JSON的二进制数据
     var dataWrapper: Data? { get }
     /// 关联类型
@@ -652,8 +652,8 @@ protocol CodingSupport {
 }
 
 extension Data: CodingSupport {
-    typealias Wrapper = Data
-    var dataWrapper: Data? {
+    public typealias Wrapper = Data
+    public var dataWrapper: Data? {
         return self
     }
 }
@@ -689,9 +689,9 @@ public struct JSONWrapper: CodingSupport {
 }
 
 extension JSON: CodingSupport {
-    typealias Wrapper = JSON
+    public typealias Wrapper = JSON
 
-    var dataWrapper: Data? {
+    public var dataWrapper: Data? {
         do {
             let string: String = try JSON.Serializer.serialize(self)
             return string.data(using: String.Encoding.utf8)
@@ -703,8 +703,8 @@ extension JSON: CodingSupport {
 }
 
 extension Dictionary: CodingSupport where Key == String, Value == Any {
-    typealias Wrapper = Dictionary
-    var dataWrapper: Data? {
+    public typealias Wrapper = Dictionary
+    public var dataWrapper: Data? {
         do {
             return try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
         } catch {
@@ -715,7 +715,7 @@ extension Dictionary: CodingSupport where Key == String, Value == Any {
 }
 
 extension Array: CodingSupport where Element == Any {
-    var dataWrapper: Data? {
+    public var dataWrapper: Data? {
         do {
             return try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
         } catch {
@@ -723,7 +723,7 @@ extension Array: CodingSupport where Element == Any {
             return nil
         }
     }
-    typealias Wrapper = Array
+    public typealias Wrapper = Array
 }
 
 
