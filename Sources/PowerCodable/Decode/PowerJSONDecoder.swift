@@ -96,10 +96,10 @@ extension InnerDecoder {
 
 extension InnerDecoder {
     func container<Key>(keyedBy type: Key.Type, json: JSON) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
-        guard case let .object(unwrappedObject) = json else {
+        guard case let .object(object) = json else {
             throw Coding.Exception.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: json)
         }
-        let container = DecodeKeyed<Key>(decoder: self, json: unwrappedObject)
+        let container = DecodeKeyed<Key>(decoder: self, json: object)
         return KeyedDecodingContainer(container)
     }
     
