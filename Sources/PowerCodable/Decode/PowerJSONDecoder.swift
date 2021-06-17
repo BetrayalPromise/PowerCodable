@@ -580,13 +580,7 @@ extension InnerDecoder {
         if let type: DecodeValueMappable.Type = T.self as? DecodeValueMappable.Type {
             self.valuesStore.append(type)
         }
-        if T.self == URL.self {
-            let container = DecodeSingleValue(decoder: self, json: self.json)
-            return try container.decode(T.self)
-        } else if T.self == Date.self {
-            let container = DecodeSingleValue(decoder: self, json: self.json)
-            return try container.decode(T.self)
-        } else if T.self == Data.self {
+        if T.self == URL.self || T.self == Date.self || T.self == Data.self {
             let container = DecodeSingleValue(decoder: self, json: self.json)
             return try container.decode(T.self)
         }
