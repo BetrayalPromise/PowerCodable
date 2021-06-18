@@ -398,13 +398,13 @@ extension DecodeValueMappable {
 // MARK: - Data
 extension DecodeValueMappable {
     static func toData(decoder: PowerJSONDecoder, paths: [Path], json: JSON) throws -> Data {
-        let decoder: InnerDecoder = InnerDecoder(json: json)
+        let inner: InnerDecoder = InnerDecoder(json: json, decoder: decoder)
         switch json {
         case .unknow: throw Coding.Exception.invalidUnknow()
         case .null: return BoxData(json: json).data
         case .bool(_): return BoxData(json: json).data
         case .integer(let integer):
-            switch decoder.wrapper?.strategy.dataValueStrategy ?? .useDefaultValues {
+            switch inner.decoder?.strategy.dataValueStrategy ?? .useDefaultValues {
             case .base64: return integer.toData()?.base64EncodedData() ?? BoxData(json: json).data.base64EncodedData()
             case .deferredToData:
                 let size = MemoryLayout.size(ofValue: json)
@@ -414,19 +414,19 @@ extension DecodeValueMappable {
             case .hexadecimalValues: return BoxData(json: json).data
             case .custom(let closure):
                 do {
-                     return try closure(decoder)
+                     return try closure(inner)
                 } catch {
                     return BoxData(json: json).data
                 }
             }
         case .double(let double):
-            switch decoder.wrapper?.strategy.dataValueStrategy ?? .useDefaultValues {
+            switch inner.decoder?.strategy.dataValueStrategy ?? .useDefaultValues {
             case .base64: return double.toData()?.base64EncodedData() ?? BoxData(json: json).data.base64EncodedData()
             case .useDefaultValues: return BoxData(json: json).data
             case .hexadecimalValues: return BoxData(json: json).data
             case .custom(let closure):
                 do {
-                    return try closure(decoder)
+                    return try closure(inner)
                 } catch {
                     return BoxData(json: json).data
                 }
@@ -436,13 +436,13 @@ extension DecodeValueMappable {
                 return Data(bytes: &json, count: size)
             }
         case .string(let string):
-            switch decoder.wrapper?.strategy.dataValueStrategy ?? .useDefaultValues {
+            switch inner.decoder?.strategy.dataValueStrategy ?? .useDefaultValues {
             case .base64: return string.toData()?.base64EncodedData() ?? BoxData(json: json).data.base64EncodedData()
             case .useDefaultValues: return json.dataWrapper ?? Data()
             case .hexadecimalValues: return Data(hexString: string)
             case .custom(let closure):
                 do {
-                    return try closure(decoder)
+                    return try closure(inner)
                 } catch {
                     return json.dataWrapper ?? Data()
                 }
@@ -481,16 +481,16 @@ extension DecodeValueMappable {
 // MARK: - Date
 extension DecodeValueMappable {
     static func toDate(decoder: PowerJSONDecoder, paths: [Path], json: JSON) throws -> Date {
-        let decoder: InnerDecoder = InnerDecoder(json: json)
+        let inner: InnerDecoder = InnerDecoder(json: json, decoder: decoder)
         switch json {
         case .unknow: throw Coding.Exception.invalidTransform()
         case .null: return BoxDate(json: json).date
         case .bool(_): return BoxDate(json: json).date
         case .integer(let integer):
-            switch decoder.wrapper?.strategy.dateValueStrategy ?? .secondsSince1970(json: .second) {
+            switch decoder.strategy.dateValueStrategy {
             case .custom(let closure):
                 do {
-                    return try closure(decoder, decoder.paths, json)
+                    return try closure(inner, decoder.paths, json)
                 } catch  {
                     return BoxDate(json: json).date
                 }
@@ -518,10 +518,10 @@ extension DecodeValueMappable {
                 return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
             }
         case .double(let double):
-            switch decoder.wrapper?.strategy.dateValueStrategy ?? .secondsSince1970(json: .second) {
+            switch decoder.strategy.dateValueStrategy {
             case .custom(let closure):
                 do {
-                    return try closure(decoder, decoder.paths, json)
+                    return try closure(inner, decoder.paths, json)
                 } catch  {
                    return BoxDate(json: json).date
                 }
@@ -545,10 +545,10 @@ extension DecodeValueMappable {
                 return dateformatter.date(from: dateformatter.string(from: date)) ?? Date()
             }
         case .string(let string):
-            switch decoder.wrapper?.strategy.dateValueStrategy ?? .secondsSince1970(json: .second) {
+            switch decoder.strategy.dateValueStrategy {
             case .custom(let closure):
                 do {
-                    return try closure(decoder, decoder.paths, json)
+                    return try closure(inner, decoder.paths, json)
                 } catch  {
                     return BoxDate(json: json).date
                 }
@@ -718,19 +718,13 @@ extension Array: CodingSupport where Element == Any {
 }
 
 
-extension Decodable {
-    func array() -> Bool {
-        guard let _ = self as? Array<Any> else {
+public extension Decodable {
+    /// Decodable解码类型是否为数组
+    static func array() -> Bool {
+        if Self.self is [Bool].Type || Self.self is [Int].Type || Self.self is [Int8].Type || Self.self is [Int16].Type || Self.self is [Int32].Type || Self.self is [Int64].Type || Self.self is [UInt].Type || Self.self is [UInt8].Type || Self.self is [UInt16].Type || Self.self is [UInt32].Type || Self.self is [UInt64].Type || Self.self is [Float].Type || Self.self is [Double].Type || Self.self is [String].Type || Self.self is [Decodable].Type || Self.self is [Codable].Type {
             return true
         }
-        return true
-    }
-    
-    func object() -> Bool {
-        guard let _ =  self as? Dictionary<AnyHashable, Any> else {
-            return false
-        }
-         return true
+        return false
     }
 }
 

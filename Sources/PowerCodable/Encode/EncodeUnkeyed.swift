@@ -14,11 +14,11 @@ class EncodeUnkeyed: UnkeyedEncodingContainer {
     var nestedCodingPath: [CodingKey] {
         return self.codingPath + [Path(intValue: self.count)!]
     }
-    private unowned let encoder: InnerEncoder
-    var unkeyed: [JSON] = []
+    private unowned let inner: InnerEncoder
+    var json: [JSON] = []
 
-    init(encoder: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
-        self.encoder = encoder
+    init(inner: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+        self.inner = inner
         self.codingPath = codingPath
         self.userInfo = userInfo
         self.storage.removeAll()
@@ -31,8 +31,8 @@ class EncodeUnkeyed: UnkeyedEncodingContainer {
 
 extension EncodeUnkeyed {
     var paths: [Path] {
-        get { return self.encoder.wrapper?.paths ?? [] }
-        set { self.encoder.wrapper?.paths = newValue }
+        get { return self.inner.encoder?.paths ?? [] }
+        set { self.inner.encoder?.paths = newValue }
     }
 }
 
@@ -43,19 +43,19 @@ extension EncodeUnkeyed {
     }
 
     func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-        let container = EncodeUnkeyed(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodeUnkeyed(inner: self.inner, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return container
     }
 
     private func nestedSingleValueContainer() -> SingleValueEncodingContainer {
-        let container = EncodeSingleValue(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(inner: self.inner, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return container
     }
 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-        let container = EncodeKeyed<NestedKey>(encoder: self.encoder, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
+        let container = EncodeKeyed<NestedKey>(inner: self.inner, codingPath: self.nestedCodingPath, userInfo: self.userInfo)
         self.storage.append(container)
         return KeyedEncodingContainer(container)
     }
@@ -70,7 +70,7 @@ extension EncodeUnkeyed {
             debugPrint(self.paths.path)
             let value = try self.url(value: value)
             let encoder = InnerEncoder(value: value)
-            encoder.wrapper = self.encoder.wrapper
+            encoder.encoder = self.inner.encoder
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         } else if value is Date {
@@ -79,7 +79,7 @@ extension EncodeUnkeyed {
             debugPrint(self.paths.path)
             let value = try self.date(value: value)
             let encoder = InnerEncoder(value: value)
-            encoder.wrapper = self.encoder.wrapper
+            encoder.encoder = self.inner.encoder
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         } else {
@@ -87,7 +87,7 @@ extension EncodeUnkeyed {
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
             let encoder = InnerEncoder(value: value)
-            encoder.wrapper = self.encoder.wrapper
+            encoder.encoder = self.inner.encoder
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         }
@@ -109,7 +109,7 @@ extension EncodeUnkeyed {
     func date(value: Encodable) throws -> Encodable {
         guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
         var mapping: Encodable = ""
-        switch self.encoder.wrapper?.strategy.dateValueStrategy ?? .utc {
+        switch self.inner.encoder?.strategy.dateValueStrategy ?? .utc {
         case .deferredToDate, .utc:
             mapping = DateFormatter.utc().string(from: value)
         case .iso8601:
@@ -125,7 +125,7 @@ extension EncodeUnkeyed {
             case .string: mapping = "\(value.timeIntervalSince1970 * 1000)"
             }
         case .formatted(let formatter): mapping = formatter.string(from: value)
-        case .custom(let closure): mapping = try closure(value, self.encoder)
+        case .custom(let closure): mapping = try closure(value, self.inner)
         }
         return mapping
     }

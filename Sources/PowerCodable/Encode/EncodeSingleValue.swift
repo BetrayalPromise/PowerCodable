@@ -4,10 +4,10 @@ class EncodeSingleValue: SingleValueEncodingContainer {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
     fileprivate var storage: JSON = .unknow
-    private unowned let encoder: InnerEncoder
+    private unowned let inner: InnerEncoder
 
-    init(encoder: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
-        self.encoder = encoder
+    init(inner: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
+        self.inner = inner
         self.codingPath = codingPath
         self.userInfo = userInfo
     }
@@ -15,46 +15,46 @@ class EncodeSingleValue: SingleValueEncodingContainer {
 
 extension EncodeSingleValue {
     var paths: [Path] {
-        get { return self.encoder.wrapper?.paths ?? [] }
-        set { self.encoder.wrapper?.paths = newValue }
+        get { return self.inner.encoder?.paths ?? [] }
+        set { self.inner.encoder?.paths = newValue }
     }
 }
 
 extension EncodeSingleValue {
     func encodeNil() throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: BoxNull())
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: BoxNull())
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: BoxNull())
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: BoxNull())
         }
     }
 
     func encode(_ value: Bool) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         }
     }
 
     func encode(_ value: String) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         }
     }
 
     func encode(_ value: Double) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloatValueStrategy ?? .convertToString() {
+            switch self.inner.encoder?.strategy.nonConformingFloatValueStrategy ?? .convertToString() {
             case .throw: throw Coding.Exception.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -73,18 +73,18 @@ extension EncodeSingleValue {
             case .object(let object): self.storage = .object(object); return
             }
         }
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         }
     }
 
     func encode(_ value: Float) throws {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
-            switch self.encoder.wrapper?.strategy.nonConformingFloatValueStrategy ?? .convertToString() {
+            switch self.inner.encoder?.strategy.nonConformingFloatValueStrategy ?? .convertToString() {
             case .throw: throw Coding.Exception.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
@@ -103,111 +103,111 @@ extension EncodeSingleValue {
             case .object(let object): self.storage = .object(object); return
             }
         }
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Double(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Double(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Double(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Double(value))
         }
     }
 
     func encode(_ value: Int) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: Int8) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: Int16) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: Int32) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: Int64) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: value)
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: value)
         }
     }
 
     func encode(_ value: UInt) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt8) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt16) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt32) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
     func encode(_ value: UInt64) throws {
         debugPrint(self.storage)
-        switch self.encoder.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.inner.encoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
-            self.storage = InnerEncoder.toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = InnerEncoder.toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         case .useCustomValues(delegete: let delegete):
-            self.storage = type(of: delegete).toJSON(decoder: self.encoder.wrapper ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
+            self.storage = type(of: delegete).toJSON(decoder: self.inner.encoder ?? PowerJSONEncoder(), paths: self.paths, value: Int64(value))
         }
     }
 
@@ -216,12 +216,12 @@ extension EncodeSingleValue {
         if value is URL {
             guard let url = value as? URL else { throw Coding.Exception.invalidTransform() }
             let encoder = InnerEncoder(value: url.absoluteString)
-            encoder.wrapper = self.encoder.wrapper
+            encoder.encoder = self.inner.encoder
             try url.absoluteString.encode(to: encoder)
             self.storage = encoder.jsonValue
         } else {
             let encoder = InnerEncoder(value: value)
-            encoder.wrapper = self.encoder.wrapper
+            encoder.encoder = self.inner.encoder
             try value.encode(to: encoder)
             self.storage = encoder.jsonValue
         }

@@ -20,17 +20,17 @@ public class PowerJSONEncoder {
     /// - Throws: 解析异常
     /// - Returns: 输出值
     public func encode<T, U>(value: T, to: U.Type) throws -> U.Wrapper where T: Encodable, U: CodingSupport {
-        let encoder = InnerEncoder(value: value)
-        encoder.wrapper = self
+        let inner = InnerEncoder(value: value)
+        inner.encoder = self
         var json: JSON = .unknow
         if value is JSON {
             json = (value as? JSON) ?? .unknow
         } else {
-            try value.encode(to: encoder)
-            json = encoder.jsonValue
+            try value.encode(to: inner)
+            json = inner.jsonValue
         }
         let options = Formatter.Options(formatting: self.strategy.outputStrategy, dataEncoding: self.strategy.dataValueStrategy, dateEncoding: self.strategy.dateValueStrategy, keyEncoding: self.strategy.keyFormatStrategy)
-        let formatter = Formatter(topLevel: json, options: options, encoder: encoder)
+        let formatter = Formatter(topLevel: json, options: options, encoder: inner)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {
             return data as! U.Wrapper
@@ -66,14 +66,14 @@ class InnerEncoder: Encoder {
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var container: JSONValue = DefaultJSONValue()
     var paths: [Path] {
-        get { return self.wrapper?.paths ?? [] }
-        set { self.wrapper?.paths = newValue }
+        get { return self.encoder?.paths ?? [] }
+        set { self.encoder?.paths = newValue }
     }
     let value: Encodable
-    unowned var wrapper: PowerJSONEncoder?
+    weak var encoder: PowerJSONEncoder?
     
     var strategy: EncodingStrategy {
-        return self.wrapper?.strategy ?? EncodingStrategy()
+        return self.encoder?.strategy ?? EncodingStrategy()
     }
 
     init(value: Encodable) {
@@ -81,19 +81,19 @@ class InnerEncoder: Encoder {
     }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
-        let container = EncodeKeyed<Key>(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeKeyed<Key>(inner: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return KeyedEncodingContainer(container)
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
-        let container = EncodeUnkeyed(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeUnkeyed(inner: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
-        let container = EncodeSingleValue(encoder: self, codingPath: self.codingPath, userInfo: self.userInfo)
+        let container = EncodeSingleValue(inner: self, codingPath: self.codingPath, userInfo: self.userInfo)
         self.container = container
         return container
     }

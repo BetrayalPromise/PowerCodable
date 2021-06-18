@@ -29,6 +29,8 @@ public final class PowerJSONDecoder {
     /// 编码路径
     var paths: [Path] = []
     
+    var inner: InnerDecoder?
+    
     /// 正向模型转化
     /// - Parameters:
     ///   - type: 顶层模型类型
@@ -42,8 +44,8 @@ public final class PowerJSONDecoder {
             if type == JSON.self {
                 return json as! T
             }
-            let decoder = InnerDecoder(json: json)
-            decoder.wrapper = self
+            let inner = InnerDecoder(json: json, decoder: self)
+            self.inner = inner
             let used: JSON = self.strategy.startPaths?.reduce(json) { (result, path) -> JSON in
                 switch result {
                 case .array(_): return json[path.intValue ?? 0] ?? JSON.unknow
@@ -53,7 +55,7 @@ public final class PowerJSONDecoder {
                     fatalError()
                 }
             } ?? json
-            return try decoder.unbox(json: used, type: type)
+            return try inner.unbox(json: used, type: type)
         } catch {
             throw error
         }
@@ -64,19 +66,20 @@ final class InnerDecoder: Decoder {
     var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var json: JSON
-    unowned var wrapper: PowerJSONDecoder?
+    weak var decoder: PowerJSONDecoder?
     
     var keysStore: [[String: [String]]] = []
     var valuesStore: [DecodeValueMappable.Type] = []
     
     var paths: [Path] {
-        get { return self.wrapper?.paths ?? [] }
-        set { self.wrapper?.paths = newValue }
+        get { return self.decoder?.paths ?? [] }
+        set { self.decoder?.paths = newValue }
     }
     
-    init(json: JSON, at codingPath: [CodingKey] = []) {
+    init(json: JSON, at codingPath: [CodingKey] = [], decoder: PowerJSONDecoder) {
         self.codingPath = codingPath
         self.json = json
+        self.decoder = decoder
     }
 }
 
@@ -90,7 +93,7 @@ extension InnerDecoder {
     }
     
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-        return DecodeSingleValue(decoder: self, json: self.json)
+        return DecodeSingleValue(inner: self, json: self.json)
     }
 }
 
@@ -99,7 +102,7 @@ extension InnerDecoder {
         guard case let .object(object) = json else {
             throw Coding.Exception.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: json)
         }
-        let container = DecodeKeyed<Key>(decoder: self, json: object)
+        let container = DecodeKeyed<Key>(inner: self, json: object)
         return KeyedDecodingContainer(container)
     }
     
@@ -107,7 +110,7 @@ extension InnerDecoder {
         guard case let .array(array) = json else {
             throw Coding.Exception.typeMismatch(type: [JSON].self, codingPath: self.codingPath, reality: json)
         }
-        return DecodeUnkeyed(decoder: self, json: array)
+        return DecodeUnkeyed(inner: self, json: array)
     }
 }
 
@@ -130,11 +133,11 @@ extension InnerDecoder {
     /// - Parameter json: JSON对象
     /// - Returns: 是否为空
     func unboxNil(json: JSON) -> Bool {
-        switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+        switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
         case .useDefaultValues:
             return json == .null
         case .useCustomValues(delegete: _):
-            if (self.wrapper?.strategy.enableEmptyValueStrategy ?? false) && json == .null {
+            if (self.decoder?.strategy.enableEmptyValueStrategy ?? false) && json == .null {
                 return false
             } else {
                 return json == .null
@@ -160,13 +163,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Bool {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toBool(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toBool(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toBool(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toBool(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -189,13 +192,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Int {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toInt(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toInt(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toInt(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -218,13 +221,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Int8 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toInt8(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toInt8(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toInt8(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -247,13 +250,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Int16 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toInt16(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toInt16(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toInt16(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -276,13 +279,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Int32 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toInt32(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toInt32(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toInt32(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -305,13 +308,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Int64 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toInt64(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toInt64(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toInt64(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -334,13 +337,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> UInt {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toUInt(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toUInt(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toUInt(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -363,13 +366,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> UInt8 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toUInt8(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toUInt8(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt8(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toUInt8(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -392,13 +395,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> UInt16 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toUInt16(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toUInt16(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt16(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toUInt16(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -421,13 +424,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> UInt32 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toUInt32(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toUInt32(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt32(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toUInt32(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -450,13 +453,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> UInt64 {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toUInt64(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toUInt64(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toUInt64(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toUInt64(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -479,13 +482,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> String {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toString(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toString(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toString(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toString(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -508,13 +511,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Float {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toFloat(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toFloat(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toFloat(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toFloat(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -537,13 +540,13 @@ extension InnerDecoder {
     func unbox(json: JSON) throws -> Double {
         if self.valuesStore.count >= 1 {
             let type: DecodeValueMappable.Type = self.valuesStore.last!
-            return try type.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+            return try type.toDouble(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
         } else {
-            switch self.wrapper?.strategy.valueStrategy ?? .useDefaultValues {
+            switch self.decoder?.strategy.valueStrategy ?? .useDefaultValues {
             case .useDefaultValues:
-                return try Self.self.toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try Self.self.toDouble(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             case .useCustomValues(delegete: let delegate):
-                return try type(of: delegate).toDouble(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths, json: json)
+                return try type(of: delegate).toDouble(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths, json: json)
             }
         }
     }
@@ -573,18 +576,18 @@ extension InnerDecoder {
     func unbox<T>(json: JSON, type: T.Type) throws -> T where T: Decodable {
         self.json = json
         print(Swift.type(of: T.self))
-        if let type: DecodeKeyMappable.Type = type as? DecodeKeyMappable.Type {
-            if !json.isArray$ {
-                self.keysStore.append(type.modelDecodeKeys(decoder: self.wrapper ?? PowerJSONDecoder(), paths: self.paths))
+        if let value: DecodeKeyMappable.Type = type as? DecodeKeyMappable.Type {
+            if type.array() {
+                print("Warnning: \(type) unsupport DecodeKeyMappable")
             } else {
-                print("Array<Decodable> type implementation DecodeKeyMappable protocol meaningless")
+                self.keysStore.append(value.modelDecodeKeys(decoder: self.decoder ?? PowerJSONDecoder(), paths: self.paths))
             }
         }
         if let type: DecodeValueMappable.Type = type as? DecodeValueMappable.Type {
             self.valuesStore.append(type)
         }
         if T.self == URL.self || T.self == Date.self || T.self == Data.self {
-            let container = DecodeSingleValue(decoder: self, json: self.json)
+            let container = DecodeSingleValue(inner: self, json: self.json)
             return try container.decode(T.self)
         }
         defer {
