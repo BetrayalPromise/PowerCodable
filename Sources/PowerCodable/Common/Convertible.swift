@@ -50,21 +50,6 @@ extension DecodeKeyMappable {
     }
 }
 
-
-public protocol GlobalDecodeKeyMappable {
-    /// json转化为model时候,model可以接受的json字段集合,并且不受到编码策略keyFormatStrategy的影响,接管DecodeKeyMappable的所有权限
-    /// - Parameters:
-    ///   - decoder: 解码器
-    ///   - paths: 编码路径集合
-    static func decodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]]
-}
-
-extension GlobalDecodeKeyMappable {
-    static func decodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
-        return ["": []]
-    }
-}
-
 // MARK: - 解码value转化协议
 public protocol DecodeValueMappable {
     // MARK: - Bool
@@ -722,39 +707,6 @@ public extension Decodable {
     /// Decodable解码类型是否为数组
     static func array() -> Bool {
         if Self.self is [Bool].Type || Self.self is [Int].Type || Self.self is [Int8].Type || Self.self is [Int16].Type || Self.self is [Int32].Type || Self.self is [Int64].Type || Self.self is [UInt].Type || Self.self is [UInt8].Type || Self.self is [UInt16].Type || Self.self is [UInt32].Type || Self.self is [UInt64].Type || Self.self is [Float].Type || Self.self is [Double].Type || Self.self is [String].Type || Self.self is [Decodable].Type || Self.self is [Codable].Type {
-            return true
-        }
-        return false
-    }
-}
-
-
-public extension Decodable {
-    static func enableKeyMappable() -> Bool {
-        if let _: DecodeKeyMappable.Type = Self.self as? DecodeKeyMappable.Type {
-            return true
-        }
-        return false
-    }
-    
-    static func enableValueMappable() -> Bool {
-        if let _: DecodeValueMappable.Type = Self.self as? DecodeValueMappable.Type {
-            return true
-        }
-        return false
-    }
-}
-
-extension Decodable {
-    static func kindOfDecodeKeyMappable() -> Bool {
-        if let _: DecodeKeyMappable.Type = Self.self as? DecodeKeyMappable.Type {
-            return true
-        }
-        return false
-    }
-    
-    static func kindOfDecodeValueMappable() -> Bool {
-        if let _: DecodeValueMappable.Type = Self.self as? DecodeValueMappable.Type {
             return true
         }
         return false

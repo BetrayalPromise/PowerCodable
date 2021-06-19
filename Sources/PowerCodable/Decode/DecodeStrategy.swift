@@ -13,8 +13,6 @@ extension PowerJSONDecoder {
     
     public enum KeyDecodingStrategy {
         case useDefaultKeys
-        // TODO: 待处理
-//        case useGlobalDelegateKeys(delegate: GlobalDecodeKeyMappable)
         case useCustomKeys(closue: ((CodingKey, [Path]) -> CodingKey))
     }
 

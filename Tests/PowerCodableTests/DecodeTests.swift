@@ -1873,15 +1873,4 @@ final class DecodeTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
-    
-    func testType() {
-        struct A: Decodable, DecodeKeyMappable, DecodeValueMappable {
-            
-        }
-        
-        XCTAssertEqual(A.kindOfDecodeKeyMappable(), true)
-        XCTAssertEqual(A.kindOfDecodeValueMappable(), true)
-        
-//        XCTAssertEqual(A.kind(of: Protocol.self), true)
-    }
 }

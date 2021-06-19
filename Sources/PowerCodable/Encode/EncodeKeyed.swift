@@ -6,25 +6,17 @@ fileprivate class Storage<Key: CodingKey> {
     private var hash: [String: KeyValue] = [:]
 
     func append(key: String, value: JSONValue, inner: InnerEncoder) {
-        var mappingKey: String = ""
-        switch inner.strategy.keyFormatStrategy {
-        case .useDefaultKeys:
-            mappingKey = key
-        case .useCamelKeys(let c):
-            mappingKey = key.toCamelCase(format: c)
-        case .useSnakeKeys(let c):
-            mappingKey = key.toSnakeCase(format: c)
-        case .usePascalKeys(let c):
-            mappingKey = key.toPascalCase(format: c)
-        case .useUpperKeys:
-            mappingKey = key.toUpperCase()
-        case .useLowerKeys:
-            mappingKey = key.toLowerCase()
-        case .useCustom(let closure):
-            mappingKey = closure(inner.paths).stringValue
+        var usedKey: String = ""
+        switch inner.encoder?.strategy.keyFormatStrategy ?? .useDefaultKeys {
+        case .useDefaultKeys: usedKey = key
+        case .useCamelKeys(let c): usedKey = key.toCamelCase(format: c)
+        case .useSnakeKeys(let c): usedKey = key.toSnakeCase(format: c)
+        case .usePascalKeys(let c): usedKey = key.toPascalCase(format: c)
+        case .useUpperKeys: usedKey = key.toUpperCase()
+        case .useLowerKeys: usedKey = key.toLowerCase()
+        case .useCustom(let closure): usedKey = closure(inner.paths).stringValue
         }
-
-        let keyValue: KeyValue = (mappingKey, value)
+        let keyValue: KeyValue = (usedKey, value)
         self.elements.append(keyValue)
         self.hash[key] = keyValue
     }

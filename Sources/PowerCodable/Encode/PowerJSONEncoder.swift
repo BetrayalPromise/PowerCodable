@@ -71,10 +71,6 @@ class InnerEncoder: Encoder {
     }
     let value: Encodable
     weak var encoder: PowerJSONEncoder?
-    
-    var strategy: EncodingStrategy {
-        return self.encoder?.strategy ?? EncodingStrategy()
-    }
 
     init(value: Encodable) {
         self.value = value
