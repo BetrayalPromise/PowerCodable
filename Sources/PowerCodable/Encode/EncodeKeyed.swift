@@ -7,7 +7,7 @@ fileprivate class Storage<Key: CodingKey> {
 
     func append(key: String, value: JSONValue, inner: InnerEncoder) {
         var usedKey: String = ""
-        switch inner.encoder?.strategy.keyFormatStrategy ?? .useDefaultKeys {
+        switch inner.encoder?.strategy.key.formatting ?? .useDefaultKeys {
         case .useDefaultKeys: usedKey = key
         case .useCamelKeys(let c): usedKey = key.toCamelCase(format: c)
         case .useSnakeKeys(let c): usedKey = key.toSnakeCase(format: c)
@@ -487,7 +487,7 @@ extension EncodeKeyed {
 extension EncodeKeyed {
     func data(value: Encodable) throws -> Encodable {
         guard let mapping = value as? Data else { throw Coding.Exception.invalidTransform() }
-        switch self.inner.encoder?.strategy.dataValueStrategy ?? .base64 {
+        switch self.inner.encoder?.strategy.value.data ?? .base64 {
         case .deferredToData, .hexadecimalArray: return value
         case .base64: return mapping.base64EncodedString()
         case .custom(let closure): return try closure(mapping, self.inner)
@@ -499,7 +499,7 @@ extension EncodeKeyed {
     func date(value: Encodable) throws -> Encodable {
         guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
         var mapping: Encodable = ""
-        switch self.inner.encoder?.strategy.dateValueStrategy ?? .utc {
+        switch self.inner.encoder?.strategy.value.date ?? .utc {
         case .deferredToDate, .utc:
             mapping = DateFormatter.utc().string(from: value)
         case .iso8601:

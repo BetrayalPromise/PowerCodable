@@ -1338,7 +1338,7 @@ final class DecodeTests: XCTestCase {
             struct Root: Codable {
                 let date : Date
             }
-            self.decoder.strategy.dateValueStrategy = .custom({ (decoder, paths, value) -> Date in
+            self.decoder.strategy.value.date = .custom({ (decoder, paths, value) -> Date in
                 return Date()
             })
             let model: Root = try decoder.decode(type: Root.self, from: data)
@@ -1427,9 +1427,9 @@ final class DecodeTests: XCTestCase {
             "string_data": "string"
         }
         """.data(using: String.Encoding.utf8) ?? Data()
-        self.decoder.strategy.keyFormatStrategy = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
+        self.decoder.strategy.key.formatting = .useSnakeKeys(StringCaseFormat.SnakeCase.default)
         defer {
-            self.decoder.strategy.keyFormatStrategy = .useDefaultKeys
+            self.decoder.strategy.key.formatting = .useDefaultKeys
         }
         do {
             struct Root: Codable, DecodeKeyMappable {
@@ -1597,7 +1597,7 @@ final class DecodeTests: XCTestCase {
             let model = try decoder.decode(type: Root.self, from: data)
             XCTAssertEqual(model.a.a, "a")
             XCTAssertEqual(model.a.b, "b")
-            XCTAssertEqual(model.b, "b")
+            XCTAssertNotEqual(model.b, "b")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -1658,7 +1658,7 @@ final class DecodeTests: XCTestCase {
             let data: Data = """
              {"gender": 4}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueStrategy = .useCustomValues(delegete: Adapter())
+            decoder.strategy.value.mapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1689,7 +1689,7 @@ final class DecodeTests: XCTestCase {
             let data: Data = """
                 {"gender": 3.5}
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueStrategy = .useCustomValues(delegete: Adapter())
+            decoder.strategy.value.mapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)
@@ -1731,7 +1731,7 @@ final class DecodeTests: XCTestCase {
                     "age": 4
                     }
             """.data(using: String.Encoding.utf8) ?? Data()
-            decoder.strategy.valueStrategy = .useCustomValues(delegete: Adapter())
+            decoder.strategy.value.mapping = .useCustomValues(delegete: Adapter())
             do {
                 let model: Human? = try decoder.decode(type: Human.self, from: data)
                 XCTAssert(model?.gender == Gender.unknow)

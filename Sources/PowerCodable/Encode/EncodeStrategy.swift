@@ -54,6 +54,11 @@ extension PowerJSONEncoder {
         case useLowerKeys
         case useCustom(([CodingKey]) -> CodingKey)
     }
+    
+    public enum KeyMappingEncodingStrategy {
+        case useDefaultKeys
+        case useCustom(([CodingKey]) -> CodingKey)
+    }
 
     public enum NonConformingFloatEncodingStrategy {
         case `throw`
@@ -119,7 +124,7 @@ extension PowerJSONEncoder {
             let formatting: OutputFormatting
             let dataEncoding: DataEncodingStrategy
             let dateEncoding: DateEncodingStrategy
-            let keyEncoding: KeyFormatEncodingStrategy
+            let keyFormatEncoding: KeyFormatEncodingStrategy
         }
 
         private var topLevel: JSON

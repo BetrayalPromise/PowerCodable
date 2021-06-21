@@ -203,9 +203,9 @@ final class EncodeTests: XCTestCase {
             var boolBool = false
         }
         
-        self.encoder.strategy.keyFormatStrategy = .useSnakeKeys(.default)
+        self.encoder.strategy.key.formatting = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keyFormatStrategy = .useDefaultKeys
+            self.encoder.strategy.key.formatting = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -225,9 +225,9 @@ final class EncodeTests: XCTestCase {
             var boolBool = false
         }
         
-        self.encoder.strategy.keyFormatStrategy = .useSnakeKeys(.default)
+        self.encoder.strategy.key.formatting = .useSnakeKeys(.default)
         defer {
-            self.encoder.strategy.keyFormatStrategy = .useDefaultKeys
+            self.encoder.strategy.key.formatting = .useDefaultKeys
         }
         do {
             let json: JSON = try encoder.encode(value: A(), to: JSON.self)
@@ -272,7 +272,7 @@ final class EncodeTests: XCTestCase {
                 let a: Data = Data(hexString: "0x234223423")
             }
             do {
-                encoder.strategy.dataValueStrategy = .base64
+                encoder.strategy.value.data = .base64
                 let json = try encoder.encode(value: A(), to: JSON.self)
                 /// Data本质上就是二进制的数组
                 XCTAssertNotEqual(json["a"].array$?.count, 0)
@@ -287,7 +287,7 @@ final class EncodeTests: XCTestCase {
             let a: Date = Date()
         }
         do {
-            self.encoder.strategy.dateValueStrategy = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
+            self.encoder.strategy.value.date = .secondsSince1970(PowerJSONEncoder.TimestampExpressionForm.number)
             let json = try encoder.encode(value: A(), to: String.self)
             print(json)
         } catch  {

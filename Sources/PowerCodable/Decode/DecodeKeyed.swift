@@ -29,17 +29,12 @@ class DecodeKeyed<K: CodingKey>: KeyedDecodingContainerProtocol {
     @inline(__always)
     private func getObject(forKey key: Key) throws -> JSON {
         var usedKey: String = ""
-        switch self.inner.decoder?.strategy.keyMappingStrategy ?? .useDefaultKeys {
+        switch self.inner.decoder?.strategy.key.mapping ?? .useDefaultKeys {
         case .useDefaultKeys: usedKey = key.stringValue
         case .useCustomKeys(closue: let closue): usedKey = closue(key, self.paths).stringValue
-//        case .useGlobalDelegateKeys(delegate: let delegate):
-//            let result: [String: [String]] = type(of: delegate).decodeKeys(decoder: self.inner.wrapper ?? PowerJSONDecoder(), paths: self.paths)
-//            for item in result[key.stringValue] ?? [] {
-//
-//            }
         }
         
-        switch self.inner.decoder?.strategy.keyFormatStrategy ?? .useDefaultKeys {
+        switch self.inner.decoder?.strategy.key.formatting ?? .useDefaultKeys {
         case .useDefaultKeys: break
         case .useCamelKeys(let c): usedKey = usedKey.toCamelCase(format: c)
         case .useSnakeKeys(let c): usedKey = usedKey.toSnakeCase(format: c)

@@ -11,7 +11,7 @@ extension PowerJSONDecoder {
         case useLowerKeys // 小写的key
     }
     
-    public enum KeyDecodingStrategy {
+    public enum KeyMappingDecodingStrategy {
         case useDefaultKeys
         case useCustomKeys(closue: ((CodingKey, [Path]) -> CodingKey))
     }

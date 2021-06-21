@@ -1,12 +1,21 @@
 import Foundation
 
+public struct EncodingKey {
+    public var mapping: PowerJSONEncoder.KeyMappingEncodingStrategy = .useDefaultKeys
+    public var formatting: PowerJSONEncoder.KeyFormatEncodingStrategy = .useDefaultKeys
+}
+
+public struct EncodingValue {
+    public var mapping: PowerJSONEncoder.ValueEncodingStrategy = .useDefaultValues
+    public var date: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
+    public var data: PowerJSONEncoder.DataEncodingStrategy = .base64
+    public var nonConformingFloat: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
+}
+
 public struct EncodingStrategy {
-    public var outputStrategy: PowerJSONEncoder.OutputFormatting = []
-    public var keyFormatStrategy: PowerJSONEncoder.KeyFormatEncodingStrategy = .useDefaultKeys
-    public var dateValueStrategy: PowerJSONEncoder.DateEncodingStrategy = .deferredToDate
-    public var dataValueStrategy: PowerJSONEncoder.DataEncodingStrategy = .base64
-    public var nonConformingFloatValueStrategy: PowerJSONEncoder.NonConformingFloatEncodingStrategy = .convertToString()
-    public var valueStrategy: PowerJSONEncoder.ValueEncodingStrategy = .useDefaultValues
+    public var output: PowerJSONEncoder.OutputFormatting = []
+    public var key = EncodingKey()
+    public var value = EncodingValue()
 }
 
 public class PowerJSONEncoder {
@@ -29,7 +38,7 @@ public class PowerJSONEncoder {
             try value.encode(to: inner)
             json = inner.jsonValue
         }
-        let options = Formatter.Options(formatting: self.strategy.outputStrategy, dataEncoding: self.strategy.dataValueStrategy, dateEncoding: self.strategy.dateValueStrategy, keyEncoding: self.strategy.keyFormatStrategy)
+        let options = Formatter.Options(formatting: self.strategy.output, dataEncoding: self.strategy.value.data, dateEncoding: self.strategy.value.date, keyFormatEncoding: self.strategy.key.formatting)
         let formatter = Formatter(topLevel: json, options: options, encoder: inner)
         let data: Data = try formatter.writeJSON()
         if to.Wrapper == Data.self {
