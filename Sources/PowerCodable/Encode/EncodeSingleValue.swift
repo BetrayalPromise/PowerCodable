@@ -55,7 +55,7 @@ extension EncodeSingleValue {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
             switch self.inner.encoder?.strategy.value.nonConformingFloat ?? .convertToString() {
-            case .throw: throw Coding.Exception.invalidValue(value: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
+            case .throw: throw Coding.Exception.numberMisfit(type: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
                     self.storage = JSON(stringLiteral: nan); return
@@ -85,7 +85,7 @@ extension EncodeSingleValue {
         debugPrint(self.storage)
         if value.isNaN || value.isInfinite {
             switch self.inner.encoder?.strategy.value.nonConformingFloat ?? .convertToString() {
-            case .throw: throw Coding.Exception.invalidValue(value: value, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
+            case .throw: throw Coding.Exception.numberMisfit(type: Float.self, codingPath: self.codingPath, reality: JSON(floatLiteral: FloatLiteralType(value)))
             case .convertToString(positiveInfinity: let positiveInfinity, negativeInfinity: let negativeInfinity, nan: let nan):
                 if value.isNaN {
                     self.storage = JSON(stringLiteral: nan); return
@@ -214,7 +214,7 @@ extension EncodeSingleValue {
     func encode<T>(_ value: T) throws where T : Encodable {
         debugPrint(self.storage)
         if value is URL {
-            guard let url = value as? URL else { throw Coding.Exception.invalidTransform() }
+            guard let url = value as? URL else { throw Coding.Exception.transform() }
             let encoder = InnerEncoder(value: url.absoluteString)
             encoder.encoder = self.inner.encoder
             try url.absoluteString.encode(to: encoder)

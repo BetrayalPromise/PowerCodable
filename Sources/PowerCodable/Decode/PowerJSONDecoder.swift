@@ -44,7 +44,7 @@ public final class PowerJSONDecoder {
     /// - Throws: 解析异常
     /// - Returns: 转换完成的模型
     public func decode<T, U>(type: T.Type, from: U) throws -> T where T: Decodable, U: CodingSupport {
-        guard let data: Data = from.dataWrapper else { throw Coding.Exception.invalidData() }
+        guard let data: Data = from.dataWrapper else { throw Coding.Exception.data() }
         do {
             let json: JSON = try JSON.Parser.parse(data)
             if type == JSON.self {
@@ -106,15 +106,16 @@ extension InnerDecoder {
 extension InnerDecoder {
     func container<Key>(keyedBy type: Key.Type, json: JSON) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
         guard case let .object(object) = json else {
-            throw Coding.Exception.typeMismatch(type: [String: JSON].self, codingPath: self.codingPath, reality: json)
+            debugPrint("Warnning: \(json) is not object structure, return [\"\": JSON.null] as default")
+            return KeyedDecodingContainer(DecodeKeyed<Key>(inner: self, json: ["": JSON.null]))
         }
-        let container = DecodeKeyed<Key>(inner: self, json: object)
-        return KeyedDecodingContainer(container)
+        return KeyedDecodingContainer(DecodeKeyed<Key>(inner: self, json: object))
     }
     
     func unkeyedContainer(json: JSON) throws -> UnkeyedDecodingContainer {
         guard case let .array(array) = json else {
-            throw Coding.Exception.typeMismatch(type: [JSON].self, codingPath: self.codingPath, reality: json)
+            debugPrint("Warnning: \(json) is not array structure, return [] as default")
+            return DecodeUnkeyed(inner: self, json: [])
         }
         return DecodeUnkeyed(inner: self, json: array)
     }
@@ -598,7 +599,7 @@ extension InnerDecoder {
         }
         defer {
             if self.keysStore.count > 0 {
-                if type.array() {
+                if !type.array() {
                     self.keysStore.removeLast()
                 }
             }

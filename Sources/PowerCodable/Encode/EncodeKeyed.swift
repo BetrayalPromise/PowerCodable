@@ -484,14 +484,14 @@ extension EncodeKeyed {
 
 extension EncodeKeyed {
     func url(value: Encodable) throws -> Encodable {
-        guard let url = value as? URL else { throw Coding.Exception.invalidTransform() }
+        guard let url = value as? URL else { throw Coding.Exception.transform() }
         return url.absoluteString
     }
 }
 
 extension EncodeKeyed {
     func data(value: Encodable) throws -> Encodable {
-        guard let mapping = value as? Data else { throw Coding.Exception.invalidTransform() }
+        guard let mapping = value as? Data else { throw Coding.Exception.transform() }
         switch self.inner.encoder?.strategy.value.data ?? .base64 {
         case .deferredToData, .hexadecimalArray: return value
         case .base64: return mapping.base64EncodedString()
@@ -502,7 +502,7 @@ extension EncodeKeyed {
 
 extension EncodeKeyed {
     func date(value: Encodable) throws -> Encodable {
-        guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
+        guard let value: Date = value as? Date else { throw Coding.Exception.transform() }
         var mapping: Encodable = ""
         switch self.inner.encoder?.strategy.value.date ?? .utc {
         case .deferredToDate, .utc:

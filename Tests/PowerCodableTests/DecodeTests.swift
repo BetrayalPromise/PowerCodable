@@ -3,81 +3,8 @@ import XCTest
 
 final class DecodeTests: XCTestCase {
     let decoder = PowerJSONDecoder()
-    
-    /// 处理null, {}, []
-    func testEmpty() {
-        let data: Data = """
-            {"a0": null, "b0":[], "c0": {}}
-        """.data(using: String.Encoding.utf8) ?? Data()
-        struct A: Decodable, DecodeKeyMappable {
-            let a: Bool
-            let b: Bool
-            let c: Bool
-            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
-                return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
-            }
-        }
-        do {
-            let model: A = try decoder.decode(type: A.self, from: data)
-            XCTAssertEqual(model.a, false)
-            XCTAssertEqual(model.b, false)
-            XCTAssertEqual(model.c, false)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testEmptyContainer() {
-        if true {
-            let data0: Data = """
-            []
-            """.data(using: String.Encoding.utf8) ?? Data()
-            do {
-                let model = try decoder.decode(type: [Bool].self, from: data0)
-                XCTAssertEqual(model.count, 0)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
-        }
-        
-        if true {
-            let data: Data = """
-            {}
-            """.data(using: String.Encoding.utf8) ?? Data()
-            struct A: Codable {
-                let int: Int
-                let int8: Int8
-                let int16: Int16
-                let int32: Int32
-                let int64: Int64
-                let uint: UInt
-                let uint8: UInt8
-                let uint16: UInt16
-                let uint32: UInt32
-                let uint64: UInt64
-                let float: Float
-                let double: Double
-            }
-            do {
-                let model = try decoder.decode(type: A.self, from: data)
-                XCTAssertEqual(model.int, 0)
-                XCTAssertEqual(model.int8, 0)
-                XCTAssertEqual(model.int16, 0)
-                XCTAssertEqual(model.int32, 0)
-                XCTAssertEqual(model.int64, 0)
-                XCTAssertEqual(model.uint, 0)
-                XCTAssertEqual(model.uint8, 0)
-                XCTAssertEqual(model.uint16, 0)
-                XCTAssertEqual(model.uint32, 0)
-                XCTAssertEqual(model.uint64, 0)
-                XCTAssertEqual(model.float, 0)
-                XCTAssertEqual(model.double, 0)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
-        }
-    }
-    
+
+// MARK: - 常规的数据处理
     func testBool() {
         let data: Data = """
             [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}, "", "dfadfad"]
@@ -982,6 +909,30 @@ final class DecodeTests: XCTestCase {
         }
     }
     
+// MARK: - 特殊的数据处理
+    /// 处理null, {}, []
+    func testEmptyArray() {
+        let data: Data = """
+            {"a0": null, "b0": [], "c0": {}}
+        """.data(using: String.Encoding.utf8) ?? Data()
+        struct A: Decodable, DecodeKeyMappable {
+            let a: [Bool]
+            let b: [Int]
+            let c: [UInt]
+            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
+                return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
+            }
+        }
+        do {
+            let model: A = try decoder.decode(type: A.self, from: data)
+            XCTAssertEqual(model.a.count, 0)
+            XCTAssertEqual(model.b.count, 0)
+            XCTAssertEqual(model.c.count, 0)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
     func testInfinityAndNonentity() {
         struct Numbers: Codable {
             let a: Float
@@ -1042,6 +993,57 @@ final class DecodeTests: XCTestCase {
             XCTAssertTrue(json.n.isInfinite)
         } catch {
             XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testEmptyContainer() {
+        if true {
+            let data0: Data = """
+            []
+            """.data(using: String.Encoding.utf8) ?? Data()
+            do {
+                let model = try decoder.decode(type: [Bool].self, from: data0)
+                XCTAssertEqual(model.count, 0)
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+        
+        if true {
+            let data: Data = """
+            {}
+            """.data(using: String.Encoding.utf8) ?? Data()
+            struct A: Codable {
+                let int: Int
+                let int8: Int8
+                let int16: Int16
+                let int32: Int32
+                let int64: Int64
+                let uint: UInt
+                let uint8: UInt8
+                let uint16: UInt16
+                let uint32: UInt32
+                let uint64: UInt64
+                let float: Float
+                let double: Double
+            }
+            do {
+                let model = try decoder.decode(type: A.self, from: data)
+                XCTAssertEqual(model.int, 0)
+                XCTAssertEqual(model.int8, 0)
+                XCTAssertEqual(model.int16, 0)
+                XCTAssertEqual(model.int32, 0)
+                XCTAssertEqual(model.int64, 0)
+                XCTAssertEqual(model.uint, 0)
+                XCTAssertEqual(model.uint8, 0)
+                XCTAssertEqual(model.uint16, 0)
+                XCTAssertEqual(model.uint32, 0)
+                XCTAssertEqual(model.uint64, 0)
+                XCTAssertEqual(model.float, 0)
+                XCTAssertEqual(model.double, 0)
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
         }
     }
     
@@ -1448,21 +1450,6 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-    func testGlobalKeyDelegateMappable() {
-        let data: Data = """
-        [true, false]
-        """.data(using: String.Encoding.utf8) ?? Data()
-
-        
-        do {
-            let json = try decoder.decode(type: [Bool].self, from: data)
-            XCTAssertEqual(json[0], true)
-            XCTAssertEqual(json[1], false)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
     func testKeyCustomMappable() {
         // 全部字段不符合模型定义
         do {
@@ -1576,7 +1563,7 @@ final class DecodeTests: XCTestCase {
         do {
             let data: Data = """
                 {
-                    "a0": {"a0": "a", "b": "b"},
+                    "a0": {"a0": "a", "c": "c"},
                     "b0": "b"
                 }
                 """.data(using: String.Encoding.utf8) ?? Data()
@@ -1584,19 +1571,19 @@ final class DecodeTests: XCTestCase {
                 let a: A
                 let b: String
                 static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
-                    return ["a": ["a", "a0"], "b": ["b", "b0"]]
+                    return ["a": ["a", "a0"]]
                 }
             }
             struct A: Codable, DecodeKeyMappable {
-                let b: String
                 let a: String
+                let c: String
                 static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
                     return ["a": ["a", "a0"]]
                 }
             }
             let model = try decoder.decode(type: Root.self, from: data)
             XCTAssertEqual(model.a.a, "a")
-            XCTAssertEqual(model.a.b, "b")
+            XCTAssertEqual(model.a.c, "c")
             XCTAssertNotEqual(model.b, "b")
         } catch {
             XCTFail(error.localizedDescription)

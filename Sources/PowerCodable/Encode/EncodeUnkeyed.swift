@@ -100,14 +100,14 @@ extension EncodeUnkeyed {
 
 extension EncodeUnkeyed {
     func url(value: Encodable) throws -> Encodable {
-        guard let url = value as? URL else { throw Coding.Exception.invalidTransform() }
+        guard let url = value as? URL else { throw Coding.Exception.transform() }
         return url.absoluteString
     }
 }
 
 extension EncodeUnkeyed {
     func date(value: Encodable) throws -> Encodable {
-        guard let value: Date = value as? Date else { throw Coding.Exception.invalidTransform() }
+        guard let value: Date = value as? Date else { throw Coding.Exception.transform() }
         var mapping: Encodable = ""
         switch self.inner.encoder?.strategy.value.date ?? .utc {
         case .deferredToDate, .utc:
