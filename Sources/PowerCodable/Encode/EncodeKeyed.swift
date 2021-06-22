@@ -1,34 +1,39 @@
 import Foundation
 
-fileprivate class Storage<Key: CodingKey> {
+class Storage<Key: CodingKey> {
     typealias KeyValue = (String, JSONValue)
     private(set) var elements: [KeyValue] = []
     private var hash: [String: KeyValue] = [:]
-
-    func append(key: String, value: JSONValue, inner: InnerEncoder) {
-        var usedKey: String = ""
-        switch inner.encoder?.strategy.key.formatting ?? .useDefaultKeys {
-        case .useDefaultKeys: usedKey = key
-        case .useCamelKeys(let c): usedKey = key.toCamelCase(format: c)
-        case .useSnakeKeys(let c): usedKey = key.toSnakeCase(format: c)
-        case .usePascalKeys(let c): usedKey = key.toPascalCase(format: c)
-        case .useUpperKeys: usedKey = key.toUpperCase()
-        case .useLowerKeys: usedKey = key.toLowerCase()
-        case .useCustom(let closure): usedKey = closure(inner.paths).stringValue
+    
+    func append(key: CodingKey, value: JSONValue, keyed: EncodeKeyed<Key>) {
+        var usedCodingKey: CodingKey = key
+        var usedKey = key.stringValue
+        if !keyed.mapping.keys.contains(key.stringValue) {
+            switch keyed.inner.encoder?.strategy.key.mapping ?? .useDefaultKeys {
+            case .useDefaultKeys: break
+            case .useCustomKeys(closue: let closure): usedCodingKey = closure(usedCodingKey, keyed.inner.paths)
+            }
+            switch keyed.inner.encoder?.strategy.key.formatting ?? .useDefaultKeys {
+            case .useDefaultKeys: break
+            case .useCamelKeys(let c): usedKey = usedKey.toCamelCase(format: c)
+            case .useSnakeKeys(let c): usedKey = usedKey.toSnakeCase(format: c)
+            case .usePascalKeys(let c): usedKey = usedKey.toPascalCase(format: c)
+            case .useUpperKeys: usedKey = usedKey.toUpperCase()
+            case .useLowerKeys: usedKey = usedKey.toLowerCase()
+            }
         }
         let keyValue: KeyValue = (usedKey, value)
         self.elements.append(keyValue)
-        self.hash[key] = keyValue
+        self.hash[usedKey] = keyValue
     }
 }
 
 struct EncodeKeyed<Key: CodingKey>: KeyedEncodingContainerProtocol {
-    private(set) var codingPath: [CodingKey]
+    var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
-    private var storage = Storage<Key>()
-    private unowned let inner: InnerEncoder
+    var storage = Storage<Key>()
+    unowned let inner: InnerEncoder
     var mapping:  [String: String] = [:]
-
     init(inner: InnerEncoder, codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.inner = inner
         self.codingPath = codingPath
@@ -50,428 +55,428 @@ extension EncodeKeyed {
     mutating func encodeNil(forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encodeNil()
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encodeNil()
         }
     }
-
+    
     mutating func encode(_ value: Bool, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: String, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: Double, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: Float, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: Int, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: Int8, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: Int16, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: Int32, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: Int64, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: UInt, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: UInt8, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: UInt16, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: UInt32, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode(_ value: UInt64, forKey key: Key) throws {
         let container = EncodeSingleValue(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
         if self.mapping.keys.contains(key.stringValue) {
-            self.paths.push(value: Path.index(by:  self.mapping[key.stringValue] ?? ""))
+            self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: container, inner: self.inner)
+            self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: container, keyed: self)
             try container.encode(value)
         } else {
-            self.paths.push(value: Path.index(by: key.stringValue))
+            self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
-            self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+            self.storage.append(key: key, value: container, keyed: self)
             try container.encode(value)
         }
     }
-
+    
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
         if value is URL {
             let value = try self.url(value: value)
             if self.mapping.keys.contains(key.stringValue) {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: inner.container.jsonValue, keyed: self)
             } else {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key: key.stringValue, value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: key, value: inner.container.jsonValue, keyed: self)
             }
         } else if value is Data {
             let value = try self.data(value: value)
             if self.mapping.keys.contains(key.stringValue) {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: inner.container.jsonValue, keyed: self)
             } else {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key: key.stringValue, value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: key, value: inner.container.jsonValue, keyed: self)
             }
         } else if value is Date {
             let value: Encodable = try self.date(value: value)
             if self.mapping.keys.contains(key.stringValue) {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: Path.index(by: self.mapping[key.stringValue] ?? ""), value: inner.container.jsonValue, keyed: self)
             } else {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key: key.stringValue, value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: key, value: inner.container.jsonValue, keyed: self)
             }
         } else {
             if self.mapping.keys.contains(key.stringValue) {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: self.mapping[key.stringValue] ?? ""), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key:  self.mapping[key.stringValue] ?? "", value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: key, value: inner.container.jsonValue, keyed: self)
             } else {
-                self.paths.push(value: Path.index(by: key.stringValue))
+                self.paths.push(value: Path.index(by: key.stringValue), encoder: self.inner.encoder ?? PowerJSONEncoder())
                 defer { self.paths.pop() }
                 debugPrint(self.paths.path)
                 let inner = InnerEncoder(value: value)
                 inner.encoder = self.inner.encoder
                 try value.encode(to: inner)
-                self.storage.append(key: key.stringValue, value: inner.container.jsonValue, inner: self.inner)
+                self.storage.append(key: key, value: inner.container.jsonValue, keyed: self)
             }
         }
     }
-
+    
     mutating func encodeIfPresent(_ value: Bool?, forKey key: Key) throws {
         guard let value: Bool = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: Int?, forKey key: Key) throws {
         guard let value: Int = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: Int8?, forKey key: Key) throws {
         guard let value: Int8 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: Int16?, forKey key: Key) throws {
         guard let value: Int16 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: Int32?, forKey key: Key) throws {
         guard let value: Int32 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: Int64?, forKey key: Key) throws {
         guard let value: Int64 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: UInt?, forKey key: Key) throws {
         guard let value: UInt = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: UInt8?, forKey key: Key) throws {
         guard let value: UInt8 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: UInt16?, forKey key: Key) throws {
         guard let value: UInt16 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: UInt32?, forKey key: Key) throws {
         guard let value: UInt32 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: UInt64?, forKey key: Key) throws {
         guard let value: UInt64 = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: Float?, forKey key: Key) throws {
         guard let value: Float = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: Double?, forKey key: Key) throws {
         guard let value: Double = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent(_ value: String?, forKey key: Key) throws {
         guard let value: String = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T : Encodable {
         guard let value: T = value else { try self.encodeNil(forKey: key); return }
         try self.encode(value, forKey: key)
     }
-
+    
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         let container = EncodeKeyed<NestedKey>(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
-        self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+        self.storage.append(key: key, value: container, keyed: self)
         return KeyedEncodingContainer(container)
     }
-
+    
     mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
         let container = EncodeUnkeyed(inner: self.inner, codingPath: self.codingPath, userInfo: self.userInfo)
-        self.storage.append(key: key.stringValue, value: container, inner: self.inner)
+        self.storage.append(key: key, value: container, keyed: self)
         return container
     }
-
+    
     mutating func superEncoder() -> Encoder {
         fatalError("Unimplemented yet")
     }
-
+    
     mutating func superEncoder(forKey key: Key) -> Encoder {
         fatalError("Unimplemented yet")
     }

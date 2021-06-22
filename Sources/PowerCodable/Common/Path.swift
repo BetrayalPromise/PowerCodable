@@ -33,8 +33,10 @@ public struct Path: CodingKey {
         self.indexPath = "\(intValue)"
     }
 
+    /// 路径信息
     let information: String
     let container: Container
+    /// 索引路径
     let indexPath: String
 
     static func index(by: String) -> Path {
@@ -55,19 +57,43 @@ public struct Path: CodingKey {
 }
 
 public extension Array where Element == Path {
-    mutating func push(value: Element, options: PowerJSONEncoder.KeyFormatEncodingStrategy = .useDefaultKeys) {
+    mutating func push(value: Element, encoder: PowerJSONEncoder) {
         switch value.container {
         case .array: self.append(value)
         case .object:
-            var key: String = ""
-            switch options {
-            case .useDefaultKeys: key = value.indexPath
+            var key: String = value.indexPath
+            switch encoder.strategy.key.mapping {
+            case .useDefaultKeys: break
+            case .useCustomKeys(closue: let closure): key = closure(Path.index(by: value.indexPath), encoder.paths).stringValue
+            }
+            switch encoder.strategy.key.formatting {
+            case .useDefaultKeys: break
             case .useCamelKeys(let c): key = value.indexPath.toCamelCase(format: c)
             case .useSnakeKeys(let c): key = value.indexPath.toSnakeCase(format: c)
             case .usePascalKeys(let c): key = value.indexPath.toPascalCase(format: c)
             case .useUpperKeys: key = value.indexPath.toUpperCase()
             case .useLowerKeys: key = value.indexPath.toLowerCase()
-            case .useCustom(let closure): key = closure(self).stringValue
+            }
+            self.append(Path(information: Container.object.rawValue + key, container: Container.object, indexPath: key))
+        }
+    }
+    
+    mutating func push(value: Element, decoder: PowerJSONDecoder) {
+        switch value.container {
+        case .array: self.append(value)
+        case .object:
+            var key: String = value.indexPath
+            switch decoder.strategy.key.mapping {
+            case .useDefaultKeys: break
+            case .useCustomKeys(closue: let closure): key = closure(Path.index(by: value.indexPath), decoder.paths).stringValue
+            }
+            switch decoder.strategy.key.formatting {
+            case .useDefaultKeys: break
+            case .useCamelKeys(let c): key = value.indexPath.toCamelCase(format: c)
+            case .useSnakeKeys(let c): key = value.indexPath.toSnakeCase(format: c)
+            case .usePascalKeys(let c): key = value.indexPath.toPascalCase(format: c)
+            case .useUpperKeys: key = value.indexPath.toUpperCase()
+            case .useLowerKeys: key = value.indexPath.toLowerCase()
             }
             self.append(Path(information: Container.object.rawValue + key, container: Container.object, indexPath: key))
         }

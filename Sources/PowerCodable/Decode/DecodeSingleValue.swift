@@ -10,7 +10,6 @@ struct DecodeSingleValue: SingleValueDecodingContainer {
     private let json: JSON
 
     init(inner: InnerDecoder, json: JSON) {
-        print(#function)
         self.json = json
         self.inner = inner
     }

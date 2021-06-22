@@ -52,12 +52,11 @@ extension PowerJSONEncoder {
         case usePascalKeys(StringCaseFormat.PascalCase)
         case useUpperKeys
         case useLowerKeys
-        case useCustom(([CodingKey]) -> CodingKey)
     }
     
     public enum KeyMappingEncodingStrategy {
         case useDefaultKeys
-        case useCustom(([CodingKey]) -> CodingKey)
+        case useCustomKeys(closue: ((CodingKey, [Path]) -> CodingKey))
     }
 
     public enum NonConformingFloatEncodingStrategy {

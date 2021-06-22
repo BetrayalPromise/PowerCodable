@@ -65,7 +65,7 @@ extension EncodeUnkeyed {
             self.currentIndex += 1
         }
         if value is URL {
-            self.paths.push(value: Path.index(by: self.currentIndex))
+            self.paths.push(value: Path.index(by: self.currentIndex), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
             let value = try self.url(value: value)
@@ -74,7 +74,7 @@ extension EncodeUnkeyed {
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         } else if value is Date {
-            self.paths.push(value: Path.index(by: self.currentIndex))
+            self.paths.push(value: Path.index(by: self.currentIndex), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
             let value = try self.date(value: value)
@@ -83,7 +83,7 @@ extension EncodeUnkeyed {
             try value.encode(to: encoder)
             self.storage.append(encoder.container.jsonValue)
         } else {
-            self.paths.push(value: Path.index(by: self.currentIndex))
+            self.paths.push(value: Path.index(by: self.currentIndex), encoder: self.inner.encoder ?? PowerJSONEncoder())
             defer { self.paths.pop() }
             debugPrint(self.paths.path)
             let encoder = InnerEncoder(value: value)
