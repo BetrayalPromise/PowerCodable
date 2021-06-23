@@ -588,7 +588,7 @@ final class DecodeTests: XCTestCase {
                 [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
             """.data(using: String.Encoding.utf8) ?? Data()
             do {
-                let model: [UInt32] = try decoder.decode(type: [UInt32].self, from: data) 
+                let model: [UInt32] = try decoder.decode(type: [UInt32].self, from: data)
                 XCTAssertEqual(model[0], 1)
                 XCTAssertEqual(model[1], 0)
                 XCTAssertEqual(model[2], 0)
@@ -782,7 +782,7 @@ final class DecodeTests: XCTestCase {
                 [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
             """.data(using: String.Encoding.utf8) ?? Data()
             do {
-                let model: [Double] = try decoder.decode(type: [Double].self, from: data) 
+                let model: [Double] = try decoder.decode(type: [Double].self, from: data)
                 XCTAssertEqual(model[0], 1)
                 XCTAssertEqual(model[1], 0)
                 XCTAssertEqual(model[2], 0)
@@ -848,7 +848,7 @@ final class DecodeTests: XCTestCase {
                 [true, false, 0, 1, 2, 3, 4.5, -6.7, null, [], [null], [true], [false], [0], [1], [2], [3], [4.5], [6.7], {}, {"a": "b"}]
             """.data(using: String.Encoding.utf8) ?? Data()
             do {
-                let model: [String] = try decoder.decode(type: [String].self, from: data) 
+                let model: [String] = try decoder.decode(type: [String].self, from: data)
                 XCTAssertEqual(model[0], "true")
                 XCTAssertEqual(model[1], "false")
                 XCTAssertEqual(model[2], "0")
@@ -911,23 +911,50 @@ final class DecodeTests: XCTestCase {
     
 // MARK: - 特殊的数据处理
     /// 处理null, {}, []
-    func testEmptyArray() {
-        let data: Data = """
-            {"a0": null, "b0": [], "c0": {}}
-        """.data(using: String.Encoding.utf8) ?? Data()
-        struct A: Decodable, DecodeKeyMappable {
-            let a: [Bool]
-            let b: [Int]
-            let c: [UInt]
-            static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
-                return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
-            }
-        }
+    func testEmptyValue() {
         do {
+            let data: Data = """
+                {"a0": null, "b0": [], "c0": {}}
+            """.data(using: String.Encoding.utf8) ?? Data()
+            struct A: Decodable, DecodeKeyMappable {
+                let a: [Bool]
+                let b: [Int]
+                let c: [UInt]
+                static func modelDecodeKeys(decoder: PowerJSONDecoder, paths: [Path]) -> [String: [String]] {
+                    return ["a": ["a0"], "b": ["b0"], "c": ["c0"]]
+                }
+            }
             let model: A = try decoder.decode(type: A.self, from: data)
             XCTAssertEqual(model.a.count, 0)
             XCTAssertEqual(model.b.count, 0)
             XCTAssertEqual(model.c.count, 0)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+        
+        do {
+            let data: Data = """
+                {"a": null, "b": [], "c": {}}
+            """.data(using: String.Encoding.utf8) ?? Data()
+            struct Root: Decodable, DecodeKeyMappable {
+                let a: A
+                let b: B
+                let c: C
+            }
+            struct A: Decodable {
+                
+            }
+            struct B: Decodable {
+                
+            }
+            struct C: Decodable {
+                
+            }
+            
+            let model: Root = try decoder.decode(type: Root.self, from: data)
+            XCTAssertNotNil(model.a)
+            XCTAssertNotNil(model.b)
+            XCTAssertNotNil(model.c)
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -1166,25 +1193,6 @@ final class DecodeTests: XCTestCase {
         }
     }
     
-//    func testNested1() {
-//        class Person: Codable {
-//            var name: String = ""
-//            var parent: Person?
-//        }
-//
-//        let json: [String: Any] = [
-//            "name": "0",
-//            "parent": ["name": "1"]
-//        ]
-//        do {
-//            let model: Person = try self.decoder.decode(type: Person.self, from: json)
-//            XCTAssertEqual(model.name, "0")
-//            XCTAssertEqual(model.parent?.name, "1")
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-    
     func testParadigm() {
         struct NetResponse<Element: Codable>: Codable {
             var data: Element? = nil
@@ -1358,69 +1366,6 @@ final class DecodeTests: XCTestCase {
         let string = "1603539281"
         print(string.toDate())
     }
-    
-//    func testKeyDelegateMappable() {
-//        // 全部字段不符合模型定义
-//        do {
-//            struct Adapter: DecodeKeyMappable {
-//                static func modelDecodeKeys() -> [String : [String]] {
-//                    
-//                }
-//            }
-//            
-//            let data: Data = """
-//            {
-//                "a0": "a",
-//                "b0": "b",
-//                "c0": {
-//                    "c0": "c",
-//                    "d0": "d",
-//                    "e0": {
-//                        "e0": "e",
-//                        "f0": "f",
-//                        "g0": "g"
-//                    }
-//                }
-//            }
-//            """.data(using: String.Encoding.utf8) ?? Data()
-//            do {
-//                struct Root : Codable, DecodeKeyMappable {
-//                    let a : String?
-//                    let b : String?
-//                    let c : C?
-//                    
-//                    static func modelDecodeKeys() -> [String: [String]] {
-//                        return ["a": ["a0"], "b": ["b0"], "c":["c0"]]
-//                    }
-//                }
-//                struct C : Codable, DecodeKeyMappable {
-//                    let c : String?
-//                    let d : String?
-//                    let e : E?
-//                    
-//                    static func modelDecodeKeys() -> [String: [String]] {
-//                        return ["c": ["c0"], "d": ["d0"], "e": ["e0"]]
-//                    }
-//                }
-//                struct E : Codable, DecodeKeyMappable {
-//                    let f : String?
-//                    let g : String?
-//                    static func modelDecodeKeys() -> [String: [String]] {
-//                        return ["e":["e0"], "f": ["f0"], "g": ["g0"]]
-//                    }
-//                }
-//                let model = try decoder.decode(type: Root.self, from: data)
-//                XCTAssertEqual(model.a, "a")
-//                XCTAssertEqual(model.b, "b")
-//                XCTAssertEqual(model.c?.c, "c")
-//                XCTAssertEqual(model.c?.d, "d")
-//                XCTAssertEqual(model.c?.e?.f, "f")
-//                XCTAssertEqual(model.c?.e?.g, "g")
-//            } catch {
-//                XCTFail(error.localizedDescription)
-//            }
-//        }
-//    }
     
     func testKeyFormatMappable() {
         let data: Data = """
@@ -1844,9 +1789,7 @@ final class DecodeTests: XCTestCase {
     
     func testStartPath() {
         let data: Data = """
-        {
-            "data": [0, 1, 3]
-        }
+        {"data": [0, 1, 3]}
         """.data(using: String.Encoding.utf8) ?? Data()
         
         do {
@@ -1857,6 +1800,70 @@ final class DecodeTests: XCTestCase {
             XCTAssertEqual(root[1], 1)
             XCTAssertEqual(root[2], 3)
         } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testFromString() {
+        do {
+            struct Root : Codable {
+                let value : Bool?
+            }
+            let value: Bool = true
+            let string = "{\"value\" : \(value)}"
+            do {
+                let decoder = PowerJSONDecoder()
+                let model = try decoder.decode(type: Root.self, from: string)
+                XCTAssertEqual(model.value, true)
+            } catch  {
+                XCTFail(error.localizedDescription)
+            }
+        }
+        
+        do {
+            let string = """
+            {
+                "dictionary": {
+                    "1": {
+                        "foo": "uno",
+                        "bar": 1
+                    },
+                    "two": {
+                        "foo": "dve",
+                        "bar": 2
+                    },
+                    "bar": {
+                        "foo": "bar",
+                        "bar": 777
+                    }
+                }
+            }
+            """
+            let decoder = PowerJSONDecoder()
+            let model = try decoder.decode(type: JSON.self, from: string)
+            XCTAssertEqual(model.kind, .object)
+            XCTAssertEqual(model["dictionary"]["1"]["foo"], "uno")
+            XCTAssertEqual(model["dictionary"]["1"]["bar"], 1)
+            XCTAssertEqual(model["dictionary"]["two"]["foo"], "dve")
+            XCTAssertEqual(model["dictionary"]["two"]["bar"], 2)
+            XCTAssertEqual(model["dictionary"]["bar"]["foo"], "bar")
+            XCTAssertEqual(model["dictionary"]["bar"]["bar"], 777)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testFromJSONWrapper() {
+        let value: Int = 123
+        let json: [String: Any] = ["value": value]
+        struct Root : Codable {
+            let value : Int
+        }
+        do {
+            let decoder = PowerJSONDecoder()
+            let model = try decoder.decode(type: Root.self, from: json)
+            XCTAssertEqual(model.value, 123)
+        } catch  {
             XCTFail(error.localizedDescription)
         }
     }
