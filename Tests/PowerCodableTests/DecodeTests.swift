@@ -1867,4 +1867,64 @@ final class DecodeTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
+    
+    func testJSONFile() {
+        // TODO: 待处理
+        do {
+            let bundle = Bundle(for: DecodeTests.self)
+            let path = bundle.path(forResource: "Tests", ofType: "json")
+            print(path ?? "not found")
+        }
+
+        do {
+            let bundle = Bundle.main
+            let path = bundle.path(forResource: "Tests", ofType: "json")
+            print(path ?? "found")
+        }
+    }
+    
+    func testInherit() {
+        class A: Codable {
+            var name: String = ""
+            
+            enum CodingKeys: String, CodingKey {
+                case name = "name"
+            }
+            
+            required init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                self.name = try container.decode(String.self, forKey: CodingKeys.name)
+            }
+        }
+        
+        class B: A {
+            enum CodingKeys: String, CodingKey {
+                case file = "file"
+            }
+            
+            required init(from decoder: Decoder) throws {
+                try super.init(from: decoder)
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                self.file = try container.decode(String.self, forKey: CodingKeys.file)
+            }
+            
+            override func encode(to encoder: Encoder) throws {
+                
+            }
+            var file: String = ""
+        }
+    
+        let data: Data = """
+         {"name": "name", "file": "file"}
+        """.data(using: String.Encoding.utf8) ?? Data()
+        
+        let decoder = PowerJSONDecoder()
+        do {
+            let model: B = try decoder.decode(type: B.self, from: data)
+            XCTAssertEqual(model.name, "name")
+            XCTAssertEqual(model.file, "file")
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
 }
